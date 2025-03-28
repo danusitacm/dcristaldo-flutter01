@@ -37,7 +37,7 @@ class LoginScreen extends StatelessWidget {
             ),
             Title(
               color: Colors.black, 
-              child: const Text("Cambio by danusita")
+              child: const Text("Cambio by arincassia")
             )
           ],
         ),

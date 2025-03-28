@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.yellow),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 11, 173, 106)),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Alejandra Home Page '),
+      home: const MyHomePage(title: 'Flutter Demo Daniela Home Page '),
     );
   }
 }
@@ -131,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            Text('Hola soy Alejandra'),
+            Text('Hola soy Daniela'),
             ElevatedButton(
             onPressed: () {
               _showWarningDialog(context);
