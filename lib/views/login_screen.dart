@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/api/services/auth_service.dart';
+import 'package:dcristaldo/views/welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -20,8 +21,9 @@ class LoginScreen extends StatelessWidget {
 
       try {
         await AuthService().login(username, password);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inicio de sesión exitoso')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
         );
       } catch (e) {
         ScaffoldMessenger.of(
