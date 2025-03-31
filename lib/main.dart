@@ -1,4 +1,4 @@
-import 'package:dcristaldo/login_screen.dart';
+import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,32 +29,34 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 11, 173, 106)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 11, 173, 106),
+        ),
       ),
       home: const MyHomePage(title: 'Flutter Demo Daniela Home Page '),
     );
   }
 }
 
-// This is a basic Flutter widget test. 
+// This is a basic Flutter widget test.
 void _showWarningDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Advertencia'),
-          content: const Text('Esto es una advertencia importante.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Advertencia'),
+        content: const Text('Esto es una advertencia importante.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cerrar'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -133,12 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text('Hola soy Daniela'),
             ElevatedButton(
-            onPressed: () {
-              _showWarningDialog(context);
-            },
-            child: const Text('Mostrar Advertencia'),
-          ),
-          ElevatedButton(
+              onPressed: () {
+                _showWarningDialog(context);
+              },
+              child: const Text('Mostrar Advertencia'),
+            ),
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
