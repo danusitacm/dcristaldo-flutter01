@@ -39,25 +39,36 @@ class _ColorChangeScreenState extends State<ColorChangeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 300,
-              height: 300,
-              color: _colorsContainer[_currentColorIndex],
-              alignment: Alignment.center,
-              child: Text(
-                'Toca para cambiar',
-                style: TextStyle(fontSize: 18, color: _colorText),
-                textAlign: TextAlign.center,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 300,
+                  height: 300,
+                  color: _colorsContainer[_currentColorIndex],
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Toca para cambiar',
+                    style: TextStyle(fontSize: 18, color: _colorText),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _changeColor,
-              child: const Text('Cambiar Color'),
-            ),
-            ElevatedButton(
-              onPressed: _changeToWhite,
-              child: const Text('Cambiar a blanco'),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _changeColor,
+                  child: const Text('Cambiar Color'),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: _changeToWhite,
+                  child: const Text('Cambiar a blanco'),
+                ),
+              ],
             ),
           ],
         ),
