@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class MiScreen extends StatelessWidget {
+class MiScreen extends StatefulWidget {
   const MiScreen({super.key});
+
+  @override
+  State<MiScreen> createState() => _MiScreenState();
+}
+
+class _MiScreenState extends State<MiScreen> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +32,13 @@ class MiScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 24),
               ),
             ),
+            SizedBox(height: 30),
+            Text(
+              'Veces presionado: $_counter',
+              style: const TextStyle(fontSize: 20, color: Colors.blue),
+            ),
             ElevatedButton(
-              onPressed: () {
-                // Acción al presionar el botón
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Botón presionado')),
-                );
-              },
+              onPressed: _incrementCounter,
               child: const Text('Toca aquí'),
             ),
           ],
