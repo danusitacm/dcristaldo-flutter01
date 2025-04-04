@@ -1,5 +1,6 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:dcristaldo/views/mi_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 11, 173, 106),
         ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
+      //home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
+      home: const MiScreen(),
     );
   }
 }
