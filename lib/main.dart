@@ -1,6 +1,7 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
+import 'package:dcristaldo/views/color_change_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       //home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
-      home: const MiScreen(),
+      //home: const MiScreen(),
+      home: const ColorChangeScreen(),
     );
   }
 }
