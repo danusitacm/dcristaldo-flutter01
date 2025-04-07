@@ -10,6 +10,10 @@ class TaskCardHelper {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Icon(
+              task.type == 'Urgente' ? Icons.warning : Icons.task,
+              color: task.type == 'Urgente' ? Colors.red : Colors.blue,
+            ),
             Text(
               task.title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
