@@ -251,6 +251,7 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      backgroundColor: Colors.grey[200],
       body:
           tareas.isEmpty
               ? const Center(
