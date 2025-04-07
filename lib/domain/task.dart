@@ -1,5 +1,5 @@
 class Task {
   final String title;
-
-  Task({required this.title});
+  final String type;
+  Task({required this.title, this.type = 'Normal'});
 }
