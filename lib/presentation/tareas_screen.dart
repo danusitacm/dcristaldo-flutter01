@@ -206,6 +206,10 @@ class _TareasScreenState extends State<TareasScreen> {
                 itemBuilder: (context, index) {
                   final tarea = tareas[index];
                   return ListTile(
+                    leading:
+                        tarea.isUrgent()
+                            ? Icon(Icons.warning)
+                            : Icon(Icons.task),
                     title: Text(tarea.title),
                     onTap: () {
                       _mostrarModalAgregarTarea(index: index);

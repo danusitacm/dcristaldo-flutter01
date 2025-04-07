@@ -10,4 +10,7 @@ class Task {
     required this.detail,
     DateTime? date,
   }) : date = date ?? DateTime.now();
+  bool isUrgent() {
+    return type == 'Urgente';
+  } // Método para verificar si la tarea es urgente
 }
