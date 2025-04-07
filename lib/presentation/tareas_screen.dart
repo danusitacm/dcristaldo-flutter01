@@ -208,8 +208,8 @@ class _TareasScreenState extends State<TareasScreen> {
                   return ListTile(
                     leading:
                         tarea.isUrgent()
-                            ? Icon(Icons.warning)
-                            : Icon(Icons.task),
+                            ? Icon(Icons.warning, color: Colors.red)
+                            : Icon(Icons.task, color: Colors.blue),
                     title: Text(tarea.title),
                     onTap: () {
                       _mostrarModalAgregarTarea(index: index);
