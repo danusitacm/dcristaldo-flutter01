@@ -15,9 +15,12 @@ class TaskRepository {
     return _tasks;
   }
 
-  // Agrega una nueva tarea
+  // Agrega una nueva tarea alternando entre "Urgente" y "Normal"
   void addTask(Task task) {
-    _tasks.add(task);
+    final type =
+        _tasks.length % 2 == 0 ? 'Normal' : 'Urgente'; // Alterna el tipo
+    final newTask = Task(title: task.title, type: type, detail: task.detail);
+    _tasks.add(newTask);
   }
 
   // Actualiza una tarea existente
