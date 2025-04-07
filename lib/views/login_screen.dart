@@ -4,6 +4,8 @@ import 'package:dcristaldo/views/welcome_screen.dart'; // Importa la pantalla de
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
+
+  LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();

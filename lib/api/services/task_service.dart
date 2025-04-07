@@ -10,12 +10,14 @@ class TaskService {
   }
 
   // Agrega una nueva tarea
-  void addTask(Task task) {
-    _taskRepository.addTask(task);
+  void addTask(String title, String detail, DateTime date) {
+    final newTask = Task(title: title, detail: detail, date: date);
+    _taskRepository.addTask(newTask);
   }
 
-  // Edita una tarea existente
-  void updateTask(int index, Task updatedTask) {
+  // Actualiza una tarea existente
+  void updateTask(int index, String title, String detail, DateTime date) {
+    final updatedTask = Task(title: title, detail: detail, date: date);
     _taskRepository.updateTask(index, updatedTask);
   }
 
