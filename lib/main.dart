@@ -1,8 +1,9 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/views/mi_screen.dart';
-import 'package:dcristaldo/views/color_change_screen.dart';
+import 'package:dcristaldo/presentation/tareas_screen.dart';
 
+//import 'package:dcristaldo/views/mi_screen.dart';
+//import 'package:dcristaldo/views/color_change_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -19,9 +20,9 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 11, 173, 106),
         ),
       ),
-      //home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
       //home: const MiScreen(),
-      home: const ColorChangeScreen(),
+      //home: const ColorChangeScreen(),
     );
   }
 }
@@ -103,10 +104,20 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               child: const Text('Ir a Login'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TareasScreen()),
+                );
+              },
+              child: const Text('Ir a Tareas'),
             ),
             IconButton(
               onPressed: _resetCounter,
