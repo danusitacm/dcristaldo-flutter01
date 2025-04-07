@@ -211,6 +211,7 @@ class _TareasScreenState extends State<TareasScreen> {
                             ? Icon(Icons.warning, color: Colors.red)
                             : Icon(Icons.task, color: Colors.blue),
                     title: Text(tarea.title),
+                    subtitle: Text(TASK_TYPE_LABEL + tarea.type),
                     onTap: () {
                       _mostrarModalAgregarTarea(index: index);
                     },
