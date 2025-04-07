@@ -1,5 +1,13 @@
 class Task {
   final String title;
   final String type;
-  Task({required this.title, this.type = 'Normal'});
+  final String detail;
+  final DateTime date;
+
+  Task({
+    required this.title,
+    this.type = 'Normal',
+    required this.detail,
+    DateTime? date,
+  }) : date = date ?? DateTime.now();
 }
