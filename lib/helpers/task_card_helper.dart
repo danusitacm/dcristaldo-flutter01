@@ -34,7 +34,7 @@ class TaskCardHelper {
               const SizedBox(height: 8),
               if (task.pasos.isNotEmpty)
                 Text(
-                  'Pasos:\n${task.pasos.join('\n')}',
+                  'Pasos:\n${task.pasos[0]}',
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
             ],
