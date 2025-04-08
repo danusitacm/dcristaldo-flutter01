@@ -7,18 +7,35 @@ class TaskRepository {
       type: 'Urgente',
       detail: 'Sin detalles',
       date: DateTime.now(),
-      fechaLimite: DateTime.now().add(
-        const Duration(days: 3),
-      ), // Fecha límite en 3 días
+      fechaLimite: DateTime.now().add(const Duration(days: 1)),
     ),
     Task(
       title: 'Tarea 2',
       type: 'Normal',
       detail: 'Sin detalles',
       date: DateTime.now(),
-      fechaLimite: DateTime.now().add(
-        const Duration(days: 5),
-      ), // Fecha límite en 5 días
+      fechaLimite: DateTime.now().add(const Duration(days: 2)),
+    ),
+    Task(
+      title: 'Tarea 3',
+      type: 'Normal',
+      detail: 'Sin detalles',
+      date: DateTime.now(),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+    ),
+    Task(
+      title: 'Tarea 4',
+      type: 'Normal',
+      detail: 'Sin detalles',
+      date: DateTime.now(),
+      fechaLimite: DateTime.now().add(const Duration(days: 4)),
+    ),
+    Task(
+      title: 'Tarea 5',
+      type: 'Normal',
+      detail: 'Sin detalles',
+      date: DateTime.now(),
+      fechaLimite: DateTime.now().add(const Duration(days: 5)),
     ),
   ];
 
