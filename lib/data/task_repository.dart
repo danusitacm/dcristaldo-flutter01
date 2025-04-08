@@ -2,11 +2,24 @@ import '../domain/task.dart';
 
 class TaskRepository {
   final List<Task> _tasks = [
-    Task(title: 'Tarea 1', type: 'Urgente', detail: 'Sin detalles'),
-    Task(title: 'Tarea 2', type: 'Urgente', detail: 'Sin detalles'),
-    Task(title: 'Tarea 3', detail: 'Sin detalles'),
-    Task(title: 'Tarea 4', detail: 'Sin detalles'),
-    Task(title: 'Tarea 5', detail: 'Sin detalles'),
+    Task(
+      title: 'Tarea 1',
+      type: 'Urgente',
+      detail: 'Sin detalles',
+      date: DateTime.now(),
+      fechaLimite: DateTime.now().add(
+        const Duration(days: 3),
+      ), // Fecha límite en 3 días
+    ),
+    Task(
+      title: 'Tarea 2',
+      type: 'Normal',
+      detail: 'Sin detalles',
+      date: DateTime.now(),
+      fechaLimite: DateTime.now().add(
+        const Duration(days: 5),
+      ), // Fecha límite en 5 días
+    ),
   ];
 
   // Obtiene todas las tareas
@@ -14,12 +27,9 @@ class TaskRepository {
     return _tasks;
   }
 
-  // Agrega una nueva tarea alternando entre "Urgente" y "Normal"
+  // Agrega una nueva tarea
   void addTask(Task task) {
-    final type =
-        _tasks.length % 2 == 0 ? 'Normal' : 'Urgente'; // Alterna el tipo
-    final newTask = Task(title: task.title, type: type, detail: task.detail);
-    _tasks.add(newTask);
+    _tasks.add(task);
   }
 
   // Actualiza una tarea existente
