@@ -1,39 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/api/services/auth_service.dart';
-import 'package:dcristaldo/views/welcome_screen.dart';
+import 'package:dcristaldo/views/welcome_screen.dart'; // Importa la pantalla de bienvenida
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final _formKey = GlobalKey<FormState>();
 
+  LoginScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-
-    void _login() async {
-      if (!_formKey.currentState!.validate()) {
-        return; // Si el formulario no es válido, no continuar
-      }
-
-      final username = usernameController.text.trim();
-      final password = passwordController.text.trim();
-
-      try {
-        await AuthService().login(username, password);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
-    }
-
+    final AuthService authService = AuthService();
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Inicio de Sesión')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -44,7 +23,7 @@ class LoginScreen extends StatelessWidget {
               TextFormField(
                 controller: usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'Usuario',
+                  labelText: 'Usuario *',
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -58,7 +37,7 @@ class LoginScreen extends StatelessWidget {
               TextFormField(
                 controller: passwordController,
                 decoration: const InputDecoration(
-                  labelText: 'Contraseña',
+                  labelText: 'Contraseña *',
                   border: OutlineInputBorder(),
                 ),
                 obscureText: true,
@@ -71,12 +50,51 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: _login,
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    final username = usernameController.text.trim();
+                    final password = passwordController.text.trim();
+
+                    // Muestra un indicador de carga mientras se realiza la autenticación
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    );
+
+                    try {
+                      final success = await authService.login(
+                        username,
+                        password,
+                      );
+
+                      Navigator.pop(context); // Cierra el indicador de carga
+
+                      if (success) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WelcomeScreen(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Inicio de sesión fallido'),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      Navigator.pop(context); // Cierra el indicador de carga
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                    }
+                  }
+                },
                 child: const Text('Iniciar Sesión'),
-              ),
-              Title(
-                color: Colors.black,
-                child: const Text("Cambio by arincassia"),
               ),
             ],
           ),

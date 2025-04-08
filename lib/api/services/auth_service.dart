@@ -1,17 +1,22 @@
 import 'dart:async';
 
 class AuthService {
-  Future<void> login(String username, String password) async {
-    // Simula un retraso para el mock
+  Future<bool> login(String username, String password) async {
+    // Verifica que las credenciales no sean nulas ni vacías
     if (username.isEmpty || password.isEmpty) {
-      throw ArgumentError('Username and password cannot be empty');
+      print('Error: Usuario o contraseña no pueden estar vacíos.');
+      return false;
     }
-    await Future.delayed(Duration(seconds: 1));
-    // Imprime las credenciales en la consola
-    print('Username: $username');
-    print('Password: $password');
 
-    // Retorna un resultado simulado
-    print('Login exitoso (mock)');
+    // Simula un retraso de red
+    await Future.delayed(Duration(seconds: 1));
+
+    // Imprime las credenciales en la consola
+    print('Intentando iniciar sesión con:');
+    print('Usuario: $username');
+    print('Contraseña: $password');
+
+    // Retorna true para simular un inicio de sesión exitoso
+    return true;
   }
 }
