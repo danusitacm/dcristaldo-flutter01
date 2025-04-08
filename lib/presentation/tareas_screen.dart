@@ -1,10 +1,11 @@
+import 'package:dcristaldo/data/task_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/constants.dart';
 import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:dcristaldo/domain/task.dart';
-import 'package:dcristaldo/helpers/task_card_helper.dart'; // Importa el helper para los Cards
+import 'package:dcristaldo/helpers/task_card_helper.dart'; // Importa TaskCardHelper
 
 class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
@@ -53,27 +54,14 @@ class _TareasScreenState extends State<TareasScreen> {
 
     // Simula la carga de más tareas
     await Future.delayed(const Duration(seconds: 2));
-    final newTasks = List.generate(
-      5,
-      (index) => Task(
-        title: 'Tarea ${tareas.length + index + 1}',
-        type: 'Normal',
-        detail: 'Sin detalles',
-      ),
-    );
-
-    for (var task in newTasks) {
-      _taskService.addTask(
-        task.title,
-        task.detail,
-        DateTime.now(),
-      ); // Usa el servicio para agregar las tareas
-    }
+    final newTasks =
+        TaskRepository().loadMoreTasks(); //Cargar mas tareas del repository
+    _taskService.addTaskAll(newTasks); // Agregar tareas al servicio
 
     setState(() {
       tareas =
           _taskService.getAllTasks(); // Actualiza la lista desde el servicio
-      _isLoading = false;
+      _isLoading = false; // Asegúrate de que _isLoading se actualice
     });
   }
 
@@ -103,27 +91,16 @@ class _TareasScreenState extends State<TareasScreen> {
   }
 
   void _agregarTarea(String titulo, String detalle, DateTime fecha) {
+    _taskService.addTask(titulo, detalle, fecha);
     setState(() {
-      _taskService.addTask(
-        titulo,
-        detalle,
-        fecha,
-      ); // Guarda la tarea en el repositorio a través del servicio
-      tareas =
-          _taskService.getAllTasks(); // Actualiza la lista desde el repositorio
+      tareas = _taskService.getAllTasks();
     });
   }
 
   void _editarTarea(int index, String titulo, String detalle, DateTime fecha) {
+    _taskService.updateTask(index, titulo, detalle, fecha);
     setState(() {
-      _taskService.updateTask(
-        index,
-        titulo,
-        detalle,
-        fecha,
-      ); // Usa el servicio para editar la tarea
-      tareas =
-          _taskService.getAllTasks(); // Actualiza la lista desde el servicio
+      tareas = _taskService.getAllTasks();
     });
   }
 
@@ -137,10 +114,11 @@ class _TareasScreenState extends State<TareasScreen> {
     final TextEditingController fechaController = TextEditingController(
       text:
           index != null
-              ? tareas[index].date.toLocal().toString().split(' ')[0]
+              ? tareas[index].fechaLimite.toLocal().toString().split(' ')[0]
               : '',
     );
-    DateTime? fechaSeleccionada = index != null ? tareas[index].date : null;
+    DateTime? fechaSeleccionada =
+        index != null ? tareas[index].fechaLimite : null;
 
     showDialog(
       context: context,
@@ -183,11 +161,9 @@ class _TareasScreenState extends State<TareasScreen> {
                     lastDate: DateTime(2100),
                   );
                   if (nuevaFecha != null) {
-                    setState(() {
-                      fechaSeleccionada = nuevaFecha;
-                      fechaController.text =
-                          nuevaFecha.toLocal().toString().split(' ')[0];
-                    });
+                    fechaSeleccionada = nuevaFecha;
+                    fechaController.text =
+                        nuevaFecha.toLocal().toString().split(' ')[0];
                   }
                 },
               ),
@@ -283,11 +259,8 @@ class _TareasScreenState extends State<TareasScreen> {
                     ),
                     onDismissed: (direction) {
                       setState(() {
-                        _taskService.deleteTask(
-                          index,
-                        ); // Elimina la tarea del repositorio
-                        tareas =
-                            _taskService.getAllTasks(); // Actualiza la lista
+                        _taskService.deleteTask(index);
+                        tareas = _taskService.getAllTasks();
                       });
 
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -296,7 +269,8 @@ class _TareasScreenState extends State<TareasScreen> {
                     },
                     child: TaskCardHelper.buildTaskCard(
                       tarea,
-                    ), // El TaskCard no se modifica
+                      () => _mostrarModalAgregarTarea(index: index),
+                    ), // Usa TaskCardHelper para construir el Card
                   );
                 },
               ),
