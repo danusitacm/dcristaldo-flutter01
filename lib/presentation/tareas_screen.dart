@@ -251,7 +251,7 @@ class _TareasScreenState extends State<TareasScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text(TITLE_APPBAR)),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey,
       body:
           tareas.isEmpty
               ? const Center(
@@ -270,8 +270,17 @@ class _TareasScreenState extends State<TareasScreen> {
                     );
                   }
                   final tarea = tareas[index];
-                  return TaskCardHelper.buildTaskCard(
-                    tarea,
+                  return Dismissible(
+                    key: Key(tarea.title),
+                    onDismissed: (direction) {
+                      setState(() {
+                        tareas.removeAt(index); // Elimina la tarea de la lista
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${tarea.title} eliminada')),
+                      );
+                    },
+                    child: TaskCardHelper.buildTaskCard(tarea),
                   ); // Usa el helper para construir el Card
                 },
               ),
