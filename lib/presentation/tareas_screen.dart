@@ -267,10 +267,13 @@ class _TareasScreenState extends State<TareasScreen> {
                         SnackBar(content: Text('${tarea.title} eliminada')),
                       );
                     },
-                    child: TaskCardHelper.buildTaskCard(
+                    child: TaskCardHelper.construirTarjetaDeportiva(
                       tarea,
-                      () => _mostrarModalAgregarTarea(index: index),
-                    ), // Usa TaskCardHelper para construir el Card
+                      index,
+                      () => _mostrarModalAgregarTarea(
+                        index: index,
+                      ), // Abre el modal al tocar
+                    ),
                   );
                 },
               ),
