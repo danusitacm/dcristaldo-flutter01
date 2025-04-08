@@ -15,7 +15,7 @@ class TaskService {
       title: title,
       detail: detail,
       fechaLimite: date,
-      pasos: getPasos(title), // Calcula la fecha límite
+      pasos: getPasos(title, date), // Calcula la fecha límite
     );
     _taskRepository.addTask(newTask);
   }
@@ -32,7 +32,7 @@ class TaskService {
       title: title,
       detail: detail,
       fechaLimite: date,
-      pasos: getPasos(title), // Calcula la fecha límite
+      pasos: getPasos(title, date), // Calcula la fecha límite
     );
     _taskRepository.updateTask(index, updatedTask);
   }
@@ -43,7 +43,7 @@ class TaskService {
   }
 
   // Simula una consulta a un asistente de IA para obtener pasos según el título de la tarea
-  List<String> getPasos(String titulo) {
-    return _taskRepository.getStepsForTask(titulo);
+  List<String> getPasos(String titulo, DateTime fechaLimite) {
+    return _taskRepository.getStepsForTask(titulo, fechaLimite);
   }
 }

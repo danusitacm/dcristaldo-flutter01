@@ -76,16 +76,17 @@ class TaskRepository {
         fechaLimite: DateTime.now().add(const Duration(days: 7)),
         pasos: getStepsForTask(
           'Tarea ${_tasks.length + indice + 1}',
+          DateTime.now().add(const Duration(days: 7)),
         ), // Asigna los pasos generados
       );
     });
   }
 
-  List<String> getStepsForTask(String titulo) {
+  List<String> getStepsForTask(String titulo, DateTime fechaLimite) {
     return [
-      'Paso 1: Planificar $titulo',
-      'Paso 2: Ejecutar $titulo',
-      'Paso 3: Revisar $titulo',
+      'Paso 1: Planificar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
+      'Paso 2: Ejecutar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
+      'Paso 3: Revisar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
     ];
   }
 }
