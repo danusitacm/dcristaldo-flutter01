@@ -5,8 +5,10 @@ class TaskCardHelper {
   static Widget buildTaskCard(Task task) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
+      child: Container(
+        width:
+            double
+                .infinity, // Asegura que el Card ocupe todo el ancho disponible
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -4,7 +4,6 @@ class TaskRepository {
   final List<Task> _tasks = [
     Task(title: 'Tarea 1', type: 'Urgente', detail: 'Sin detalles'),
     Task(title: 'Tarea 2', type: 'Urgente', detail: 'Sin detalles'),
-    Task(title: 'Tarea 2', detail: 'Sin detalles'),
     Task(title: 'Tarea 3', detail: 'Sin detalles'),
     Task(title: 'Tarea 4', detail: 'Sin detalles'),
     Task(title: 'Tarea 5', detail: 'Sin detalles'),

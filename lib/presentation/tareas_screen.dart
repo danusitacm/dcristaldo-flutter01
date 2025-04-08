@@ -271,17 +271,33 @@ class _TareasScreenState extends State<TareasScreen> {
                   }
                   final tarea = tareas[index];
                   return Dismissible(
-                    key: Key(tarea.title),
+                    key: Key(tarea.title), // Clave única para cada tarea
+                    direction:
+                        DismissDirection
+                            .endToStart, // Deslizar de derecha a izquierda
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
                     onDismissed: (direction) {
                       setState(() {
-                        tareas.removeAt(index); // Elimina la tarea de la lista
+                        _taskService.deleteTask(
+                          index,
+                        ); // Elimina la tarea del repositorio
+                        tareas =
+                            _taskService.getAllTasks(); // Actualiza la lista
                       });
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('${tarea.title} eliminada')),
                       );
                     },
-                    child: TaskCardHelper.buildTaskCard(tarea),
-                  ); // Usa el helper para construir el Card
+                    child: TaskCardHelper.buildTaskCard(
+                      tarea,
+                    ), // El TaskCard no se modifica
+                  );
                 },
               ),
       floatingActionButton: FloatingActionButton(
