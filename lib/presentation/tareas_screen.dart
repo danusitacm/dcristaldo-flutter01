@@ -56,7 +56,7 @@ class _TareasScreenState extends State<TareasScreen> {
     // Simula la carga de más tareas
     await Future.delayed(const Duration(seconds: 2));
     final newTasks =
-        TaskRepository().loadMoreTasks(); //Cargar mas tareas del repository
+        _taskService.getMoreTasksWithSteps(); //Cargar mas tareas del repository
     _taskService.addTaskAll(newTasks); // Agregar tareas al servicio
 
     setState(() {

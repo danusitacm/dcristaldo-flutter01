@@ -3,7 +3,7 @@ class Task {
   final String type;
   final String detail;
   final DateTime fechaLimite; // Campo para la fecha límite
-  final List<String> pasos;
+  List<String> pasos;
 
   Task({
     required this.title,

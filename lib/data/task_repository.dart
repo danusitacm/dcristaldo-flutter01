@@ -67,26 +67,16 @@ class TaskRepository {
     }
   }
 
+  // Obtiene más tareas con pasos
   List<Task> loadMoreTasks() {
-    return List.generate(5, (indice) {
+    List<Task> newTasks = List.generate(5, (indice) {
       return Task(
         title: 'Tarea ${_tasks.length + indice + 1}',
         type: 'Normal',
         detail: 'Sin detalles',
         fechaLimite: DateTime.now().add(const Duration(days: 7)),
-        pasos: getStepsForTask(
-          'Tarea ${_tasks.length + indice + 1}',
-          DateTime.now().add(const Duration(days: 7)),
-        ), // Asigna los pasos generados
       );
     });
-  }
-
-  List<String> getStepsForTask(String titulo, DateTime fechaLimite) {
-    return [
-      'Paso 1: Planificar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
-      'Paso 2: Ejecutar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
-      'Paso 3: Revisar $titulo antes del ${fechaLimite.toLocal().toString().split(' ')[0]}',
-    ];
+    return newTasks;
   }
 }
