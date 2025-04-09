@@ -275,8 +275,10 @@ class _TareasScreenState extends State<TareasScreen> {
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) =>
-                                  DetailScreen(index: index, task: tarea),
+                              (context) => DetailScreen(
+                                initialIndex: index,
+                                tasks: tareas,
+                              ),
                         ),
                       ),
                     ),

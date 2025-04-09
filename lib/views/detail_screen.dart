@@ -1,19 +1,27 @@
-import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
 
 class DetailScreen extends StatelessWidget {
-  final Task task;
-  final int index;
+  final List<Task> tasks; // Lista de tareas
+  final int initialIndex; // Índice inicial para mostrar
 
-  const DetailScreen({super.key, required this.task, required this.index});
+  const DetailScreen({
+    super.key,
+    required this.tasks,
+    required this.initialIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Detalle")),
-      body: SingleChildScrollView(
-        child: Center(child: TaskCard(index: index, task: task)),
+      appBar: AppBar(title: const Text("Detalle")),
+      body: PageView.builder(
+        controller: PageController(initialPage: initialIndex),
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          final task = tasks[index];
+          return TaskCard(index: index, task: task);
+        },
       ),
     );
   }
@@ -62,7 +70,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  if (task.pasos.length > 1) ...[
+                  if (task.pasos.isNotEmpty) ...[
                     ...task.pasos.map(
                       (paso) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -71,7 +79,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ] else ...[
                     const Text(
-                      PASOS_VACIO,
+                      'No hay pasos disponibles.',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
