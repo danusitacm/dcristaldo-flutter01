@@ -1,6 +1,6 @@
 import 'dart:async';
 
-class StepsRepository {
+class AssistantRepository {
   // Simula una API que genera pasos para una tarea
   List<String> fetchTaskSteps(String title, DateTime fechaLimite) {
     // Simulación de un retraso como si fuera una llamada a una API

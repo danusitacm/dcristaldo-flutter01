@@ -1,15 +1,14 @@
+import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
 
 class DetailScreen extends StatelessWidget {
   final List<Task> tasks; // Lista de tareas
   final int initialIndex; // Índice inicial para mostrar
+  final TaskService taskService =
+      TaskService(); // Instancia del servicio de tareas
 
-  const DetailScreen({
-    super.key,
-    required this.tasks,
-    required this.initialIndex,
-  });
+  DetailScreen({super.key, required this.tasks, required this.initialIndex});
 
   @override
   Widget build(BuildContext context) {

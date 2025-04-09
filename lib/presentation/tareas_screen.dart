@@ -1,4 +1,3 @@
-import 'package:dcristaldo/data/task_repository.dart';
 import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/login_screen.dart';
@@ -273,16 +272,28 @@ class _TareasScreenState extends State<TareasScreen> {
                     child: TaskCardHelper.construirTarjetaDeportiva(
                       tarea,
                       index,
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => DetailScreen(
-                                initialIndex: index,
-                                tasks: tareas,
-                              ),
-                        ),
-                      ),
+                      () async {
+                        setState(() {
+                          _taskService.addTaskAll(
+                            _taskService.getTasksWithSteps([tarea]),
+                          );
+                        });
+                        // Navegar a la pantalla de detalles y esperar el resultado
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DetailScreen(
+                                  initialIndex: index,
+                                  tasks: tareas,
+                                ),
+                          ),
+                        );
+                        // Actualizar la lista de tareas al regresar
+                        setState(() {
+                          tareas = _taskService.getAllTasks();
+                        });
+                      },
                     ),
                   );
                 },

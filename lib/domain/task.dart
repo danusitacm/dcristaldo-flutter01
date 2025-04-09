@@ -10,7 +10,7 @@ class Task {
     this.type = 'Normal',
     required this.detail,
     DateTime? fechaLimite,
-    this.pasos = const ["vacio"],
+    this.pasos = const [],
   }) : fechaLimite = fechaLimite ?? DateTime.now();
 
   bool isUrgent() {
