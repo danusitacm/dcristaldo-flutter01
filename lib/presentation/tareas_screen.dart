@@ -274,8 +274,11 @@ class _TareasScreenState extends State<TareasScreen> {
                       index,
                       () async {
                         setState(() {
-                          _taskService.addTaskAll(
-                            _taskService.getTasksWithSteps([tarea]),
+                          _taskService.updateTask(
+                            index,
+                            tarea.title,
+                            tarea.detail,
+                            tarea.fechaLimite,
                           );
                         });
                         // Navegar a la pantalla de detalles y esperar el resultado
