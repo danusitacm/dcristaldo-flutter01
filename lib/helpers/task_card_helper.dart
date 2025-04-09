@@ -102,18 +102,32 @@ class TaskCardHelper {
                   ),
                   const SizedBox(height: 8),
                   if (pasos.length > 1) ...[
-                    for (var paso in pasos)
-                      Text(
-                        paso,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
+                    Column(
+                      children: [
+                        for (var paso in pasos)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              paso,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ] else ...[
-                    Text(
-                      'No hay pasos disponibles',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    Column(
+                      children: [
+                        Text(
+                          PASOS_VACIO,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                   const SizedBox(height: 8),

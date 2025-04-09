@@ -1,4 +1,5 @@
 import 'package:dcristaldo/data/task_repository.dart';
+import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
@@ -270,9 +271,14 @@ class _TareasScreenState extends State<TareasScreen> {
                     child: TaskCardHelper.construirTarjetaDeportiva(
                       tarea,
                       index,
-                      () => _mostrarModalAgregarTarea(
-                        index: index,
-                      ), // Abre el modal al tocar
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  DetailScreen(index: index, task: tarea),
+                        ),
+                      ),
                     ),
                   );
                 },
