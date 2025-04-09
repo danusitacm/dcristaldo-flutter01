@@ -61,6 +61,7 @@ class TaskCardHelper {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        elevation: 8,
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
