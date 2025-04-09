@@ -127,48 +127,50 @@ class _TareasScreenState extends State<TareasScreen> {
         return AlertDialog(
           title: Text(index == null ? 'Agregar Tarea' : 'Editar Tarea'),
           key: _formKey,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: tituloController,
-                decoration: const InputDecoration(
-                  labelText: 'Título',
-                  border: OutlineInputBorder(),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: tituloController,
+                  decoration: const InputDecoration(
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: detalleController,
-                decoration: const InputDecoration(
-                  labelText: 'Detalle',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: detalleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Detalle',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: fechaController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Fecha',
-                  border: OutlineInputBorder(),
-                  hintText: 'Seleccionar Fecha',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: fechaController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    border: OutlineInputBorder(),
+                    hintText: 'Seleccionar Fecha',
+                  ),
+                  onTap: () async {
+                    DateTime? nuevaFecha = await showDatePicker(
+                      context: context,
+                      initialDate: fechaSeleccionada ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (nuevaFecha != null) {
+                      fechaSeleccionada = nuevaFecha;
+                      fechaController.text =
+                          nuevaFecha.toLocal().toString().split(' ')[0];
+                    }
+                  },
                 ),
-                onTap: () async {
-                  DateTime? nuevaFecha = await showDatePicker(
-                    context: context,
-                    initialDate: fechaSeleccionada ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (nuevaFecha != null) {
-                    fechaSeleccionada = nuevaFecha;
-                    fechaController.text =
-                        nuevaFecha.toLocal().toString().split(' ')[0];
-                  }
-                },
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
