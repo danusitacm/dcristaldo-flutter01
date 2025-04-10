@@ -3,13 +3,24 @@ import 'package:flutter/material.dart';
 class BaseScreen extends StatelessWidget {
   final Widget body;
   final Widget? floatingActionButton;
+  final PreferredSizeWidget appBar;
+  final Color? backgroundColor;
+  final Widget? bottomNavigationBar;
 
-  const BaseScreen({super.key, required this.body, this.floatingActionButton});
+  const BaseScreen({
+    super.key,
+    required this.body,
+    required this.appBar,
+    this.backgroundColor,
+    this.floatingActionButton,
+    this.bottomNavigationBar,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Aplicación')),
+      appBar: appBar,
+      backgroundColor: backgroundColor,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -63,6 +74,7 @@ class BaseScreen extends StatelessWidget {
       ),
       body: body,
       floatingActionButton: floatingActionButton,
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }
