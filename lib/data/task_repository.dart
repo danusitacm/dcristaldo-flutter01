@@ -72,7 +72,7 @@ class TaskRepository {
     List<Task> newTasks = List.generate(5, (indice) {
       return Task(
         title: 'Tarea ${_tasks.length + indice + 1}',
-        type: 'Normal',
+        type: (indice % 2 == 0) ? 'Normal' : 'Urgente',
         detail: 'Sin detalles',
         deadline: DateTime.now().add(const Duration(days: 7)),
       );
