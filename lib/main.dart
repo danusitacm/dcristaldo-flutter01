@@ -1,6 +1,6 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/presentation/tareas_screen.dart';
+import 'package:dcristaldo/presentation/task_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
