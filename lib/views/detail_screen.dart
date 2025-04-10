@@ -1,6 +1,7 @@
 import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
+import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class DetailScreen extends StatelessWidget {
   final List<Task> tasks; // Lista de tareas
@@ -61,14 +62,9 @@ class TaskCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Título
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
+                  CommonWidgetsHelper.buildBoldTitle(task.title),
+                  CommonWidgetsHelper.buildSpacing(),
+                  // Pasos
                   if (task.steps.isNotEmpty) ...[
                     ...task.steps.map(
                       (paso) => Padding(
@@ -77,22 +73,16 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    const Text(
+                    CommonWidgetsHelper.buildInfoLines(
                       'No hay steps disponibles.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
-                  const SizedBox(height: 16),
+                  CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite
-                  Text(
+                  CommonWidgetsHelper.buildInfoLines(
                     'Fecha límite: ${task.deadline.day.toString().padLeft(2, '0')}/'
                     '${task.deadline.month.toString().padLeft(2, '0')}/'
                     '${task.deadline.year}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
                   ),
                 ],
               ),
