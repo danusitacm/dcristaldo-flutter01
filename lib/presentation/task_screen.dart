@@ -217,7 +217,7 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      appBar: AppBar(title: Text('$TITLE_APPBAR - Total: ${tareas.length}')),
       backgroundColor: Colors.grey,
       body:
           tareas.isEmpty
