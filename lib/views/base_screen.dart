@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dcristaldo/views/login_screen.dart';
 
 class BaseScreen extends StatelessWidget {
   final Widget body;
@@ -15,6 +16,14 @@ class BaseScreen extends StatelessWidget {
     this.floatingActionButton,
     this.bottomNavigationBar,
   });
+
+  void _logout(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (route) => false, // Esto elimina todas las rutas anteriores
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +75,7 @@ class BaseScreen extends StatelessWidget {
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                _logout(context);
               },
             ),
           ],
