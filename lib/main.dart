@@ -130,7 +130,7 @@ class _CounterScreenState extends State<CounterScreen> {
   }
 }
 
-void _showWarningDialog(BuildContext context) {
+/*void _showWarningDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -149,3 +149,4 @@ void _showWarningDialog(BuildContext context) {
     },
   );
 }
+*/
