@@ -1,6 +1,9 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/presentation/tareas_screen.dart';
+import 'package:dcristaldo/views/welcome_screen.dart';
+import 'package:dcristaldo/views/color_change_screen.dart';
+import 'package:dcristaldo/views/mi_screen.dart';
 
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
@@ -20,9 +23,15 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 11, 173, 106),
         ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Daniela Home Page'),
-      //home: const MiScreen(),
-      //home: const ColorChangeScreen(),
+      initialRoute: '/login',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+        '/login': (context) => LoginScreen(),
+        '/tareas': (context) => TareasScreen(),
+        '/color_change': (context) => const ColorChangeScreen(),
+        '/mi_screen': (context) => const MiScreen(),
+        '/welcome': (context) => const WelcomeScreen(),
+      },
     );
   }
 }
