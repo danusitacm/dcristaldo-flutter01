@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:dcristaldo/views/base_screen.dart'; // Asegúrate de importar el BaseScreen
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Bienvenido'), centerTitle: true),
+    return BaseScreen(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -23,13 +23,6 @@ class WelcomeScreen extends StatelessWidget {
                   color: Colors.blueAccent,
                 ),
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  // Acción al presionar el botón
-                },
-                child: const Text('Comenzar'),
               ),
             ],
           ),
