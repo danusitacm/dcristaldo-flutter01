@@ -1,4 +1,5 @@
 import 'package:dcristaldo/api/services/task_service.dart';
+import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
 import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
@@ -73,9 +74,7 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    CommonWidgetsHelper.buildInfoLines(
-                      'No hay steps disponibles.',
-                    ),
+                    CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
                   ],
                   CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite
