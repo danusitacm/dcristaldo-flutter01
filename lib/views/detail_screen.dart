@@ -74,7 +74,7 @@ class TaskCard extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
+                    CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
                   ],
                   CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite

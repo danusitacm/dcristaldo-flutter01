@@ -102,7 +102,7 @@ class TaskCardHelper {
                     ),
                     CommonWidgetsHelper.buildSpacing(),
                     // Pasos
-                    CommonWidgetsHelper.buildBoldTitle(PASOS_TITULO),
+                    CommonWidgetsHelper.buildBoldTitle(stepsTitle),
                     CommonWidgetsHelper.buildSpacing(),
                     if (steps.isNotEmpty)
                       Column(
@@ -122,7 +122,7 @@ class TaskCardHelper {
                             }).toList(),
                       )
                     else
-                      CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
+                      CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
                     CommonWidgetsHelper.buildSpacing(),
                     // Fecha límite
                     CommonWidgetsHelper.buildBoldFooter(
