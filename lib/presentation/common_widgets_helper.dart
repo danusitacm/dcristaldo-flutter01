@@ -5,7 +5,7 @@ class CommonWidgetsHelper {
   static Widget buildBoldTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
     );
   }
 
