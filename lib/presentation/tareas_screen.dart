@@ -1,3 +1,4 @@
+import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/login_screen.dart';
@@ -227,7 +228,7 @@ class _TareasScreenState extends State<TareasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BaseScreen(
       appBar: AppBar(title: const Text(TITLE_APPBAR)),
       backgroundColor: Colors.grey,
       body:
