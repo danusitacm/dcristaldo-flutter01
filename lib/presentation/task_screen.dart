@@ -10,11 +10,12 @@ class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
 
   @override
-  _TareasScreenState createState() => _TareasScreenState();
+  TareasScreenState createState() => TareasScreenState(); // Clase de estado pública
 }
 
-class _TareasScreenState extends State<TareasScreen> {
-  //Variables
+class TareasScreenState extends State<TareasScreen> {
+  // Clase de estado ahora es pública
+  // Variables
   final TaskService _taskService = TaskService(); // Instancia del servicio
   late List<Task> tareas; // Lista de tareas obtenida del servicio
   final ScrollController _scrollController =
