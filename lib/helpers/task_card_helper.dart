@@ -33,9 +33,9 @@ class TaskCardHelper {
               const SizedBox(height: 8),
               Text(task.detail, style: const TextStyle(fontSize: 14)),
               const SizedBox(height: 8),
-              if (task.pasos.isNotEmpty)
+              if (task.steps.isNotEmpty)
                 Text(
-                  'Pasos:\n${task.pasos[0]}',
+                  'steps:\n${task.steps[0]}',
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
             ],
@@ -52,11 +52,11 @@ class TaskCardHelper {
   ) {
     // Formatear la fecha manualmente
     final String formattedDate =
-        '${task.fechaLimite.day.toString().padLeft(2, '0')}/'
-        '${task.fechaLimite.month.toString().padLeft(2, '0')}/'
-        '${task.fechaLimite.year}';
+        '${task.deadline.day.toString().padLeft(2, '0')}/'
+        '${task.deadline.month.toString().padLeft(2, '0')}/'
+        '${task.deadline.year}';
 
-    final List<String> pasos = List<String>.from(task.pasos);
+    final List<String> steps = List<String>.from(task.steps);
 
     return GestureDetector(
       onTap: onTap,
@@ -92,7 +92,7 @@ class TaskCardHelper {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Pasos
+                  // steps
                   Text(
                     PASOS_TITULO,
                     style: const TextStyle(
@@ -101,10 +101,10 @@ class TaskCardHelper {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (pasos.length > 1) ...[
+                  if (steps.length > 1) ...[
                     Column(
                       children: [
-                        for (var paso in pasos)
+                        for (var paso in steps)
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: Text(

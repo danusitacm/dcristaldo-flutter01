@@ -104,11 +104,10 @@ class _TareasScreenState extends State<TareasScreen> {
     final TextEditingController fechaController = TextEditingController(
       text:
           index != null
-              ? tareas[index].fechaLimite.toLocal().toString().split(' ')[0]
+              ? tareas[index].deadline.toLocal().toString().split(' ')[0]
               : '',
     );
-    DateTime? fechaSeleccionada =
-        index != null ? tareas[index].fechaLimite : null;
+    DateTime? fechaSeleccionada = index != null ? tareas[index].deadline : null;
 
     showDialog(
       context: context,
@@ -268,7 +267,7 @@ class _TareasScreenState extends State<TareasScreen> {
                             index,
                             tarea.title,
                             tarea.detail,
-                            tarea.fechaLimite,
+                            tarea.deadline,
                           );
                         });
                         // Navegar a la pantalla de detalles y esperar el resultado

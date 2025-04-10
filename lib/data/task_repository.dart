@@ -6,31 +6,31 @@ class TaskRepository {
       title: 'Tarea 1',
       type: 'Urgente',
       detail: 'Sin detalles',
-      fechaLimite: DateTime.now().add(const Duration(days: 1)),
+      deadline: DateTime.now().add(const Duration(days: 1)),
     ),
     Task(
       title: 'Tarea 2',
       type: 'Normal',
       detail: 'Sin detalles',
-      fechaLimite: DateTime.now().add(const Duration(days: 2)),
+      deadline: DateTime.now().add(const Duration(days: 2)),
     ),
     Task(
       title: 'Tarea 3',
       type: 'Normal',
       detail: 'Sin detalles',
-      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      deadline: DateTime.now().add(const Duration(days: 3)),
     ),
     Task(
       title: 'Tarea 4',
       type: 'Normal',
       detail: 'Sin detalles',
-      fechaLimite: DateTime.now().add(const Duration(days: 4)),
+      deadline: DateTime.now().add(const Duration(days: 4)),
     ),
     Task(
       title: 'Tarea 5',
       type: 'Normal',
       detail: 'Sin detalles',
-      fechaLimite: DateTime.now().add(const Duration(days: 5)),
+      deadline: DateTime.now().add(const Duration(days: 5)),
     ),
   ];
 
@@ -46,8 +46,8 @@ class TaskRepository {
       title: task.title,
       type: task.type,
       detail: task.detail,
-      fechaLimite: task.fechaLimite,
-      pasos: task.pasos,
+      deadline: task.deadline,
+      steps: task.steps,
     );
 
     _tasks.add(newTask);
@@ -74,7 +74,7 @@ class TaskRepository {
         title: 'Tarea ${_tasks.length + indice + 1}',
         type: 'Normal',
         detail: 'Sin detalles',
-        fechaLimite: DateTime.now().add(const Duration(days: 7)),
+        deadline: DateTime.now().add(const Duration(days: 7)),
       );
     });
     return newTasks;

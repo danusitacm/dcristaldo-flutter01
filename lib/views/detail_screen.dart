@@ -69,8 +69,8 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  if (task.pasos.isNotEmpty) ...[
-                    ...task.pasos.map(
+                  if (task.steps.isNotEmpty) ...[
+                    ...task.steps.map(
                       (paso) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Text(paso, style: const TextStyle(fontSize: 16)),
@@ -78,16 +78,16 @@ class TaskCard extends StatelessWidget {
                     ),
                   ] else ...[
                     const Text(
-                      'No hay pasos disponibles.',
+                      'No hay steps disponibles.',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
                   const SizedBox(height: 16),
                   // Fecha límite
                   Text(
-                    'Fecha límite: ${task.fechaLimite.day.toString().padLeft(2, '0')}/'
-                    '${task.fechaLimite.month.toString().padLeft(2, '0')}/'
-                    '${task.fechaLimite.year}',
+                    'Fecha límite: ${task.deadline.day.toString().padLeft(2, '0')}/'
+                    '${task.deadline.month.toString().padLeft(2, '0')}/'
+                    '${task.deadline.year}',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black,
