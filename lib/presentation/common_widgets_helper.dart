@@ -27,7 +27,11 @@ class CommonWidgetsHelper {
   static Widget buildBoldFooter(String footer) {
     return Text(
       footer,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey,
+      ),
     );
   }
 
