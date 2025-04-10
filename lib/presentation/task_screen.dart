@@ -286,6 +286,9 @@ class _TareasScreenState extends State<TareasScreen> {
                           tareas = _taskService.getAllTasks();
                         });
                       },
+                      () {
+                        _mostrarModalAgregarTarea(index: index);
+                      },
                     ),
                   );
                 },

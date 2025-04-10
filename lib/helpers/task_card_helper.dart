@@ -49,6 +49,7 @@ class TaskCardHelper {
     Task task,
     int indice,
     VoidCallback onTap,
+    void Function() onEdit,
   ) {
     // Formatear la fecha manualmente
     final String formattedDate =
@@ -83,16 +84,29 @@ class TaskCardHelper {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Título
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // Título y botón de edición
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          task.title,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Icon(
+                        task.type == 'Urgente' ? Icons.warning : Icons.task,
+                        color:
+                            task.type == 'Urgente' ? Colors.red : Colors.blue,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  // steps
+                  // Pasos
                   Text(
                     PASOS_TITULO,
                     style: const TextStyle(
@@ -101,35 +115,28 @@ class TaskCardHelper {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  if (steps.length > 1) ...[
+                  if (steps.isNotEmpty)
                     Column(
-                      children: [
-                        for (var paso in steps)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Text(
-                              paso,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          steps.map((paso) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Text(
+                                paso,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          ),
-                      ],
+                            );
+                          }).toList(),
+                    )
+                  else
+                    const Text(
+                      PASOS_VACIO,
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                  ] else ...[
-                    Column(
-                      children: [
-                        Text(
-                          PASOS_VACIO,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                   const SizedBox(height: 8),
                   // Fecha límite
                   Text(
@@ -138,6 +145,15 @@ class TaskCardHelper {
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: onEdit, // Función de edición
+                        child: const Icon(Icons.edit),
+                      ),
+                    ],
                   ),
                 ],
               ),
