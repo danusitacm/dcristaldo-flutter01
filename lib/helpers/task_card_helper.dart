@@ -124,8 +124,9 @@ class TaskCardHelper {
                     CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
                   CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite
-                  CommonWidgetsHelper.buildInfoLines(
+                  Text(
                     'Fecha límite: $formattedDate',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
