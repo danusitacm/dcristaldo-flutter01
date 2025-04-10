@@ -1,8 +1,10 @@
 import '../../data/task_repository.dart';
+import '../../data/assistant_repository.dart';
 import '../../domain/task.dart';
 
 class TaskService {
   final TaskRepository _taskRepository = TaskRepository();
+  final AssistantRepository _assistantRepository = AssistantRepository();
 
   // Obtiene todas las tareas
   List<Task> getAllTasks() {
@@ -11,12 +13,11 @@ class TaskService {
 
   // Agrega una nueva tarea con fecha límite
   void addTask(String title, String detail, DateTime date) {
-    final newTask = Task(
-      title: title,
-      detail: detail,
-      fechaLimite: date,
-      pasos: getPasos(title, date), // Calcula la fecha límite
-    );
+    final newTask = Task(title: title, detail: detail, fechaLimite: date);
+    newTask.pasos = _assistantRepository.fetchTaskSteps(
+      title,
+      date,
+    ); // Sin await
     _taskRepository.addTask(newTask);
   }
 
@@ -28,12 +29,11 @@ class TaskService {
 
   // Actualiza una tarea existente
   void updateTask(int index, String title, String detail, DateTime date) {
-    final updatedTask = Task(
-      title: title,
-      detail: detail,
-      fechaLimite: date,
-      pasos: getPasos(title, date), // Calcula la fecha límite
-    );
+    final updatedTask = Task(title: title, detail: detail, fechaLimite: date);
+    updatedTask.pasos = _assistantRepository.fetchTaskSteps(
+      title,
+      date,
+    ); // Sin await
     _taskRepository.updateTask(index, updatedTask);
   }
 
@@ -42,8 +42,26 @@ class TaskService {
     _taskRepository.deleteTask(index);
   }
 
-  // Simula una consulta a un asistente de IA para obtener pasos según el título de la tarea
-  List<String> getPasos(String titulo, DateTime fechaLimite) {
-    return _taskRepository.getStepsForTask(titulo, fechaLimite);
+  // Obtiene más tareas con pasos
+  List<Task> getMoreTasksWithSteps() {
+    List<Task> newTasks = _taskRepository.loadMoreTasks();
+    for (var task in newTasks) {
+      task.pasos = _assistantRepository.fetchTaskSteps(
+        task.title,
+        task.fechaLimite,
+      ); // Sin await
+    }
+    return newTasks;
+  }
+
+  // Devuelve la lista de tareas con los pasos
+  List<Task> getTasksWithSteps(List<Task> tasks) {
+    for (var task in tasks) {
+      task.pasos = _assistantRepository.fetchTaskSteps(
+        task.title,
+        task.fechaLimite,
+      ); // Sin await
+    }
+    return tasks;
   }
 }

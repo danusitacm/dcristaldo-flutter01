@@ -1,8 +1,6 @@
-import 'package:dcristaldo/data/task_repository.dart';
+import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/views/login_screen.dart';
-import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/constants.dart';
 import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:dcristaldo/domain/task.dart';
@@ -56,7 +54,7 @@ class _TareasScreenState extends State<TareasScreen> {
     // Simula la carga de más tareas
     await Future.delayed(const Duration(seconds: 2));
     final newTasks =
-        TaskRepository().loadMoreTasks(); //Cargar mas tareas del repository
+        _taskService.getMoreTasksWithSteps(); //Cargar mas tareas del repository
     _taskService.addTaskAll(newTasks); // Agregar tareas al servicio
 
     setState(() {
@@ -74,19 +72,10 @@ class _TareasScreenState extends State<TareasScreen> {
     // Lógica para manejar la navegación según el índice seleccionado
     switch (index) {
       case 0: // Inicio
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/welcome');
         break;
-      case 1: // Añadir Tarea
-        // Ya estás en TareasScreen, no necesitas navegar
-        break;
-      case 2: // Salir
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+      case 1: // Salir
+        Navigator.pushReplacementNamed(context, '/login');
         break;
     }
   }
@@ -127,48 +116,50 @@ class _TareasScreenState extends State<TareasScreen> {
         return AlertDialog(
           title: Text(index == null ? 'Agregar Tarea' : 'Editar Tarea'),
           key: _formKey,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: tituloController,
-                decoration: const InputDecoration(
-                  labelText: 'Título',
-                  border: OutlineInputBorder(),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: tituloController,
+                  decoration: const InputDecoration(
+                    labelText: 'Título',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: detalleController,
-                decoration: const InputDecoration(
-                  labelText: 'Detalle',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: detalleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Detalle',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: fechaController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: 'Fecha',
-                  border: OutlineInputBorder(),
-                  hintText: 'Seleccionar Fecha',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: fechaController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    border: OutlineInputBorder(),
+                    hintText: 'Seleccionar Fecha',
+                  ),
+                  onTap: () async {
+                    DateTime? nuevaFecha = await showDatePicker(
+                      context: context,
+                      initialDate: fechaSeleccionada ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (nuevaFecha != null) {
+                      fechaSeleccionada = nuevaFecha;
+                      fechaController.text =
+                          nuevaFecha.toLocal().toString().split(' ')[0];
+                    }
+                  },
                 ),
-                onTap: () async {
-                  DateTime? nuevaFecha = await showDatePicker(
-                    context: context,
-                    initialDate: fechaSeleccionada ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (nuevaFecha != null) {
-                    fechaSeleccionada = nuevaFecha;
-                    fechaController.text =
-                        nuevaFecha.toLocal().toString().split(' ')[0];
-                  }
-                },
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -226,7 +217,7 @@ class _TareasScreenState extends State<TareasScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BaseScreen(
       appBar: AppBar(title: const Text(TITLE_APPBAR)),
       backgroundColor: Colors.grey,
       body:
@@ -271,14 +262,31 @@ class _TareasScreenState extends State<TareasScreen> {
                     child: TaskCardHelper.construirTarjetaDeportiva(
                       tarea,
                       index,
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  DetailScreen(index: index, task: tarea),
-                        ),
-                      ),
+                      () async {
+                        setState(() {
+                          _taskService.updateTask(
+                            index,
+                            tarea.title,
+                            tarea.detail,
+                            tarea.fechaLimite,
+                          );
+                        });
+                        // Navegar a la pantalla de detalles y esperar el resultado
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DetailScreen(
+                                  initialIndex: index,
+                                  tasks: tareas,
+                                ),
+                          ),
+                        );
+                        // Actualizar la lista de tareas al regresar
+                        setState(() {
+                          tareas = _taskService.getAllTasks();
+                        });
+                      },
                     ),
                   );
                 },
@@ -293,7 +301,6 @@ class _TareasScreenState extends State<TareasScreen> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Añadir Tarea'),
           BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salir"),
         ],
       ),

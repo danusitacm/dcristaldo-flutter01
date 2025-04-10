@@ -1,3 +1,4 @@
+import 'package:dcristaldo/views/base_screen.dart';
 import 'package:flutter/material.dart';
 
 class ColorChangeScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _ColorChangeScreenState extends State<ColorChangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return BaseScreen(
       appBar: AppBar(title: const Text('Cambiar Color')),
       body: Center(
         child: Column(

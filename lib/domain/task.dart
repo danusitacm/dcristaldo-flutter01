@@ -3,14 +3,14 @@ class Task {
   final String type;
   final String detail;
   final DateTime fechaLimite; // Campo para la fecha límite
-  final List<String> pasos;
+  List<String> pasos;
 
   Task({
     required this.title,
     this.type = 'Normal',
     required this.detail,
     DateTime? fechaLimite,
-    this.pasos = const ["vacio"],
+    this.pasos = const [],
   }) : fechaLimite = fechaLimite ?? DateTime.now();
 
   bool isUrgent() {

@@ -1,90 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/presentation/tareas_screen.dart';
-import 'package:dcristaldo/views/login_screen.dart';
-import 'package:dcristaldo/views/welcome_screen.dart';
 
 class BaseScreen extends StatelessWidget {
-  final Widget child; // Contenido de la pantalla
-  final String title; // Título de la AppBar
+  final Widget body;
+  final Widget? floatingActionButton;
+  final PreferredSizeWidget appBar;
+  final Color? backgroundColor;
+  final Widget? bottomNavigationBar;
 
-  const BaseScreen({super.key, required this.child, required this.title});
+  const BaseScreen({
+    super.key,
+    required this.body,
+    required this.appBar,
+    this.backgroundColor,
+    this.floatingActionButton,
+    this.bottomNavigationBar,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), backgroundColor: Colors.pinkAccent),
+      appBar: appBar,
+      backgroundColor: backgroundColor,
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.pinkAccent),
-              child: Text(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              child: const Text(
                 'Menú de Navegación',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Inicio'),
+              leading: const Icon(Icons.home),
+              title: const Text('Inicio'),
               onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
-                );
+                Navigator.pushReplacementNamed(context, '/welcome');
               },
             ),
             ListTile(
-              leading: Icon(Icons.task),
-              title: Text('Tareas'),
+              leading: const Icon(Icons.task),
+              title: const Text('Tareas'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TareasScreen()),
-                );
+                Navigator.pushReplacementNamed(context, '/tareas');
               },
             ),
             ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Cerrar Sesión'),
+              leading: const Icon(Icons.person),
+              title: const Text('Contador'),
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Confirmar'),
-                      content: Text(
-                        '¿Estás seguro de que deseas cerrar sesión?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Cierra el diálogo
-                          },
-                          child: Text('Cancelar'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Cierra el diálogo
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
-                              ),
-                            );
-                          },
-                          child: Text('Cerrar Sesión'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                Navigator.pushReplacementNamed(context, '/counter');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.color_lens),
+              title: const Text('Cambiar Color'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/color_change');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Cerrar Sesión'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/login');
               },
             ),
           ],
         ),
       ),
-      body: child, // Contenido de la pantalla
+      body: body,
+      floatingActionButton: floatingActionButton,
+      bottomNavigationBar: bottomNavigationBar,
     );
   }
 }

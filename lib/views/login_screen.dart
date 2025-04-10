@@ -20,6 +20,8 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Icon(Icons.lock_outline, size: 100, color: Colors.blue),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: usernameController,
                 decoration: const InputDecoration(
