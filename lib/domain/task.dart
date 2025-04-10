@@ -1,8 +1,8 @@
 class Task {
-  final String title; // Título de la tarea
-  final String type; // Tipo de tarea (Normal o Urgente)
-  final String detail; // Detalle de la tarea
-  final DateTime deadline; // Campo para la fecha límite
+  String title; // Título de la tarea
+  String type; // Tipo de tarea (Normal o Urgente)
+  String detail; // Detalle de la tarea
+  DateTime deadline; // Campo para la fecha límite
   List<String> steps; // Lista de pasos a seguir para completar la tarea
 
   Task({
