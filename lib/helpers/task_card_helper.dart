@@ -1,6 +1,7 @@
 import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
+import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class TaskCardHelper {
   static Widget buildTaskCard(Task task, VoidCallback onTap) {
@@ -89,14 +90,7 @@ class TaskCardHelper {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
-                          task.title,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: CommonWidgetsHelper.buildBoldTitle(task.title),
                       ),
                       Icon(
                         task.type == 'Urgente' ? Icons.warning : Icons.task,
@@ -105,16 +99,10 @@ class TaskCardHelper {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  CommonWidgetsHelper.buildSpacing(),
                   // Pasos
-                  Text(
-                    PASOS_TITULO,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  CommonWidgetsHelper.buildBoldTitle(PASOS_TITULO),
+                  CommonWidgetsHelper.buildSpacing(),
                   if (steps.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,18 +121,11 @@ class TaskCardHelper {
                           }).toList(),
                     )
                   else
-                    const Text(
-                      PASOS_VACIO,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  const SizedBox(height: 8),
+                    CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
+                  CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite
-                  Text(
+                  CommonWidgetsHelper.buildInfoLines(
                     'Fecha límite: $formattedDate',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
