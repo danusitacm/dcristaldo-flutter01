@@ -35,6 +35,7 @@ class _ColorChangeScreenState extends State<ColorChangeScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
+      appBar: AppBar(title: const Text('Cambiar Color')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
