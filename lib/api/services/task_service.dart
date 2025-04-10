@@ -50,7 +50,6 @@ class TaskService {
         task.title,
         task.deadline,
       ); // Sin await
-      task.deadline = DateTime.now().add(const Duration(days: 1));
     }
 
     return newTasks;
