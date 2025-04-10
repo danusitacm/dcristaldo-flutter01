@@ -1,8 +1,6 @@
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/views/login_screen.dart';
-import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/constants.dart';
 import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:dcristaldo/domain/task.dart';
@@ -74,19 +72,10 @@ class _TareasScreenState extends State<TareasScreen> {
     // Lógica para manejar la navegación según el índice seleccionado
     switch (index) {
       case 0: // Inicio
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-        );
+        Navigator.pushReplacementNamed(context, '/welcome');
         break;
-      case 1: // Añadir Tarea
-        // Ya estás en TareasScreen, no necesitas navegar
-        break;
-      case 2: // Salir
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+      case 1: // Salir
+        Navigator.pushReplacementNamed(context, '/login');
         break;
     }
   }
@@ -312,7 +301,6 @@ class _TareasScreenState extends State<TareasScreen> {
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Añadir Tarea'),
           BottomNavigationBarItem(icon: Icon(Icons.close), label: "Salir"),
         ],
       ),
