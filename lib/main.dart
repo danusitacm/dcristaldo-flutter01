@@ -41,10 +41,10 @@ class CounterScreen extends StatefulWidget {
   const CounterScreen({super.key});
 
   @override
-  _CounterScreenState createState() => _CounterScreenState();
+  CounterScreenState createState() => CounterScreenState();
 }
 
-class _CounterScreenState extends State<CounterScreen> {
+class CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
   String message = "";
   Color messageColor = Colors.black;
