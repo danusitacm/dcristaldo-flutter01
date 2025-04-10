@@ -74,7 +74,6 @@ class TaskRepository {
         title: 'Tarea ${_tasks.length + indice + 1}',
         type: (indice % 2 == 0) ? 'Normal' : 'Urgente',
         detail: 'Sin detalles',
-        deadline: DateTime.now().add(const Duration(days: 7)),
       );
     });
     return newTasks;
