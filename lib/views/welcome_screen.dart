@@ -7,6 +7,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
+      appBar: AppBar(title: const Text('Bienvenido'), centerTitle: true),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
