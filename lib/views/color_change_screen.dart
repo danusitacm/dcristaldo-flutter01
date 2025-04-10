@@ -16,7 +16,8 @@ class _ColorChangeScreenState extends State<ColorChangeScreen> {
     Colors.white,
   ];
   int _currentColorIndex = 0;
-  var _colorText;
+  Color _colorText = Colors.black; // Explicitly typed as Color
+
   void _changeColor() {
     setState(() {
       _currentColorIndex =
