@@ -26,7 +26,6 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
         '/login': (context) => LoginScreen(),
         '/tareas': (context) => TareasScreen(),
         '/color_change': (context) => const ColorChangeScreen(),
@@ -34,37 +33,6 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/counter': (context) => const CounterScreen(),
       },
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return BaseScreen(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '0', // El contador ya no está aquí porque es un StatelessWidget
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                _showWarningDialog(context);
-              },
-              child: const Text('Mostrar Advertencia'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -117,6 +85,10 @@ class _CounterScreenState extends State<CounterScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
+      appBar: AppBar(
+        title: const Text('Contador'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
