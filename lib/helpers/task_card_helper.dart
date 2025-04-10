@@ -62,85 +62,87 @@ class TaskCardHelper {
 
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        elevation: 8,
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Imagen aleatoria
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(8.0),
+      child: Center(
+        child: Card(
+          elevation: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Imagen aleatoria
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8.0),
+                ),
+                child: Image.network(
+                  'https://picsum.photos/200/300?random=$indice',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: Image.network(
-                'https://picsum.photos/200/300?random=$indice',
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Título y botón de edición
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: CommonWidgetsHelper.buildBoldTitle(task.title),
-                      ),
-                      Icon(
-                        task.type == 'Urgente' ? Icons.warning : Icons.task,
-                        color:
-                            task.type == 'Urgente' ? Colors.red : Colors.blue,
-                      ),
-                    ],
-                  ),
-                  CommonWidgetsHelper.buildSpacing(),
-                  // Pasos
-                  CommonWidgetsHelper.buildBoldTitle(PASOS_TITULO),
-                  CommonWidgetsHelper.buildSpacing(),
-                  if (steps.isNotEmpty)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          steps.map((paso) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 4.0),
-                              child: Text(
-                                paso,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título y botón de edición
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: CommonWidgetsHelper.buildBoldTitle(task.title),
+                        ),
+                        Icon(
+                          task.type == 'Urgente' ? Icons.warning : Icons.task,
+                          color:
+                              task.type == 'Urgente' ? Colors.red : Colors.blue,
+                        ),
+                      ],
+                    ),
+                    CommonWidgetsHelper.buildSpacing(),
+                    // Pasos
+                    CommonWidgetsHelper.buildBoldTitle(PASOS_TITULO),
+                    CommonWidgetsHelper.buildSpacing(),
+                    if (steps.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:
+                            steps.map((paso) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Text(
+                                  paso,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                    )
-                  else
-                    CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
-                  CommonWidgetsHelper.buildSpacing(),
-                  // Fecha límite
-                  Text(
-                    'Fecha límite: $formattedDate',
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: onEdit, // Función de edición
-                        child: const Icon(Icons.edit),
-                      ),
-                    ],
-                  ),
-                ],
+                              );
+                            }).toList(),
+                      )
+                    else
+                      CommonWidgetsHelper.buildInfoLines(PASOS_VACIO),
+                    CommonWidgetsHelper.buildSpacing(),
+                    // Fecha límite
+                    Text(
+                      'Fecha límite: $formattedDate',
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: onEdit, // Función de edición
+                          child: const Icon(Icons.edit),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
