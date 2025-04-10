@@ -4,6 +4,7 @@ import 'package:dcristaldo/presentation/tareas_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
+import 'package:dcristaldo/views/base_screen.dart';
 
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 11, 173, 106),
+          seedColor: const Color.fromARGB(255, 68, 190, 190),
         ),
       ),
       initialRoute: '/login',
@@ -31,25 +32,54 @@ class MyApp extends StatelessWidget {
         '/color_change': (context) => const ColorChangeScreen(),
         '/mi_screen': (context) => const MiScreen(),
         '/welcome': (context) => const WelcomeScreen(),
+        '/counter': (context) => const CounterScreen(),
       },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return BaseScreen(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('You have pushed the button this many times:'),
+            Text(
+              '0', // El contador ya no está aquí porque es un StatelessWidget
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                _showWarningDialog(context);
+              },
+              child: const Text('Mostrar Advertencia'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class CounterScreen extends StatefulWidget {
+  const CounterScreen({super.key});
+
+  @override
+  _CounterScreenState createState() => _CounterScreenState();
+}
+
+class _CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
   String message = "";
   Color messageColor = Colors.black;
-
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -72,65 +102,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _updateMessage() {
-    setState(() {
-      if (_counter > 0) {
-        message = "Contador en positivo";
-        messageColor = Colors.green;
-      } else if (_counter < 0) {
-        message = "Contador en negativo";
-        messageColor = Colors.red;
-      } else {
-        message = "Contador en cero";
-        messageColor = Colors.black;
-      }
-    });
+    if (_counter > 0) {
+      message = "Contador en positivo";
+      messageColor = Colors.green;
+    } else if (_counter < 0) {
+      message = "Contador en negativo";
+      messageColor = Colors.red;
+    } else {
+      message = "Contador en cero";
+      messageColor = Colors.black;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
+    return BaseScreen(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text('You have pushed the button this many times:'),
+            const SizedBox(height: 8),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Text(message, style: TextStyle(color: messageColor, fontSize: 18)),
-            ElevatedButton(
-              onPressed: () {
-                _showWarningDialog(context);
-              },
-              child: const Text('Mostrar Advertencia'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              child: const Text('Ir a Login'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TareasScreen()),
-                );
-              },
-              child: const Text('Ir a Tareas'),
-            ),
-            IconButton(
-              onPressed: _resetCounter,
-              icon: const Icon(Icons.refresh),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(onPressed: _resetCounter, icon: Icon(Icons.refresh)),
+              ],
             ),
           ],
         ),
