@@ -1,10 +1,13 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/views/task_screen.dart';
+import 'package:dcristaldo/views/start_screen.dart';
+import 'package:dcristaldo/views/game_screen.dart';
+//import 'package:dcristaldo/views/result_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
 import 'package:dcristaldo/views/base_screen.dart';
+import 'package:dcristaldo/views/task_screen.dart';
 
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
@@ -32,6 +35,8 @@ class MyApp extends StatelessWidget {
         '/mi_screen': (context) => const MiScreen(),
         '/welcome': (context) => const WelcomeScreen(),
         '/counter': (context) => const CounterScreen(),
+        '/start_game': (context) => const StartScreen(),
+        '/game': (context) => const GameScreen(),
       },
     );
   }
