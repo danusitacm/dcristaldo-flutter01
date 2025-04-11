@@ -1,3 +1,4 @@
+import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/api/services/question_service.dart';
 import 'package:dcristaldo/domain/question.dart';
@@ -57,7 +58,7 @@ class GameScreenState extends State<GameScreen> {
     final question = questionList[currentQuestionIndex];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Juego de Preguntas')),
+      appBar: AppBar(title: const Text(gameTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -75,7 +76,7 @@ class GameScreenState extends State<GameScreen> {
                 onPressed: () => _answerQuestion(index),
                 child: Text(option),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 16),
             if (isCorrectAnswer != null)
               Text(
