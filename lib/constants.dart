@@ -11,3 +11,4 @@ const String appBarGameTitle = 'Juego de preguntas';
 const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
 const String startGameLabel = 'Iniciar Juego';
 const String finalScoreLabel = 'Pregunta: ';
+const String playAgainButton = 'Jugar de Nuevo';
