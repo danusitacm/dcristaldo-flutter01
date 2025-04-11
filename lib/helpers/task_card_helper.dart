@@ -1,6 +1,7 @@
 import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
+import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class TaskCardHelper {
   static Widget buildTaskCard(Task task, VoidCallback onTap) {
@@ -33,9 +34,9 @@ class TaskCardHelper {
               const SizedBox(height: 8),
               Text(task.detail, style: const TextStyle(fontSize: 14)),
               const SizedBox(height: 8),
-              if (task.pasos.isNotEmpty)
+              if (task.steps.isNotEmpty)
                 Text(
-                  'Pasos:\n${task.pasos[0]}',
+                  'steps:\n${task.steps[0]}',
                   style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
             ],
@@ -49,100 +50,99 @@ class TaskCardHelper {
     Task task,
     int indice,
     VoidCallback onTap,
+    void Function() onEdit,
   ) {
     // Formatear la fecha manualmente
     final String formattedDate =
-        '${task.fechaLimite.day.toString().padLeft(2, '0')}/'
-        '${task.fechaLimite.month.toString().padLeft(2, '0')}/'
-        '${task.fechaLimite.year}';
+        '${task.deadline.day.toString().padLeft(2, '0')}/'
+        '${task.deadline.month.toString().padLeft(2, '0')}/'
+        '${task.deadline.year}';
 
-    final List<String> pasos = List<String>.from(task.pasos);
+    final List<String> steps = List<String>.from(task.steps);
 
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        elevation: 8,
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Imagen aleatoria
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(8.0),
+      child: Center(
+        child: Card(
+          elevation: 8,
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Imagen aleatoria
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8.0),
+                ),
+                child: Image.network(
+                  'https://picsum.photos/200/300?random=$indice',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: Image.network(
-                'https://picsum.photos/200/300?random=$indice',
-                height: 150,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Título
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Pasos
-                  Text(
-                    PASOS_TITULO,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (pasos.length > 1) ...[
-                    Column(
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título y botón de edición
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        for (var paso in pasos)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Text(
-                              paso,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
+                        Expanded(
+                          child: CommonWidgetsHelper.buildBoldTitle(task.title),
+                        ),
+                        Icon(
+                          task.type == 'Urgente' ? Icons.warning : Icons.task,
+                          color:
+                              task.type == 'Urgente' ? Colors.red : Colors.blue,
+                        ),
                       ],
                     ),
-                  ] else ...[
-                    Column(
+                    CommonWidgetsHelper.buildSpacing(),
+                    // Pasos
+                    CommonWidgetsHelper.buildBoldTitle(stepsTitle),
+                    CommonWidgetsHelper.buildSpacing(),
+                    if (steps.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:
+                            steps.map((paso) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Text(
+                                  paso,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                      )
+                    else
+                      CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
+                    CommonWidgetsHelper.buildSpacing(),
+                    // Fecha límite
+                    CommonWidgetsHelper.buildBoldFooter(
+                      'Fecha límite:$formattedDate',
+                    ),
+                    CommonWidgetsHelper.buildSpacing(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          PASOS_VACIO,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
+                        ElevatedButton(
+                          onPressed: onEdit, // Función de edición
+                          child: const Icon(Icons.edit),
                         ),
                       ],
                     ),
                   ],
-                  const SizedBox(height: 8),
-                  // Fecha límite
-                  Text(
-                    'Fecha límite: $formattedDate',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

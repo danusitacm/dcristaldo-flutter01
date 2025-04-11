@@ -32,7 +32,7 @@ class _MiScreenState extends State<MiScreen> {
                 style: TextStyle(fontSize: 24),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Text(
               'Veces presionado: $_counter',
               style: const TextStyle(fontSize: 20, color: Colors.blue),

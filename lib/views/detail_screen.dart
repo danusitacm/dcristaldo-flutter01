@@ -1,6 +1,8 @@
 import 'package:dcristaldo/api/services/task_service.dart';
+import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
+import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class DetailScreen extends StatelessWidget {
   final List<Task> tasks; // Lista de tareas
@@ -61,38 +63,25 @@ class TaskCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Título
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  if (task.pasos.isNotEmpty) ...[
-                    ...task.pasos.map(
+                  CommonWidgetsHelper.buildBoldTitle(task.title),
+                  CommonWidgetsHelper.buildSpacing(),
+                  // Pasos
+                  if (task.steps.isNotEmpty) ...[
+                    ...task.steps.map(
                       (paso) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: Text(paso, style: const TextStyle(fontSize: 16)),
                       ),
                     ),
                   ] else ...[
-                    const Text(
-                      'No hay pasos disponibles.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
+                    CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
                   ],
-                  const SizedBox(height: 16),
+                  CommonWidgetsHelper.buildSpacing(),
                   // Fecha límite
-                  Text(
-                    'Fecha límite: ${task.fechaLimite.day.toString().padLeft(2, '0')}/'
-                    '${task.fechaLimite.month.toString().padLeft(2, '0')}/'
-                    '${task.fechaLimite.year}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  CommonWidgetsHelper.buildInfoLines(
+                    'Fecha límite: ${task.deadline.day.toString().padLeft(2, '0')}/'
+                    '${task.deadline.month.toString().padLeft(2, '0')}/'
+                    '${task.deadline.year}',
                   ),
                 ],
               ),

@@ -72,16 +72,25 @@ class LoginScreen extends StatelessWidget {
                         password,
                       );
 
+                      if (!context.mounted) {
+                        return; // Verifica si el widget sigue montado
+                      }
                       Navigator.pop(context); // Cierra el indicador de carga
 
                       if (success) {
+                        if (!context.mounted) {
+                          return; // Verifica si el widget sigue montado
+                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => WelcomeScreen(),
+                            builder: (context) => const WelcomeScreen(),
                           ),
                         );
                       } else {
+                        if (!context.mounted) {
+                          return; // Verifica si el widget sigue montado
+                        }
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Inicio de sesión fallido'),
@@ -89,6 +98,9 @@ class LoginScreen extends StatelessWidget {
                         );
                       }
                     } catch (e) {
+                      if (!context.mounted) {
+                        return; // Verifica si el widget sigue montado
+                      }
                       Navigator.pop(context); // Cierra el indicador de carga
                       ScaffoldMessenger.of(
                         context,

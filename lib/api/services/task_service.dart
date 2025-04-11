@@ -1,6 +1,6 @@
-import '../../data/task_repository.dart';
-import '../../data/assistant_repository.dart';
-import '../../domain/task.dart';
+import 'package:dcristaldo/data/task_repository.dart';
+import 'package:dcristaldo/data/assistant_repository.dart';
+import 'package:dcristaldo/domain/task.dart';
 
 class TaskService {
   final TaskRepository _taskRepository = TaskRepository();
@@ -13,8 +13,8 @@ class TaskService {
 
   // Agrega una nueva tarea con fecha límite
   void addTask(String title, String detail, DateTime date) {
-    final newTask = Task(title: title, detail: detail, fechaLimite: date);
-    newTask.pasos = _assistantRepository.fetchTaskSteps(
+    final newTask = Task(title: title, detail: detail, deadline: date);
+    newTask.steps = _assistantRepository.fetchTaskSteps(
       title,
       date,
     ); // Sin await
@@ -29,8 +29,8 @@ class TaskService {
 
   // Actualiza una tarea existente
   void updateTask(int index, String title, String detail, DateTime date) {
-    final updatedTask = Task(title: title, detail: detail, fechaLimite: date);
-    updatedTask.pasos = _assistantRepository.fetchTaskSteps(
+    final updatedTask = Task(title: title, detail: detail, deadline: date);
+    updatedTask.steps = _assistantRepository.fetchTaskSteps(
       title,
       date,
     ); // Sin await
@@ -42,24 +42,25 @@ class TaskService {
     _taskRepository.deleteTask(index);
   }
 
-  // Obtiene más tareas con pasos
+  // Obtiene más tareas con steps
   List<Task> getMoreTasksWithSteps() {
     List<Task> newTasks = _taskRepository.loadMoreTasks();
     for (var task in newTasks) {
-      task.pasos = _assistantRepository.fetchTaskSteps(
+      task.steps = _assistantRepository.fetchTaskSteps(
         task.title,
-        task.fechaLimite,
+        task.deadline,
       ); // Sin await
     }
+
     return newTasks;
   }
 
-  // Devuelve la lista de tareas con los pasos
+  // Devuelve la lista de tareas con los steps
   List<Task> getTasksWithSteps(List<Task> tasks) {
     for (var task in tasks) {
-      task.pasos = _assistantRepository.fetchTaskSteps(
+      task.steps = _assistantRepository.fetchTaskSteps(
         task.title,
-        task.fechaLimite,
+        task.deadline,
       ); // Sin await
     }
     return tasks;

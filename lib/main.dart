@@ -1,6 +1,6 @@
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/presentation/tareas_screen.dart';
+import 'package:dcristaldo/presentation/task_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
-        '/tareas': (context) => TareasScreen(),
+        '/tareas': (context) => const TareasScreen(),
         '/color_change': (context) => const ColorChangeScreen(),
         '/mi_screen': (context) => const MiScreen(),
         '/welcome': (context) => const WelcomeScreen(),
@@ -41,10 +41,10 @@ class CounterScreen extends StatefulWidget {
   const CounterScreen({super.key});
 
   @override
-  _CounterScreenState createState() => _CounterScreenState();
+  CounterScreenState createState() => CounterScreenState();
 }
 
-class _CounterScreenState extends State<CounterScreen> {
+class CounterScreenState extends State<CounterScreen> {
   int _counter = 0;
   String message = "";
   Color messageColor = Colors.black;
@@ -62,7 +62,7 @@ class _CounterScreenState extends State<CounterScreen> {
     });
   }
 
-  _resetCounter() {
+  void _resetCounter() {
     setState(() {
       _counter = 0;
       _updateMessage();
@@ -104,7 +104,10 @@ class _CounterScreenState extends State<CounterScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(onPressed: _resetCounter, icon: Icon(Icons.refresh)),
+                IconButton(
+                  onPressed: _resetCounter,
+                  icon: const Icon(Icons.refresh),
+                ),
               ],
             ),
           ],

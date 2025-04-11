@@ -10,11 +10,12 @@ class TareasScreen extends StatefulWidget {
   const TareasScreen({super.key});
 
   @override
-  _TareasScreenState createState() => _TareasScreenState();
+  TareasScreenState createState() => TareasScreenState(); // Clase de estado pública
 }
 
-class _TareasScreenState extends State<TareasScreen> {
-  //Variables
+class TareasScreenState extends State<TareasScreen> {
+  // Clase de estado ahora es pública
+  // Variables
   final TaskService _taskService = TaskService(); // Instancia del servicio
   late List<Task> tareas; // Lista de tareas obtenida del servicio
   final ScrollController _scrollController =
@@ -104,11 +105,10 @@ class _TareasScreenState extends State<TareasScreen> {
     final TextEditingController fechaController = TextEditingController(
       text:
           index != null
-              ? tareas[index].fechaLimite.toLocal().toString().split(' ')[0]
+              ? tareas[index].deadline.toLocal().toString().split(' ')[0]
               : '',
     );
-    DateTime? fechaSeleccionada =
-        index != null ? tareas[index].fechaLimite : null;
+    DateTime? fechaSeleccionada = index != null ? tareas[index].deadline : null;
 
     showDialog(
       context: context,
@@ -218,12 +218,12 @@ class _TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      appBar: AppBar(title: const Text(TITLE_APPBAR)),
+      appBar: AppBar(title: Text('$appBarTitle - Total: ${tareas.length}')),
       backgroundColor: Colors.grey,
       body:
           tareas.isEmpty
               ? const Center(
-                child: Text(EMPTY_LIST, style: TextStyle(fontSize: 18)),
+                child: Text(emptyListMessage, style: TextStyle(fontSize: 18)),
               )
               : ListView.builder(
                 controller: _scrollController, // Controlador para el scroll
@@ -268,7 +268,7 @@ class _TareasScreenState extends State<TareasScreen> {
                             index,
                             tarea.title,
                             tarea.detail,
-                            tarea.fechaLimite,
+                            tarea.deadline,
                           );
                         });
                         // Navegar a la pantalla de detalles y esperar el resultado
@@ -286,6 +286,9 @@ class _TareasScreenState extends State<TareasScreen> {
                         setState(() {
                           tareas = _taskService.getAllTasks();
                         });
+                      },
+                      () {
+                        _mostrarModalAgregarTarea(index: index);
                       },
                     ),
                   );
