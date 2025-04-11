@@ -1,7 +1,7 @@
 import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
-import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
+import 'package:dcristaldo/helpers/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class TaskCardHelper {
   static Widget buildTaskCard(Task task, VoidCallback onTap) {
