@@ -8,15 +8,15 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseScreen(
       appBar: AppBar(title: const Text('Bienvenido'), centerTitle: true),
-      body: Center(
+      body: const Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.waving_hand, size: 80, color: Colors.blue),
-              const SizedBox(height: 16),
-              const Text(
+              Icon(Icons.waving_hand, size: 80, color: Colors.blue),
+              SizedBox(height: 16),
+              Text(
                 '¡Bienvenido!',
                 style: TextStyle(
                   fontSize: 28,

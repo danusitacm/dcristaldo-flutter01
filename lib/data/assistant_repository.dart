@@ -4,7 +4,7 @@ class AssistantRepository {
   // Simula una API que genera pasos para una tarea
   List<String> fetchTaskSteps(String title, DateTime fechaLimite) {
     // Simulación de un retraso como si fuera una llamada a una API
-    Future.delayed(Duration(seconds: 2));
+    Future.delayed(const Duration(seconds: 2));
 
     // Formatear la fecha en el formato día/mes/año
     final String formattedDate =

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginScreen(),
-        '/tareas': (context) => TareasScreen(),
+        '/tareas': (context) => const TareasScreen(),
         '/color_change': (context) => const ColorChangeScreen(),
         '/mi_screen': (context) => const MiScreen(),
         '/welcome': (context) => const WelcomeScreen(),
@@ -104,7 +104,10 @@ class CounterScreenState extends State<CounterScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(onPressed: _resetCounter, icon: Icon(Icons.refresh)),
+                IconButton(
+                  onPressed: _resetCounter,
+                  icon: const Icon(Icons.refresh),
+                ),
               ],
             ),
           ],
