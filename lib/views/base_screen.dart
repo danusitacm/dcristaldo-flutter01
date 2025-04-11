@@ -72,6 +72,13 @@ class BaseScreen extends StatelessWidget {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.question_mark),
+              title: const Text('Juego de Preguntas'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/start_game');
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {
