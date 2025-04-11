@@ -1,6 +1,6 @@
-import '../../data/task_repository.dart';
-import '../../data/assistant_repository.dart';
-import '../../domain/task.dart';
+import 'package:dcristaldo/data/task_repository.dart';
+import 'package:dcristaldo/data/assistant_repository.dart';
+import 'package:dcristaldo/domain/task.dart';
 
 class TaskService {
   final TaskRepository _taskRepository = TaskRepository();

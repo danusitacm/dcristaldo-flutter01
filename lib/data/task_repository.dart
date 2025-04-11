@@ -1,4 +1,4 @@
-import '../domain/task.dart';
+import 'package:dcristaldo/domain/task.dart';
 
 class TaskRepository {
   final List<Task> _tasks = [
