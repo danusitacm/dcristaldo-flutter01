@@ -27,6 +27,10 @@ class StartScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
               child: const Text(startGame),
             ),
           ],
