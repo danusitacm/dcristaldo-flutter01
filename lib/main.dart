@@ -62,7 +62,7 @@ class CounterScreenState extends State<CounterScreen> {
     });
   }
 
-  _resetCounter() {
+  void _resetCounter() {
     setState(() {
       _counter = 0;
       _updateMessage();
