@@ -19,11 +19,13 @@ class GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    _questions = _service.fetchQuestions();
+    _questions =
+        _service.getQuestions(); // Cambiado para usar el método getQuestions
   }
 
-  void _answerQuestion(String selectedAnswer) {
-    if (_questions[_currentQuestionIndex].correctAnswer == selectedAnswer) {
+  void _answerQuestion(int selectedAnswerIndex) {
+    if (_questions[_currentQuestionIndex].correctAnswerIndex ==
+        selectedAnswerIndex) {
       _score++;
     }
 
@@ -55,16 +57,18 @@ class GameScreenState extends State<GameScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              question.question,
+              question.questionText,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            ...question.options.map((option) {
+            ...question.answerOptions.asMap().entries.map((entry) {
+              final index = entry.key;
+              final option = entry.value;
               return ElevatedButton(
-                onPressed: () => _answerQuestion(option),
+                onPressed: () => _answerQuestion(index),
                 child: Text(option),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
