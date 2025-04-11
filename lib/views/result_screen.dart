@@ -1,3 +1,4 @@
+import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/start_screen.dart';
 
@@ -16,7 +17,7 @@ class ResultScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Puntaje: $score / $total',
+              '$finalScore: $score / $total',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -27,7 +28,7 @@ class ResultScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const StartScreen()),
                 );
               },
-              child: const Text('Volver al Inicio'),
+              child: const Text(playAgain),
             ),
           ],
         ),
