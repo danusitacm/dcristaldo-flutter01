@@ -12,42 +12,49 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> {
   final QuestionService _service = QuestionService();
-  late List<Question> _questions;
-  int _currentQuestionIndex = 0;
-  int _score = 0;
+  late List<Question> questionList; // Lista de preguntas
+  int currentQuestionIndex = 0; // Índice de la pregunta actual
+  int userScore = 0; // Puntuación del usuario
+  bool? isCorrectAnswer; // Indica si la respuesta seleccionada es correcta
 
   @override
   void initState() {
     super.initState();
-    _questions =
-        _service.getQuestions(); // Cambiado para usar el método getQuestions
+    questionList =
+        _service.getQuestions(); // Obtiene las preguntas del servicio
   }
 
   void _answerQuestion(int selectedAnswerIndex) {
-    if (_questions[_currentQuestionIndex].correctAnswerIndex ==
-        selectedAnswerIndex) {
-      _score++;
-    }
+    setState(() {
+      // Verifica si la respuesta seleccionada es correcta
+      isCorrectAnswer =
+          questionList[currentQuestionIndex].correctAnswerIndex ==
+          selectedAnswerIndex;
 
-    if (_currentQuestionIndex < _questions.length - 1) {
-      setState(() {
-        _currentQuestionIndex++;
-      });
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder:
-              (context) =>
-                  ResultScreen(score: _score, total: _questions.length),
-        ),
-      );
-    }
+      if (isCorrectAnswer!) {
+        userScore++; // Incrementa la puntuación si es correcta
+      }
+
+      // Avanza a la siguiente pregunta o navega a la pantalla de resultados
+      if (currentQuestionIndex < questionList.length - 1) {
+        currentQuestionIndex++;
+        isCorrectAnswer = null; // Reinicia el estado de la respuesta
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    ResultScreen(score: userScore, total: questionList.length),
+          ),
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final question = _questions[_currentQuestionIndex];
+    final question = questionList[currentQuestionIndex];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Juego de Preguntas')),
@@ -68,7 +75,19 @@ class GameScreenState extends State<GameScreen> {
                 onPressed: () => _answerQuestion(index),
                 child: Text(option),
               );
-            }),
+            }).toList(),
+            const SizedBox(height: 16),
+            if (isCorrectAnswer != null)
+              Text(
+                isCorrectAnswer!
+                    ? '¡Respuesta Correcta!'
+                    : 'Respuesta Incorrecta',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isCorrectAnswer! ? Colors.green : Colors.red,
+                ),
+              ),
           ],
         ),
       ),
