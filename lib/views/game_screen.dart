@@ -72,9 +72,17 @@ class GameScreenState extends State<GameScreen> {
             ...question.answerOptions.asMap().entries.map((entry) {
               final index = entry.key;
               final option = entry.value;
-              return ElevatedButton(
-                onPressed: () => _answerQuestion(index),
-                child: Text(option),
+              return Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () => _answerQuestion(index),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: Text(option),
+                  ),
+                ],
               );
             }),
             const SizedBox(height: 16),
