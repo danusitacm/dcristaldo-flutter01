@@ -67,7 +67,7 @@ class GameScreenState extends State<GameScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Pregunta $questionCounterText de  $totalQuestion'),
+            Text('Pregunta $questionCounterText de  $totalQuestion', style: const TextStyle(color: Colors.grey),),
             Text(
               question.questionText,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
