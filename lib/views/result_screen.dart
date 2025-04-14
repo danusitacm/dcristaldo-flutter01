@@ -10,6 +10,9 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String scoreText = '$finalScoreLabel $finalScore/$totalQuestion';
+    String feedbackMessage = finalScore >= (totalQuestion/2) ? 'Buen trabajo' : 'Sigue intentando';
+    TextStyle scoreTextStyle = const TextStyle(fontSize: 24,fontWeight:  FontWeight.bold);
     return Scaffold(
       appBar: AppBar(title: const Text('Resultados')),
       body: Center(
@@ -17,19 +20,24 @@ class ResultScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$finalScoreLabel $finalScore/$totalQuestion',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              scoreText,
+              style: scoreTextStyle,
             ),
+            Text(feedbackMessage, style: const TextStyle(color: Colors.grey),),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const StartScreen()),
+                  (route) => true,
                 );
               },
+              style: const ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green)),
               child: const Text(playAgain),
             ),
+            
           ],
         ),
       ),
