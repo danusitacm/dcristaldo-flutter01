@@ -22,6 +22,7 @@ class GameScreenState extends State<GameScreen> {
   Color correctAnswerColor= Colors.green;
   Color defaultButtonColor= Colors.blue;
   Color wrongAnswerColor= Colors.red;
+  int totalQuestion=0;
   
   @override
   void initState() {
@@ -60,7 +61,7 @@ class GameScreenState extends State<GameScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ResultScreen(score: userScore, total: questionList.length),
+          builder: (context) => ResultScreen(finalScore: userScore, totalQuestion: totalQuestion),
         ),
       );
     }
@@ -69,7 +70,7 @@ class GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final question = questionList[currentQuestionIndex];
-    int totalQuestion = questionList.length;
+    totalQuestion = questionList.length;
 
     return Scaffold(
       appBar: AppBar(title: const Text(gameTitle)),

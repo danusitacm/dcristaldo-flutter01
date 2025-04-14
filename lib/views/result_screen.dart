@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/start_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  final int score;
-  final int total;
+  final int finalScore;
+  final int totalQuestion;
 
-  const ResultScreen({super.key, required this.score, required this.total});
+  const ResultScreen({super.key, required this.finalScore, required this.totalQuestion});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ResultScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$finalScore: $score / $total',
+              '$finalScoreLabel $finalScore/$totalQuestion',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
