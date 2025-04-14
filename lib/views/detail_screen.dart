@@ -64,7 +64,7 @@ class TaskCard extends StatelessWidget {
                 children: [
                   // Título
                   CommonWidgetsHelper.buildBoldTitle(task.title),
-                  CommonWidgetsHelper.buildSpacing(),
+                  CommonWidgetsHelper.buildSpacing(8),
                   // Pasos
                   if (task.steps.isNotEmpty) ...[
                     ...task.steps.map(
@@ -76,7 +76,7 @@ class TaskCard extends StatelessWidget {
                   ] else ...[
                     CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
                   ],
-                  CommonWidgetsHelper.buildSpacing(),
+                  CommonWidgetsHelper.buildSpacing(8),
                   // Fecha límite
                   CommonWidgetsHelper.buildInfoLines(
                     'Fecha límite: ${task.deadline.day.toString().padLeft(2, '0')}/'

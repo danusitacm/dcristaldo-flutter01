@@ -1,6 +1,7 @@
 import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/start_screen.dart';
+import 'package:dcristaldo/helpers/common_widgets_helper.dart';
 
 class ResultScreen extends StatelessWidget {
   final int finalScore;
@@ -24,7 +25,7 @@ class ResultScreen extends StatelessWidget {
               style: scoreTextStyle,
             ),
             Text(feedbackMessage, style: const TextStyle(color: Colors.grey),),
-            const SizedBox(height: 16),
+            CommonWidgetsHelper.buildSpacing(16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushAndRemoveUntil(

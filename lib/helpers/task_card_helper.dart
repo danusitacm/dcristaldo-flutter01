@@ -26,14 +26,14 @@ class TaskCardHelper {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              CommonWidgetsHelper.buildSpacing(8),
               Text(
                 'Tipo: ${task.type}',
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
-              const SizedBox(height: 8),
+              CommonWidgetsHelper.buildSpacing(8),
               Text(task.detail, style: const TextStyle(fontSize: 14)),
-              const SizedBox(height: 8),
+              CommonWidgetsHelper.buildSpacing(8),
               if (task.steps.isNotEmpty)
                 Text(
                   'steps:\n${task.steps[0]}',
@@ -100,10 +100,10 @@ class TaskCardHelper {
                         ),
                       ],
                     ),
-                    CommonWidgetsHelper.buildSpacing(),
+                    CommonWidgetsHelper.buildSpacing(8),
                     // Pasos
                     CommonWidgetsHelper.buildBoldTitle(stepsTitle),
-                    CommonWidgetsHelper.buildSpacing(),
+                    CommonWidgetsHelper.buildSpacing(8),
                     if (steps.isNotEmpty)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,12 +123,12 @@ class TaskCardHelper {
                       )
                     else
                       CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
-                    CommonWidgetsHelper.buildSpacing(),
+                    CommonWidgetsHelper.buildSpacing(8),
                     // Fecha límite
                     CommonWidgetsHelper.buildBoldFooter(
                       'Fecha límite:$formattedDate',
                     ),
-                    CommonWidgetsHelper.buildSpacing(),
+                    CommonWidgetsHelper.buildSpacing(8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
