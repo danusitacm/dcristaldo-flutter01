@@ -17,7 +17,11 @@ class GameScreenState extends State<GameScreen> {
   int currentQuestionIndex = 0; // Índice de la pregunta actual
   int userScore = 0; // Puntuación del usuario
   bool? isCorrectAnswer; // Indica si la respuesta seleccionada es correcta
+  int? selectedAnswerIndex;
   int questionCounterText = 1;
+  Color correctAnswerColor= Colors.green;
+  Color defaultButtonColor= Colors.blue;
+  Color wrongAnswerColor= Colors.red;
   
   @override
   void initState() {
@@ -26,35 +30,42 @@ class GameScreenState extends State<GameScreen> {
         _service.getQuestions(); // Obtiene las preguntas del servicio
   }
 
-  void _answerQuestion(int selectedAnswerIndex) {
-    setState(() {
-      // Verifica si la respuesta seleccionada es correcta
-      isCorrectAnswer =
+  void _answerQuestion(int selectedIndex) async {
+  // Primer setState - para mostrar la respuesta seleccionada
+  setState(() {
+    selectedAnswerIndex = selectedIndex;
+    isCorrectAnswer =
           questionList[currentQuestionIndex].correctAnswerIndex ==
           selectedAnswerIndex;
 
-      if (isCorrectAnswer!) {
-        userScore++; // Incrementa la puntuación si es correcta
-      }
+    if (isCorrectAnswer!) {
+      userScore++;
+    }
+  });
 
-      // Avanza a la siguiente pregunta o navega a la pantalla de resultados
-      if (currentQuestionIndex < questionList.length - 1) {
-        currentQuestionIndex++;
-        questionCounterText=currentQuestionIndex + 1;
-        isCorrectAnswer = null; // Reinicia el estado de la respuesta
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) =>
-                    ResultScreen(score: userScore, total: questionList.length),
-          ),
-        );
-      }
-    });
-  }
+  // Espera 5 segundos
+  await Future.delayed(const Duration(seconds: 2));
 
+  // Verifica si el widget sigue montado antes de hacer cambios
+  if (!mounted) return;
+
+  // Segundo setState - para avanzar a la siguiente pregunta o resultados
+  setState(() {
+    if (currentQuestionIndex < questionList.length - 1) {
+      currentQuestionIndex++;
+      questionCounterText = currentQuestionIndex + 1;
+      isCorrectAnswer = null;
+      selectedAnswerIndex=null;
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultScreen(score: userScore, total: questionList.length),
+        ),
+      );
+    }
+  });
+} 
   @override
   Widget build(BuildContext context) {
     final question = questionList[currentQuestionIndex];
@@ -76,13 +87,23 @@ class GameScreenState extends State<GameScreen> {
             ...question.answerOptions.asMap().entries.map((entry) {
               final index = entry.key;
               final option = entry.value;
+              
               return Column(
                 children: [
                   ElevatedButton(
                     onPressed: () => _answerQuestion(index),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                    style: ButtonStyle( backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                            if (selectedAnswerIndex == index) {
+                              return isCorrectAnswer == true
+                                  ? correctAnswerColor
+                                  : wrongAnswerColor;
+                            }
+                            return defaultButtonColor;
+                          },
+                          
+                        ),
+                        foregroundColor: WidgetStateProperty.all(Colors.white),
                     ),
                     child: Text(option),
                   ),
