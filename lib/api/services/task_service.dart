@@ -8,7 +8,8 @@ class TaskService {
 
   // Obtiene todas las tareas
   List<Task> getAllTasks() {
-    return _taskRepository.getTasks();
+    List<Task> tasks = _taskRepository.getTasks();
+    return tasks;
   }
 
   // Agrega una nueva tarea con fecha límite
@@ -49,7 +50,7 @@ class TaskService {
       task.steps = _assistantRepository.fetchTaskSteps(
         task.title,
         task.deadline,
-      ); // Sin await
+      );
     }
 
     return newTasks;
@@ -61,7 +62,7 @@ class TaskService {
       task.steps = _assistantRepository.fetchTaskSteps(
         task.title,
         task.deadline,
-      ); // Sin await
+      );
     }
     return tasks;
   }

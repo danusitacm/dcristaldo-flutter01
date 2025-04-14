@@ -108,7 +108,7 @@ class TaskCardHelper {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children:
-                            steps.map((paso) {
+                            steps.take(2).map((paso) {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 4.0),
                                 child: Text(

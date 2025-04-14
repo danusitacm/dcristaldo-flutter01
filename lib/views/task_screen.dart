@@ -30,6 +30,7 @@ class TareasScreenState extends State<TareasScreen> {
     super.initState();
     tareas =
         _taskService.getAllTasks(); // Carga inicial de tareas desde el servicio
+    tareas = _taskService.getTasksWithSteps(tareas);
     _scrollController.addListener(_onScroll); // Escucha el scroll
   }
 
