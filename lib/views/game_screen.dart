@@ -1,8 +1,10 @@
 import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/helpers/common_widgets_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/api/services/question_service.dart';
 import 'package:dcristaldo/domain/question.dart';
 import 'package:dcristaldo/views/result_screen.dart';
+
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -100,7 +102,7 @@ class GameScreenState extends State<GameScreen> {
               question.questionText,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            CommonWidgetsHelper.buildSpacing(16),
             ...question.answerOptions.asMap().entries.map((entry) {
               final index = entry.key;
               final option = entry.value;
