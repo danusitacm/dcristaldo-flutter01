@@ -14,6 +14,7 @@ class ResultScreen extends StatelessWidget {
     String scoreText = '$finalScoreLabel $finalScore/$totalQuestion';
     String feedbackMessage = finalScore >= (totalQuestion/2) ? 'Buen trabajo' : 'Sigue intentando';
     TextStyle scoreTextStyle = const TextStyle(fontSize: 24,fontWeight:  FontWeight.bold);
+    Color buttonColor= finalScore >= (totalQuestion/2) ? Colors.blue : Colors.green;
     return Scaffold(
       appBar: AppBar(title: const Text('Resultados')),
       body: Center(
@@ -24,6 +25,7 @@ class ResultScreen extends StatelessWidget {
               scoreText,
               style: scoreTextStyle,
             ),
+            CommonWidgetsHelper.buildSpacing(20),
             Text(feedbackMessage, style: const TextStyle(color: Colors.grey),),
             CommonWidgetsHelper.buildSpacing(16),
             ElevatedButton(
@@ -34,8 +36,8 @@ class ResultScreen extends StatelessWidget {
                   (route) => true,
                 );
               },
-              style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(Colors.green)),
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll<Color>(buttonColor)),
               child: const Text(playAgain),
             ),
             
