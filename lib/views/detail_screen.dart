@@ -2,7 +2,7 @@ import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:dcristaldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/task.dart';
-import 'package:dcristaldo/presentation/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
+import 'package:dcristaldo/helpers/common_widgets_helper.dart'; // Importa CommonWidgetsHelper
 
 class DetailScreen extends StatelessWidget {
   final List<Task> tasks; // Lista de tareas
@@ -64,7 +64,7 @@ class TaskCard extends StatelessWidget {
                 children: [
                   // Título
                   CommonWidgetsHelper.buildBoldTitle(task.title),
-                  CommonWidgetsHelper.buildSpacing(),
+                  CommonWidgetsHelper.buildSpacing(8),
                   // Pasos
                   if (task.steps.isNotEmpty) ...[
                     ...task.steps.map(
@@ -76,7 +76,7 @@ class TaskCard extends StatelessWidget {
                   ] else ...[
                     CommonWidgetsHelper.buildInfoLines(emptyStepsMessage),
                   ],
-                  CommonWidgetsHelper.buildSpacing(),
+                  CommonWidgetsHelper.buildSpacing(8),
                   // Fecha límite
                   CommonWidgetsHelper.buildInfoLines(
                     'Fecha límite: ${task.deadline.day.toString().padLeft(2, '0')}/'

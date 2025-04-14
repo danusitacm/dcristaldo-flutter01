@@ -36,8 +36,8 @@ class CommonWidgetsHelper {
   }
 
   // Método para construir un SizedBox con altura 8
-  static Widget buildSpacing() {
-    return const SizedBox(height: 8);
+  static Widget buildSpacing(double? height) {
+    return SizedBox(height: height);
   }
 
   // Método para construir un borde redondeado
