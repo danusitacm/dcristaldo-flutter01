@@ -23,6 +23,8 @@ class GameScreenState extends State<GameScreen> {
   Color defaultButtonColor= Colors.blue;
   Color wrongAnswerColor= Colors.red;
   int totalQuestion=0;
+  String snackBarMessage='Incorrecto';
+  Color snackBarColor= Colors.red;
   
   @override
   void initState() {
@@ -41,7 +43,20 @@ class GameScreenState extends State<GameScreen> {
 
     if (isCorrectAnswer!) {
       userScore++;
+      snackBarMessage='Correcto';
+      snackBarColor=Colors.green;
+    }else{
+      snackBarMessage='Incorrecto';
+      snackBarColor= Colors.red;
+  
     }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(snackBarMessage),
+          backgroundColor: snackBarColor,
+          duration: const Duration(seconds: 1),
+        ),
+    );
   });
 
   // Espera 5 segundos
@@ -67,6 +82,7 @@ class GameScreenState extends State<GameScreen> {
     }
   });
 } 
+  
   @override
   Widget build(BuildContext context) {
     final question = questionList[currentQuestionIndex];
@@ -112,20 +128,11 @@ class GameScreenState extends State<GameScreen> {
               );
             }),
             const SizedBox(height: 16),
-            if (isCorrectAnswer != null)
-              Text(
-                isCorrectAnswer!
-                    ? '¡Respuesta Correcta!'
-                    : 'Respuesta Incorrecta',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isCorrectAnswer! ? Colors.green : Colors.red,
-                ),
-              ),
           ],
         ),
       ),
+      
+
     );
   }
 }
