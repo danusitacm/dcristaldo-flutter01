@@ -110,7 +110,7 @@ class GameScreenState extends State<GameScreen> {
               return Column(
                 children: [
                   ElevatedButton(
-                    onPressed: () => _answerQuestion(index),
+                    onPressed: selectedAnswerIndex == null ? () => _answerQuestion(index) : null,
                     style: ButtonStyle( backgroundColor: WidgetStateProperty.resolveWith<Color>(
                           (Set<WidgetState> states) {
                             if (selectedAnswerIndex == index) {
