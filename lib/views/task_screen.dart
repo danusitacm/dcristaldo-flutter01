@@ -218,12 +218,17 @@ class TareasScreenState extends State<TareasScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      appBar: AppBar(title: Text('$appBarTitle - Total: ${tareas.length}')),
+      appBar: AppBar(
+        title: Text('$Constants.appBarTitle - Total: ${tareas.length}'),
+      ),
       backgroundColor: Colors.grey,
       body:
           tareas.isEmpty
               ? const Center(
-                child: Text(emptyListMessage, style: TextStyle(fontSize: 18)),
+                child: Text(
+                  Constants.emptyListMessage,
+                  style: TextStyle(fontSize: 18),
+                ),
               )
               : ListView.builder(
                 controller: _scrollController, // Controlador para el scroll
