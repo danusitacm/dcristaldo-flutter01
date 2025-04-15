@@ -12,3 +12,6 @@ const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
 const String startGame = 'Iniciar Juego';
 const String finalScoreLabel = 'Puntuacion Final: ';
 const String playAgain = 'Jugar de Nuevo';
+const String quoteTitle = 'Cotizaciones Financieras';
+const String loadingMessage = 'Cargando cotizaciones...';
+const String emptyList = 'No hay cotizaciones';
