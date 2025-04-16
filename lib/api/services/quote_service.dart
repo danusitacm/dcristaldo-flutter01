@@ -10,21 +10,13 @@ class QuoteService {
     // Obtiene las cotizaciones del repositorio
     final List<Quote> quotes = await _repository.getQuotes();
 
-    /* // Modifica los datos antes de retornarlos
-    final List<Quote> formattedQuotes =
-        quotes.map((quote) {
-          return Quote(
-            companyName: quote.companyName,
-            stockPrice: double.parse(
-              quote.stockPrice.toStringAsFixed(2),
-            ), // Formatea stockPrice
-            changePercentage: double.parse(
-              quote.changePercentage.toStringAsFixed(2),
-            ), // Formatea changePercentage
-          );
-        }).toList();*/
+    // Valida que el stockPrice sea positivo
+    for (final quote in quotes) {
+      if (quote.stockPrice <= 0) {
+        throw Exception(Constants.errorLoadingQuotes);
+      }
+    }
 
-    //return formattedQuotes;
     return quotes;
   }
 
@@ -33,27 +25,28 @@ class QuoteService {
     int page = 1,
     int pageSize = Constants.pageSize,
   }) async {
+    print(pageSize);
+    // Validar que page y pageSize sean válidos
+    if (page < 1) {
+      throw Exception(Constants.errorLoadingQuotes);
+    }
+    if (pageSize <= 0) {
+      throw Exception(Constants.errorLoadingQuotes);
+    }
+
     // Obtiene las cotizaciones paginadas del repositorio
     final List<Quote> quotes = await _repository.getPaginatedQuotes(
       page: page,
       pageSize: pageSize,
     );
 
-    // Modifica los datos antes de retornarlos
-    /*final List<Quote> formattedQuotes =
-        quotes.map((quote) {
-          return Quote(
-            companyName: quote.companyName,
-            stockPrice: double.parse(
-              quote.stockPrice.toStringAsFixed(2),
-            ), // Formatea stockPrice
-            changePercentage: double.parse(
-              quote.changePercentage.toStringAsFixed(2),
-            ), // Formatea changePercentage
-          );
-        }).toList();
+    // Valida que el stockPrice sea positivo
+    for (final quote in quotes) {
+      if (quote.stockPrice <= 0) {
+        throw Exception(Constants.errorLoadingQuotes);
+      }
+    }
 
-    return formattedQuotes;*/
     return quotes;
   }
 
