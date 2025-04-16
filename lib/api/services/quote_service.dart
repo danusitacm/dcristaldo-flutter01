@@ -15,7 +15,13 @@ class QuoteService {
       if (quote.stockPrice <= 0) {
         throw Exception(Constants.errorLoadingQuotes);
       }
+      if (quote.changePercentage < -100 || quote.changePercentage > 100) {
+        throw Exception(Constants.errorLoadingQuotes);
+      }
     }
+
+    // Ordena las cotizaciones por stockPrice de mayor a menor
+    quotes.sort((a, b) => b.stockPrice.compareTo(a.stockPrice));
 
     return quotes;
   }
@@ -25,7 +31,6 @@ class QuoteService {
     int page = 1,
     int pageSize = Constants.pageSize,
   }) async {
-    print(pageSize);
     // Validar que page y pageSize sean válidos
     if (page < 1) {
       throw Exception(Constants.errorLoadingQuotes);
@@ -45,8 +50,10 @@ class QuoteService {
       if (quote.stockPrice <= 0) {
         throw Exception(Constants.errorLoadingQuotes);
       }
+      if (quote.changePercentage < -100 || quote.changePercentage > 100) {
+        throw Exception(Constants.errorLoadingQuotes);
+      }
     }
-
     return quotes;
   }
 
