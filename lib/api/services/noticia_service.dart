@@ -19,6 +19,28 @@ class NoticiaService {
     // Obtener todas las noticias del repositorio
     final todasLasNoticias = await _repository.generarNoticiasAleatorias();
 
+    // Validar que publicadaEl no esté en el futuro
+    for (final noticia in todasLasNoticias) {
+      if (noticia.publicadaEl.isAfter(DateTime.now())) {
+        throw ArgumentError(
+          'La fecha de publicación no puede estar en el futuro.',
+        );
+      }
+
+      // Validar que titulo, contenido y fuente no estén vacíos
+      if (noticia.titulo.trim().isEmpty) {
+        throw ArgumentError('El título de la noticia no puede estar vacío.');
+      }
+      if (noticia.descripcion.trim().isEmpty) {
+        throw ArgumentError(
+          'La descripción de la noticia no puede estar vacía.',
+        );
+      }
+      if (noticia.fuente.trim().isEmpty) {
+        throw ArgumentError('La fuente de la noticia no puede estar vacía.');
+      }
+    }
+
     // Calcular el rango de noticias para la página solicitada
     final inicio = (numeroPagina - 1) * tamanoPaginaConst;
     final fin = inicio + tamanoPaginaConst;
@@ -26,14 +48,6 @@ class NoticiaService {
     // Validar que el rango no exceda el tamaño de la lista
     if (inicio >= todasLasNoticias.length) {
       return []; // Retorna una lista vacía si no hay más noticias
-    }
-
-    for (final noticia in todasLasNoticias) {
-      if (noticia.publicadaEl.isAfter(DateTime.now())) {
-        throw ArgumentError(
-          'La fecha de publicación no puede estar en el futuro.',
-        );
-      }
     }
 
     return todasLasNoticias.sublist(
