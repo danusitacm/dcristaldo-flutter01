@@ -103,12 +103,9 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             ),
           if (!_isLoading || _noticias.isNotEmpty)
             Expanded(
-              child: ListView.separated(
+              child: ListView.builder(
                 controller: _scrollController,
                 itemCount: _noticias.length + (_isLoading ? 1 : 0),
-                separatorBuilder:
-                    (context, index) =>
-                        const SizedBox(height: Constants.espacioAlto),
                 itemBuilder: (context, index) {
                   if (index == _noticias.length) {
                     return const Center(child: CircularProgressIndicator());
