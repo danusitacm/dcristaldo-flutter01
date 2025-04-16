@@ -78,7 +78,7 @@ class QuoteScreenState extends State<QuoteScreen> {
       // Llama al servicio para obtener cotizaciones paginadas y agregarlas al repositorio
       final fetchedQuotes = await _quoteService.getPaginatedQuotes(
         page: currentPage,
-        pageSize: pageSize,
+        pageSize: Constants.pageSize,
       );
 
       _quoteService.addQuotes(fetchedQuotes);
@@ -96,9 +96,9 @@ class QuoteScreenState extends State<QuoteScreen> {
         isLoadingMore = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al cargar más cotizaciones: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       isFetching = false; // Libera el flag al finalizar
