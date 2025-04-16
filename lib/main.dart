@@ -9,6 +9,7 @@ import 'package:dcristaldo/views/mi_screen.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/task_screen.dart';
 import 'package:dcristaldo/views/quote_screen.dart';
+import 'package:dcristaldo/views/noticia_screen.dart';
 
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/start_game': (context) => const StartScreen(),
         '/game': (context) => const GameScreen(),
         '/quote': (context) => const QuoteScreen(),
+        '/noticias': (context) => const NoticiaScreen(),
       },
     );
   }
