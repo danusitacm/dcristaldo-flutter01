@@ -17,5 +17,5 @@ class Constants {
   static const String loadingMessage = 'Cargando cotizaciones...';
   static const String emptyList = 'No hay cotizaciones';
   static const String errorLoadingQuotes = 'Error al cargar las cotizaciones';
-  static const int pageSize = 0;
+  static const int pageSize = 10;
 }
