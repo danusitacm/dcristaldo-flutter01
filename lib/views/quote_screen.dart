@@ -143,7 +143,8 @@ class QuoteScreenState extends State<QuoteScreen> {
                           title: Text(quote.companyName),
                           subtitle: Text(
                             'Precio: \$${quote.stockPrice}\n'
-                            'Cambio: ${quote.changePercentage}%',
+                            'Cambio: ${quote.changePercentage}%\n'
+                            '${quote.lastUpdated}',
                           ),
                         );
                       },
