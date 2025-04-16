@@ -1,4 +1,5 @@
 import 'package:dcristaldo/api/services/noticia_service.dart';
+import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/constants.dart';
@@ -61,9 +62,9 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         _isLoading = false;
       });
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error al cargar noticias: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${Constants.mensajeError}: $e')),
+        );
       }
     }
   }
@@ -77,24 +78,46 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   Widget build(BuildContext context) {
     return BaseScreen(
       appBar: AppBar(title: const Text(Constants.tituloAppNoticias)),
+      backgroundColor: Colors.grey[200],
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _noticias.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _noticias.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final noticia = _noticias[index];
-                return ListTile(
-                  title: Text(noticia.titulo),
-                  subtitle: Text('${noticia.fuente} - ${noticia.publicadaEl}'),
-                );
-              },
+          if (_noticias.isEmpty && !_isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  Constants.listaVacia,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
-          ),
+          if (_isLoading && _noticias.isEmpty)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  Constants.mensajeCargando,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          if (!_isLoading || _noticias.isNotEmpty)
+            Expanded(
+              child: ListView.separated(
+                controller: _scrollController,
+                itemCount: _noticias.length + (_isLoading ? 1 : 0),
+                separatorBuilder:
+                    (context, index) =>
+                        const SizedBox(height: Constants.espacioAlto),
+                itemBuilder: (context, index) {
+                  if (index == _noticias.length) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final noticia = _noticias[index];
+                  return NoticiaCard(noticia: noticia);
+                },
+              ),
+            ),
         ],
       ),
     );
