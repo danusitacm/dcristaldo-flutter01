@@ -79,6 +79,13 @@ class BaseScreen extends StatelessWidget {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.monetization_on),
+              title: const Text('Cotizaciones Financieras'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/quote');
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {

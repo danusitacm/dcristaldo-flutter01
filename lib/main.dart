@@ -8,6 +8,7 @@ import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/task_screen.dart';
+import 'package:dcristaldo/views/quote_screen.dart';
 
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/counter': (context) => const CounterScreen(),
         '/start_game': (context) => const StartScreen(),
         '/game': (context) => const GameScreen(),
+        '/quote': (context) => const QuoteScreen(),
       },
     );
   }
