@@ -4,16 +4,66 @@ import 'dart:math';
 
 class QuoteRepository {
   final List<Quote> _quotes = [
-    Quote(companyName: 'Apple', stockPrice: 150.25, changePercentage: 2.5),
-    Quote(companyName: 'Google', stockPrice: 2800.50, changePercentage: -1.2),
-    Quote(companyName: 'Amazon', stockPrice: 3400.75, changePercentage: 0.8),
-    Quote(companyName: 'Microsoft', stockPrice: 299.99, changePercentage: 1.5),
-    Quote(companyName: 'Tesla', stockPrice: 720.50, changePercentage: -0.7),
-    Quote(companyName: 'Facebook', stockPrice: 350.10, changePercentage: 1.2),
-    Quote(companyName: 'Netflix', stockPrice: 590.75, changePercentage: -0.4),
-    Quote(companyName: 'NVIDIA', stockPrice: 220.30, changePercentage: 3.1),
-    Quote(companyName: 'Adobe', stockPrice: 650.20, changePercentage: 0.9),
-    Quote(companyName: 'Intel', stockPrice: 55.75, changePercentage: -1.8),
+    Quote(
+      companyName: 'Apple',
+      stockPrice: 150.25,
+      changePercentage: 2.5,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Google',
+      stockPrice: 2800.50,
+      changePercentage: -1.2,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Amazon',
+      stockPrice: 3400.75,
+      changePercentage: 0.8,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Microsoft',
+      stockPrice: 299.99,
+      changePercentage: 1.5,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Tesla',
+      stockPrice: 720.50,
+      changePercentage: -0.7,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Facebook',
+      stockPrice: 350.10,
+      changePercentage: 1.2,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Netflix',
+      stockPrice: 590.75,
+      changePercentage: -0.4,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'NVIDIA',
+      stockPrice: 220.30,
+      changePercentage: 3.1,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Adobe',
+      stockPrice: 650.20,
+      changePercentage: 0.9,
+      lastUpdated: DateTime.now(),
+    ),
+    Quote(
+      companyName: 'Intel',
+      stockPrice: 55.75,
+      changePercentage: -1.8,
+      lastUpdated: DateTime.now(),
+    ),
   ];
 
   final Random _random = Random();
@@ -35,6 +85,9 @@ class QuoteRepository {
             100, // Precio aleatorio entre 100 y 1100
         changePercentage:
             _random.nextDouble() * 10 - 5, // Cambio aleatorio entre -5% y 5%
+        lastUpdated: DateTime.now().add(
+          Duration(seconds: _random.nextInt(10000)),
+        ), // Fecha y hora de la última actualización
       );
     });
 
@@ -48,12 +101,16 @@ class QuoteRepository {
 
   Future<void> addQuote(Quote newQuote) async {
     await Future.delayed(const Duration(seconds: 2));
-    _quotes.add(newQuote);
+    _quotes.add(
+      newQuote.copyWith(lastUpdated: DateTime.now()),
+    ); // Agrega la fecha de última actualización
   }
 
   Future<void> addQuotes(List<Quote> newQuotes) async {
     await Future.delayed(const Duration(seconds: 2));
-    _quotes.addAll(newQuotes);
+    _quotes.addAll(
+      newQuotes.map((quote) => quote.copyWith(lastUpdated: DateTime.now())),
+    ); // Agrega la fecha de última actualización
   }
 
   // Método para actualizar cotizaciones existentes
@@ -63,7 +120,9 @@ class QuoteRepository {
       (quote) => quote.companyName == updatedQuote.companyName,
     );
     if (index != -1) {
-      _quotes[index] = updatedQuote; // Actualiza la cotización existente
+      _quotes[index] = updatedQuote.copyWith(
+        lastUpdated: DateTime.now(),
+      ); // Actualiza la cotización y la fecha
     }
   }
 }
