@@ -75,7 +75,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ] else ...[
                     CommonWidgetsHelper.buildInfoLines(
-                      Constants.emptyStepsMessage,
+                      TaskConstants.emptyStepsMessage,
                     ),
                   ],
                   CommonWidgetsHelper.buildSpacing(8),

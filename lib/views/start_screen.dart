@@ -9,13 +9,13 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      appBar: AppBar(title: const Text(Constants.gameTitle)),
+      appBar: AppBar(title: const Text(GameConstants.gameTitle)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              Constants.welcomeMessage,
+              GameConstants.welcomeMessage,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -31,7 +31,7 @@ class StartScreen extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              child: const Text(Constants.startGame),
+              child: const Text(GameConstants.startGame),
             ),
           ],
         ),

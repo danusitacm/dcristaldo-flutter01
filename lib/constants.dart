@@ -1,6 +1,27 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Constants {
+  // Constantes generales de la aplicación
+  static const double defaultPadding = 16.0;
+  static const double defaultBorderRadius = 8.0;
+  static const double defaultElevation = 4.0;
+  static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
+  
+  // Mensajes genéricos
+  static const String loadingMessage = 'Cargando...';
+  static const String emptyListMessage = 'No hay elementos';
+  static const String errorMessage = 'Error al cargar los datos';
+  static const String deletedMessage = 'Elemento eliminado';
+  
+  // Formatos
+  static const String defaultDateFormat = 'dd/MM/yyyy';
+  static const String defaultDateTimeFormat = 'dd/MM/yyyy HH:mm';
+  
+  // Paginación
+  static const int defaultPageSize = 10;
+}
+
+class TaskConstants extends Constants {
   static const String appBarTitle = 'Mis Tareas';
-  static const String emptyListMessage = 'No hay tareas';
   static const String taskTypeLabel = 'Tipo: ';
   static const String stepsTitle = 'Pasos para completar';
   static const String deadlineLabel = 'Fecha límite: ';
@@ -8,22 +29,35 @@ class Constants {
   static const String taskDeletedMessage = 'Tarea eliminada';
   static const String taskType = 'Tipo: ';
   static const String taskDetail = 'Detalles: ';
+}
+
+class GameConstants extends Constants {
   static const String gameTitle = 'Juego de preguntas';
   static const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
   static const String startGame = 'Iniciar Juego';
-  static const String finalScoreLabel = 'Puntuacion Final: ';
+  static const String finalScoreLabel = 'Puntuación Final: ';
   static const String playAgain = 'Jugar de Nuevo';
+  static const String resultTitle = 'Resultados';
+  static const String feedbackMessage = '¡Buen trabajo!';
+  static const String tryAgainMessage = 'Sigue intentando';
+  static const String stepsTitle = 'Pasos para completar';
+  static const String emptyStepsMessage = 'No hay pasos disponibles.';
+}
+
+class FinanceConstants extends Constants {
   static const String quoteTitle = 'Cotizaciones Financieras';
   static const String loadingMessage = 'Cargando cotizaciones...';
-  static const String emptyList = 'No hay cotizaciones';
   static const String errorLoadingQuotes = 'Error al cargar las cotizaciones';
-  static const int pageSize = 10;
+  static const String emptyList = 'No hay cotizaciones disponibles';
+}
 
-  static const String tituloAppNoticias = 'Noticias tecnicas';
+
+
+class NewsConstants extends Constants {
+  static const String tituloAppNoticias = 'Noticias técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar las noticias';
-  static const String formatoFecha = 'dd/MM/yyyy HH:mm';
-  static const int tamanoPaginaConst = 10;
-  static const double espacioAlto = 10.0;
+  static String get url => dotenv.env['API_URL'] ?? 'https://default.url';
 }
+

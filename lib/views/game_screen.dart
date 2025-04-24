@@ -93,7 +93,7 @@ class GameScreenState extends State<GameScreen> {
     totalQuestion = questionList.length;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(Constants.gameTitle)),
+      appBar: AppBar(title: const Text(GameConstants.gameTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
