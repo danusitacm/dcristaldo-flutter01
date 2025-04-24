@@ -78,7 +78,7 @@ class QuoteScreenState extends State<QuoteScreen> {
       // Llama al servicio para obtener cotizaciones paginadas y agregarlas al repositorio
       final fetchedQuotes = await _quoteService.getPaginatedQuotes(
         page: currentPage,
-        pageSize: Constants.pageSize,
+        pageSize: Constants.defaultPageSize,
       );
 
       _quoteService.addQuotes(fetchedQuotes);
@@ -119,12 +119,12 @@ class QuoteScreenState extends State<QuoteScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      appBar: AppBar(title: const Text(Constants.quoteTitle)),
+      appBar: AppBar(title: const Text(FinanceConstants.quoteTitle)),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : quotes.isEmpty
-              ? const Center(child: Text(Constants.emptyList))
+              ? const Center(child: Text(FinanceConstants.emptyList))
               : Column(
                 children: [
                   Expanded(

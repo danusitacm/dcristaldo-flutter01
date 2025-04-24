@@ -121,3 +121,6 @@ app.*.symbols
 #Sonar-scanner
 sonar-project.properties
 .scannerwork
+
+#Variables de entorno
+.env*

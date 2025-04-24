@@ -10,10 +10,11 @@ import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/task_screen.dart';
 import 'package:dcristaldo/views/quote_screen.dart';
 import 'package:dcristaldo/views/noticia_screen.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
-void main() {
+Future<void> main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 

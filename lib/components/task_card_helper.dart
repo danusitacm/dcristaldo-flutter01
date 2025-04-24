@@ -102,7 +102,7 @@ class TaskCardHelper {
                     ),
                     CommonWidgetsHelper.buildSpacing(8),
                     // Pasos
-                    CommonWidgetsHelper.buildBoldTitle(Constants.stepsTitle),
+                    CommonWidgetsHelper.buildBoldTitle(GameConstants.stepsTitle),
                     CommonWidgetsHelper.buildSpacing(8),
                     if (steps.isNotEmpty)
                       Column(
@@ -123,7 +123,7 @@ class TaskCardHelper {
                       )
                     else
                       CommonWidgetsHelper.buildInfoLines(
-                        Constants.emptyStepsMessage,
+                        GameConstants.emptyStepsMessage,
                       ),
                     CommonWidgetsHelper.buildSpacing(8),
                     // Fecha límite
