@@ -13,10 +13,10 @@ class QuoteService {
     // Valida que el stockPrice sea positivo
     for (final quote in quotes) {
       if (quote.stockPrice <= 0) {
-        throw Exception(Constants.errorLoadingQuotes);
+        throw Exception(FinanceConstants.errorLoadingQuotes);
       }
       if (quote.changePercentage < -100 || quote.changePercentage > 100) {
-        throw Exception(Constants.errorLoadingQuotes);
+        throw Exception(FinanceConstants.errorLoadingQuotes);
       }
     }
 
@@ -29,14 +29,14 @@ class QuoteService {
   // Método para obtener cotizaciones paginadas desde el repositorio
   Future<List<Quote>> getPaginatedQuotes({
     int page = 1,
-    int pageSize = Constants.pageSize,
+    int pageSize = Constants.defaultPageSize,
   }) async {
     // Validar que page y pageSize sean válidos
     if (page < 1) {
-      throw Exception(Constants.errorLoadingQuotes);
+      throw Exception(FinanceConstants.errorLoadingQuotes);
     }
     if (pageSize <= 0) {
-      throw Exception(Constants.errorLoadingQuotes);
+      throw Exception(FinanceConstants.errorLoadingQuotes);
     }
 
     // Obtiene las cotizaciones paginadas del repositorio
@@ -48,10 +48,10 @@ class QuoteService {
     // Valida que el stockPrice sea positivo
     for (final quote in quotes) {
       if (quote.stockPrice <= 0) {
-        throw Exception(Constants.errorLoadingQuotes);
+        throw Exception(FinanceConstants.errorLoadingQuotes);
       }
       if (quote.changePercentage < -100 || quote.changePercentage > 100) {
-        throw Exception(Constants.errorLoadingQuotes);
+        throw Exception(FinanceConstants.errorLoadingQuotes);
       }
     }
     return quotes;

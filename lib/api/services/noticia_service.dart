@@ -4,7 +4,65 @@ import 'package:dcristaldo/domain/noticia.dart';
 class NoticiaService {
   final NoticiaRepository _repository = NoticiaRepository();
 
-  Future<List<Noticia>> obtenerNoticiasPaginadas({
+  /// Obtener todas las noticias sin paginación
+  Future<List<Noticia>> obtenerNoticias() async {
+    // Obtener todas las noticias desde el repositorio
+    final noticias = await _repository.obtenerNoticias();
+
+    // Validar que las noticias tengan datos válidos
+    for (final noticia in noticias) {
+      validarNoticia(noticia);
+    }
+
+    return noticias;
+  }
+
+  /// Crear una nueva noticia
+  Future<Noticia> crearNoticia(Noticia noticia) async {
+    try{
+      // Validar que los datos de la noticia sean válidos
+      validarNoticia(noticia);
+      // Enviar la noticia al repositorio
+      return await _repository.crearNoticia(noticia);
+    }catch(e){
+      throw Exception('Error al crear la noticia: $e');
+    }
+    
+  }
+
+  /// Actualizar una noticia
+  Future<void> actualizarNoticia(String id, Noticia noticia) async {
+    validarNoticia(noticia);
+    await _repository.actualizarNoticia(id, noticia);
+  }
+
+  /// Eliminar una noticia
+  Future<void> eliminarNoticia(String id) async {
+    // Eliminar la noticia desde el repositorio
+    await _repository.eliminarNoticia(id);
+  }
+
+  /// Validar los datos de una noticia
+  void validarNoticia(Noticia noticia) {
+    if (noticia.publicadaEl.isAfter(DateTime.now())) {
+      throw ArgumentError('La fecha de publicación no puede estar en el futuro.');
+    }
+    if (noticia.titulo.trim().isEmpty) {
+      throw ArgumentError('El título de la noticia no puede estar vacío.');
+    }
+    if (noticia.descripcion.trim().isEmpty) {
+      throw ArgumentError('La descripción de la noticia no puede estar vacía.');
+    }
+    if (noticia.fuente.trim().isEmpty) {
+      throw ArgumentError('La fuente de la noticia no puede estar vacía.');
+    }
+    if (noticia.imagenUrl.trim().isEmpty) {
+      throw ArgumentError('La URL de la imagen no puede estar vacía.');
+    }
+  }
+
+  /// Obtener noticias paginadas
+  /*Future<List<Noticia>> obtenerNoticiasPaginadas({
     required int numeroPagina,
     required int tamanoPaginaConst,
   }) async {
@@ -16,43 +74,17 @@ class NoticiaService {
       throw ArgumentError('El tamaño de página debe ser mayor a 0.');
     }
 
-    // Obtener todas las noticias del repositorio
-    final todasLasNoticias = await _repository.generarNoticiasAleatorias();
-
-    // Validar que publicadaEl no esté en el futuro
-    for (final noticia in todasLasNoticias) {
-      if (noticia.publicadaEl.isAfter(DateTime.now())) {
-        throw ArgumentError(
-          'La fecha de publicación no puede estar en el futuro.',
-        );
-      }
-
-      // Validar que titulo, contenido y fuente no estén vacíos
-      if (noticia.titulo.trim().isEmpty) {
-        throw ArgumentError('El título de la noticia no puede estar vacío.');
-      }
-      if (noticia.descripcion.trim().isEmpty) {
-        throw ArgumentError(
-          'La descripción de la noticia no puede estar vacía.',
-        );
-      }
-      if (noticia.fuente.trim().isEmpty) {
-        throw ArgumentError('La fuente de la noticia no puede estar vacía.');
-      }
-    }
-
-    // Calcular el rango de noticias para la página solicitada
-    final inicio = (numeroPagina - 1) * tamanoPaginaConst;
-    final fin = inicio + tamanoPaginaConst;
-
-    // Validar que el rango no exceda el tamaño de la lista
-    if (inicio >= todasLasNoticias.length) {
-      return []; // Retorna una lista vacía si no hay más noticias
-    }
-
-    return todasLasNoticias.sublist(
-      inicio,
-      fin > todasLasNoticias.length ? todasLasNoticias.length : fin,
+    // Obtener las noticias paginadas desde el repositorio
+    final noticias = await _repository.obtenerNoticias(
+      numeroPagina: numeroPagina,
+      tamanoPagina: tamanoPaginaConst,
     );
-  }
+
+    // Validar que las noticias tengan datos válidos
+    for (final noticia in noticias) {
+      validarNoticia(noticia);
+    }
+
+    return noticias;
+  }*/
 }
