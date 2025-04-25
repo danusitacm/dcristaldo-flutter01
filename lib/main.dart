@@ -11,6 +11,7 @@ import 'package:dcristaldo/views/task_screen.dart';
 import 'package:dcristaldo/views/quote_screen.dart';
 import 'package:dcristaldo/views/noticia_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dcristaldo/views/categoria_screen.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
 Future<void> main() async {
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/game': (context) => const GameScreen(),
         '/quote': (context) => const QuoteScreen(),
         '/noticias': (context) => const NoticiaScreen(),
+        '/categorias': (context) => const CategoriaScreen(),
       },
     );
   }

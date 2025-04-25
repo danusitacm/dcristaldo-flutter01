@@ -93,6 +93,13 @@ class BaseScreen extends StatelessWidget {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.category),
+              title: const Text('Categorias'),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/categorias');
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {
