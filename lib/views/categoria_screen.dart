@@ -110,6 +110,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
               },
               style: const ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(Colors.red),
+                foregroundColor: WidgetStatePropertyAll(Colors.white),
               ),
               child: const Text('Eliminar'),
             ),
