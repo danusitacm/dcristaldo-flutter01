@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/api/services/noticia_service.dart';
+import 'package:dcristaldo/data/noticia_repository.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/constants.dart';
@@ -13,7 +13,7 @@ class NoticiaScreen extends StatefulWidget {
 }
 
 class NoticiaScreenState extends State<NoticiaScreen> {
-  final NoticiaService _noticiaService = NoticiaService();
+  final NoticiaRepository _noticiaRepository = NoticiaRepository();
   final List<Noticia> _noticias = [];
   bool _isLoading = false;
   bool hasError = false;
@@ -33,7 +33,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     });
 
     try {
-      final nuevasNoticias = await _noticiaService.obtenerNoticias();
+      final nuevasNoticias = await _noticiaRepository.obtenerNoticias();
       if (!mounted) return;
       setState(() {
         _noticias.clear();
@@ -138,7 +138,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         categoriaId: NewsConstants.defaultcategoriaId,
                       );
                       try {
-                        final noticiaCreada = await _noticiaService.crearNoticia(nuevaNoticia);
+                        final noticiaCreada = await _noticiaRepository.crearNoticia(nuevaNoticia);
                         setState(() {
                           _noticias.insert(0, noticiaCreada);
                           _ultimaActualizacion = DateTime.now();
@@ -258,7 +258,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         categoriaId: NewsConstants.defaultcategoriaId,
                       );
                       try {
-                        await _noticiaService.actualizarNoticia(noticia.id, noticiaActualizada);
+                        await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
                         setState(() {
                           final index = _noticias.indexWhere((n) => n.id == noticia.id);
                           if (index != -1) {
@@ -376,7 +376,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         });
 
                         try {
-                          await _noticiaService.eliminarNoticia(noticia.id);
+                          await _noticiaRepository.eliminarNoticia(noticia.id);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Noticia eliminada: ${noticia.titulo}')),

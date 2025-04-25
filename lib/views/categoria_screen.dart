@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/api/services/categoria_service.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/components/custom_form_modal.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
+
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});
 
@@ -13,7 +14,7 @@ class CategoriaScreen extends StatefulWidget {
 }
 
 class CategoriaScreenState extends State<CategoriaScreen> {
-  late final CategoriaService _categoriaService=CategoriaService();
+  late final CategoriaRepository _categoriaRepository=CategoriaRepository();
   List<Categoria> _categorias = [];
   bool _isLoading = false;
   bool _hasError = false;
@@ -33,7 +34,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
     });
 
     try {
-      final categorias = await _categoriaService.obtenerCategorias();
+      final categorias = await _categoriaRepository.obtenerCategorias();
       setState(() {
         _categorias = categorias;
         _isLoading = false;
@@ -64,7 +65,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
     });
 
     try {
-      await _categoriaService.eliminarCategoria(id);
+      await _categoriaRepository.eliminarCategoria(id);
       _loadCategorias();
     } catch (e) {
       setState(() {
@@ -164,7 +165,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
             try {
               if (categoria == null) {
                 // Agregar nueva categoría
-                await _categoriaService.crearCategoria(
+                await _categoriaRepository.crearCategoria(
                   Categoria(
                     id: '',
                     nombre: nombre,
@@ -174,7 +175,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                 );
               } else {
                 // Actualizar categoría existente
-                await _categoriaService.actualizarCategoria(
+                await _categoriaRepository.actualizarCategoria(
                   categoria.id!,
                   Categoria(
                     id: categoria.id!,
