@@ -81,6 +81,13 @@ class NoticiaCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                       ),
+                      Text (
+                        'categoriaId: ${noticia.categoriaId}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                 ),

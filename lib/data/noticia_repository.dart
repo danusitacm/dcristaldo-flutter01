@@ -4,7 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:dcristaldo/constants.dart';
 
 class NoticiaRepository {
-  final Dio _dio = Dio();
+  final Dio _dio = Dio(
+          BaseOptions(
+            connectTimeout: const Duration(seconds: CategoryConstants.timeoutSeconds),
+            receiveTimeout:const  Duration(seconds: CategoryConstants.timeoutSeconds),
+          ),
+        );
   final String path=NewsConstants.noticiasEndpoint;
   /// Crear una nueva noticia
   Future<Noticia> crearNoticia(Noticia noticia) async {
@@ -17,6 +22,7 @@ class NoticiaRepository {
           'fuente': noticia.fuente,
           'publicadaEl': noticia.publicadaEl.toIso8601String(),
           'urlImage': noticia.imagenUrl,
+          'categoriaId': noticia.categoriaId,
         },
       );
       if (response.statusCode != 201) {
@@ -71,6 +77,7 @@ class NoticiaRepository {
           'fuente': noticia.fuente,
           'publicadaEl': noticia.publicadaEl.toIso8601String(),
           'urlImage': noticia.imagenUrl,
+          'categoriaId': noticia.categoriaId,
         },
       );
 

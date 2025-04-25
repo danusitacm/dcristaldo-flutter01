@@ -1,3 +1,4 @@
+import 'package:dcristaldo/constants.dart';
 class Noticia {
   String id;
   final String titulo;
@@ -5,7 +6,7 @@ class Noticia {
   final String fuente;
   final DateTime publicadaEl;
   final String imagenUrl;
-  final String? categoriaId;
+  String categoriaId=NewsConstants.defaultcategoriaId;
 
   Noticia({
     required this.titulo,

@@ -135,6 +135,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         imagenUrl: imagenUrl.isNotEmpty
                             ? imagenUrl
                             : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
+                        categoriaId: NewsConstants.defaultcategoriaId,
                       );
                       try {
                         final noticiaCreada = await _noticiaService.crearNoticia(nuevaNoticia);
@@ -254,6 +255,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         fuente: fuente,
                         publicadaEl: noticia.publicadaEl,
                         imagenUrl: imagenUrl,
+                        categoriaId: NewsConstants.defaultcategoriaId,
                       );
                       try {
                         await _noticiaService.actualizarNoticia(noticia.id, noticiaActualizada);
