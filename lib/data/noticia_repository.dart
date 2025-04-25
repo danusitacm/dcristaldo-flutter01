@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dcristaldo/constants.dart';
 
 class NoticiaRepository {
   final Dio _dio = Dio();
-  final String _baseUrl = dotenv.env['API_URL'] ?? '';
+  final String path=NewsConstants.noticiasEndpoint;
   /// Crear una nueva noticia
   Future<Noticia> crearNoticia(Noticia noticia) async {
     try {
       final response = await _dio.post(
-        _baseUrl,
+        path,
         data: {
           'titulo': noticia.titulo,
           'descripcion': noticia.descripcion,
@@ -32,7 +32,7 @@ class NoticiaRepository {
   /// Leer todas las noticias
   Future<List<Noticia>> obtenerNoticias() async {
     try {
-      final response = await _dio.get(_baseUrl);
+      final response = await _dio.get(path);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data ?? [];
@@ -48,7 +48,7 @@ class NoticiaRepository {
   /// Leer una noticia por ID
   Future<Noticia> obtenerNoticiaPorId(String id) async {
     try {
-      final response = await _dio.get('$_baseUrl/$id');
+      final response = await _dio.get('$path/$id');
 
       if (response.statusCode == 200) {
         return Noticia.fromJson(response.data);
@@ -64,7 +64,7 @@ class NoticiaRepository {
   Future<void> actualizarNoticia(String id, Noticia noticia) async {
     try {
       final response = await _dio.put(
-        '$_baseUrl/$id',
+        '$path/$id',
         data: {
           'titulo': noticia.titulo,
           'descripcion': noticia.descripcion,
@@ -85,7 +85,7 @@ class NoticiaRepository {
   /// Eliminar una noticia
   Future<void> eliminarNoticia(String id) async {
     try {
-      final response = await _dio.delete('$_baseUrl/$id');
+      final response = await _dio.delete('$path/$id');
 
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw Exception('Error al eliminar la noticia: ${response.statusMessage}');
