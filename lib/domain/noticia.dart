@@ -5,6 +5,7 @@ class Noticia {
   final String fuente;
   final DateTime publicadaEl;
   final String imagenUrl;
+  final String? categoriaId;
 
   Noticia({
     required this.titulo,
@@ -13,6 +14,7 @@ class Noticia {
     required this.publicadaEl,
     required this.imagenUrl,
     required this.id,
+    required this.categoriaId,
   });
 
   factory Noticia.fromJson(Map<String, dynamic> json) {
@@ -23,7 +25,7 @@ class Noticia {
       fuente: json['fuente']?? 'Fuente desconocida',
       publicadaEl: DateTime.parse(json['publicadaEl'] ?? DateTime.now().toIso8601String()),
       imagenUrl: json['urlImage'] ?? 'https://demofree.sirv.com/nope-not-here.jpg?w=150', // Si no hay imagen, se asigna una cadena vacía
-    );
+      categoriaId: json['categoriaId'],);
   }
   Map<String, dynamic> toJson() {
     return {
@@ -32,6 +34,7 @@ class Noticia {
       'fuente': fuente,
       'publicadaEl': publicadaEl.toIso8601String(),
       'urlImage': imagenUrl,
+      'categoriaId': categoriaId,
     };
   }
 
