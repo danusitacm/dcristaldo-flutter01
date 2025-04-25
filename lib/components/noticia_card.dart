@@ -10,11 +10,11 @@ class NoticiaCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const NoticiaCard({
-    Key? key,
+    super.key,
     required this.noticia,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
