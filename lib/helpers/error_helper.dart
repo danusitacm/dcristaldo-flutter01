@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dcristaldo/constants.dart';
 
 class ErrorHelper {
   /// Devuelve un mensaje y un color basado en el código HTTP
@@ -7,23 +8,23 @@ class ErrorHelper {
     Color color;
     switch (statusCode) {
       case 400:
-        message = 'Solicitud incorrecta. Verifica los datos enviados.';
-        color = Colors.orange;
-        break;
-      case 401:
-        message = 'No autorizado. Verifica tus credenciales.';
+        message = ErrorConstants.errorMessage;
         color = Colors.red;
         break;
+      case 401:
+        message = ErrorConstants.errorUnauthorized;
+        color = Colors.orange;
+        break;
       case 403:
-        message = 'Prohibido. No tienes permisos para acceder.';
+        message = ErrorConstants.errorForbidden;
         color = Colors.redAccent;
         break;
       case 404:
-        message = 'Recurso no encontrado. Verifica la URL.';
-        color = Colors.blueGrey;
+        message = ErrorConstants.errorNotFound;
+        color = Colors.grey;
         break;
       case 500:
-        message = 'Error interno del servidor. Intenta más tarde.';
+        message = ErrorConstants.errorServer;
         color = Colors.red;
         break;
       default:
