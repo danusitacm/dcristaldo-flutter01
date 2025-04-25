@@ -58,6 +58,16 @@ class NewsConstants extends Constants {
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar las noticias';
-  static String get url => dotenv.env['API_URL'] ?? 'https://default.url';
+  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
+  static String get noticiasEndpoint => '$url/noticias';
+
+}
+class CategoryConstants extends Constants{
+  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
+  static String get categoriaEndpoint => '$url/categorias';
+  static const String timeoutSeconds = '10';
+  static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String errorNocategoria= 'Categoría no encontrada';
+  static const String defaultcategoriaId= 'Sin categoria';
 }
 
