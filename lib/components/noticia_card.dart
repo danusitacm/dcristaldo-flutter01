@@ -10,11 +10,11 @@ class NoticiaCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const NoticiaCard({
-    Key? key,
+    super.key,
     required this.noticia,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +76,13 @@ class NoticiaCard extends StatelessWidget {
                       // Fecha
                       Text(
                         dateFormat.format(noticia.publicadaEl),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      Text (
+                        'categoriaId: ${noticia.categoriaId}',
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,

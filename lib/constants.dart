@@ -18,8 +18,17 @@ class Constants {
   
   // Paginación
   static const int defaultPageSize = 10;
-}
 
+}
+class ErrorConstants {
+  static const String errorUnauthorized = 'No autorizado';
+  static const String errorNotFound = 'No encontrado';
+  static const String errorForbidden = 'Prohibido';
+  static const String errorServer = 'Error del servidor';
+  static const String timeout = 'Tiempo de espera agotado';
+  static const String errorMessage = 'Error al cargar los datos';
+  static const String errorUknown = 'Ocurrió un error desconocido';
+}
 class TaskConstants extends Constants {
   static const String appBarTitle = 'Mis Tareas';
   static const String taskTypeLabel = 'Tipo: ';
@@ -51,13 +60,27 @@ class FinanceConstants extends Constants {
   static const String emptyList = 'No hay cotizaciones disponibles';
 }
 
-
-
 class NewsConstants extends Constants {
   static const String tituloAppNoticias = 'Noticias técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
   static const String mensajeError = 'Error al cargar las noticias';
-  static String get url => dotenv.env['API_URL'] ?? 'https://default.url';
+  static const String defaultcategoriaId= 'Sin categoria';
+  
+  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
+  static String get noticiasEndpoint => '$url/noticias';
+
+  static const String errorUnauthorized= "No autorizado";
+  static const String errorNotFound= "Noticias no encontradas";
+  static const String errorServer= "Error del servidor";
+
+}
+class CategoryConstants extends Constants{
+  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
+  static String get categoriaEndpoint => '$url/categorias';
+  static const int timeoutSeconds = 10;
+  static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String errorNocategoria= 'Categoría no encontrada';
+  
 }
 
