@@ -1,45 +1,63 @@
 import 'package:dcristaldo/api/services/noticia_service.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-
+import 'package:dcristaldo/exceptions/api_exception.dart';
 class NoticiaRepository {
   final NoticiaService _service = NoticiaService();
 
   /// Obtener todas las noticias sin paginación
   Future<List<Noticia>> obtenerNoticias() async {
-    // Obtener todas las noticias desde el repositorio
-    final noticias = await _service.obtenerNoticias();
-
-    // Validar que las noticias tengan datos válidos
-    for (final noticia in noticias) {
-      validarNoticia(noticia);
+    try {
+      return await _service.obtenerNoticias();
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        rethrow;
+      } else {
+        throw Exception('Error desconocido: $e');
+      }
     }
-
-    return noticias;
   }
 
   /// Crear una nueva noticia
-  Future<Noticia> crearNoticia(Noticia noticia) async {
-    try{
-      // Validar que los datos de la noticia sean válidos
-      validarNoticia(noticia);
-      // Enviar la noticia al repositorio
-      return await _service.crearNoticia(noticia);
-    }catch(e){
-      throw Exception('Error al crear la noticia: $e');
+  Future<void> crearNoticia(Noticia noticia) async {
+    try {
+      await _service.crearNoticia(noticia);
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        throw Exception('Error en el servicio de noticias: ${e.message}');
+      } else {
+        throw Exception('Error desconocido: $e');
+      }
     }
-    
   }
 
   /// Actualizar una noticia
-  Future<void> actualizarNoticia(String id, Noticia noticia) async {
-    validarNoticia(noticia);
-    await _service.actualizarNoticia(id, noticia);
+  Future<void> actualizarNoticia(String id, Noticia noticia)async {
+    try {
+      await _service.actualizarNoticia(id, noticia);
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        throw Exception('Error en el servicio de noticias: ${e.message}');
+      } else {
+        throw Exception('Error desconocido: $e');
+      }
+    }
   }
 
   /// Eliminar una noticia
   Future<void> eliminarNoticia(String id) async {
-    // Eliminar la noticia desde el repositorio
-    await _service.eliminarNoticia(id);
+    try {
+      await _service.eliminarNoticia(id);
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        rethrow;
+      } else {
+        throw Exception('Error desconocido: $e');
+      }
+    }
   }
 
   /// Validar los datos de una noticia

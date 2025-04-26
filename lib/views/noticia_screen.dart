@@ -5,6 +5,8 @@ import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/constants.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:intl/intl.dart';
+import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:dcristaldo/helpers/error_helper.dart';
 
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
@@ -47,6 +49,18 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         _isLoading = false;
         hasError = true;
       });
+      String errorMessage='Error al cargar las categorías';
+      Color errorColor=Colors.grey; 
+      if (e is ApiException) {
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+        errorMessage = errorData['message'];
+        errorColor = errorData['color'];
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+        );
+      }
     }
   }
 
@@ -138,22 +152,36 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                         categoriaId: NewsConstants.defaultcategoriaId,
                       );
                       try {
-                        final noticiaCreada = await _noticiaRepository.crearNoticia(nuevaNoticia);
+                        await _noticiaRepository.crearNoticia(nuevaNoticia);
                         setState(() {
-                          _noticias.insert(0, noticiaCreada);
+                          _loadNoticias();
                           _ultimaActualizacion = DateTime.now();
                         });
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Noticia creada: ${noticiaCreada.titulo}')),
+                            SnackBar(content: Text('${NewsConstants.successCreated}: ${nuevaNoticia.titulo}'),
+                            backgroundColor: Colors.green),
                           );
                         }
+                        
                       } catch (e) {
                         if (context.mounted) {
                           setState(() {
                             hasError = true;
                           });
+                        }
+                        String errorMessage='Error al cargar las noticias';
+                        Color errorColor=Colors.grey; 
+                        if (e is ApiException) {
+                          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                          errorMessage = errorData['message'];
+                          errorColor = errorData['color'];
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                          );
                         }
                       }
                     }
@@ -259,16 +287,20 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                       );
                       try {
                         await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
+                        
                         setState(() {
                           final index = _noticias.indexWhere((n) => n.id == noticia.id);
                           if (index != -1) {
-                            _noticias[index] = noticiaActualizada;
+                            _loadNoticias();
                           }
                         });
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Noticia actualizada: ${noticiaActualizada.titulo}')),
+                            SnackBar(
+                              content: Text('${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}'),
+                              backgroundColor: Colors.green,
+                            )
                           );
                         }
                       } catch (e) {
@@ -276,6 +308,18 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                           setState(() {
                             hasError = true;
                           });
+                        }
+                        String errorMessage='Error al cargar las noticias';
+                        Color errorColor=Colors.grey; 
+                        if (e is ApiException) {
+                          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                          errorMessage = errorData['message'];
+                          errorColor = errorData['color'];
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                          );
                         }
                       }
                     }
@@ -379,14 +423,28 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                           await _noticiaRepository.eliminarNoticia(noticia.id);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Noticia eliminada: ${noticia.titulo}')),
-                            );
+                              SnackBar(
+                                content: Text('${NewsConstants.successDeleted}: ${noticia.titulo}'),
+                                backgroundColor: Colors.green,
+                            ));
                           }
                         } catch (e) {
                           setState(() {
                             _noticias.insert(index, noticiaEliminada);
                             hasError = true;
                           });
+                          String errorMessage='Error al eliminar la noticia';
+                          Color errorColor=Colors.grey; 
+                          if (e is ApiException) {
+                            final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,context: 'noticia');
+                            errorMessage = errorData['message'];
+                            errorColor = errorData['color'];
+                          }
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                            );
+                          }
                         }
                       }
                     },
