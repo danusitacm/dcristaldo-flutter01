@@ -5,6 +5,7 @@ import 'package:dcristaldo/components/custom_form_modal.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
+import 'package:dcristaldo/constants.dart';
 
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});
@@ -47,7 +48,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       String errorMessage='Error al cargar las categorías';
       Color errorColor=Colors.grey; 
       if (e is ApiException) {
-        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,  context: 'categoria');
         errorMessage = errorData['message'];
         errorColor = errorData['color'];
       }
@@ -67,6 +68,11 @@ class CategoriaScreenState extends State<CategoriaScreen> {
     try {
       await _categoriaRepository.eliminarCategoria(id);
       _loadCategorias();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(CategoryConstants.successDeleted), backgroundColor: Colors.green),
+        );
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -75,7 +81,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       String errorMessage='Error al eliminar la categoría';
       Color errorColor=Colors.grey; 
       if (e is ApiException) {
-        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,context: 'categoria');
         errorMessage = errorData['message'];
         errorColor = errorData['color'];
       }
@@ -173,6 +179,11 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                     imagenUrl: imagenUrl,
                   ),
                 );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text(CategoryConstants.successCreated), backgroundColor: Colors.green),
+                  );
+                }
               } else {
                 // Actualizar categoría existente
                 await _categoriaRepository.actualizarCategoria(
@@ -184,6 +195,11 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                     imagenUrl: imagenUrl,
                   ),
                 );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text(CategoryConstants.successUpdated), backgroundColor: Colors.green),
+                  );
+                }
               }
               // ignore: use_build_context_synchronously
               Navigator.pop(context);
