@@ -20,16 +20,8 @@ class Constants {
   static const int defaultPageSize = 10;
 
 }
-class ErrorConstants {
-  static const String errorUnauthorized = 'No autorizado';
-  static const String errorNotFound = 'No encontrado';
-  static const String errorForbidden = 'Prohibido';
-  static const String errorServer = 'Error del servidor';
-  static const String timeout = 'Tiempo de espera agotado';
-  static const String errorMessage = 'Error al cargar los datos';
-  static const String errorUknown = 'Ocurrió un error desconocido';
-}
-class TaskConstants extends Constants {
+
+class TaskConstants  {
   static const String appBarTitle = 'Mis Tareas';
   static const String taskTypeLabel = 'Tipo: ';
   static const String stepsTitle = 'Pasos para completar';
@@ -40,7 +32,7 @@ class TaskConstants extends Constants {
   static const String taskDetail = 'Detalles: ';
 }
 
-class GameConstants extends Constants {
+class GameConstants  {
   static const String gameTitle = 'Juego de preguntas';
   static const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
   static const String startGame = 'Iniciar Juego';
@@ -53,34 +45,53 @@ class GameConstants extends Constants {
   static const String emptyStepsMessage = 'No hay pasos disponibles.';
 }
 
-class FinanceConstants extends Constants {
+class FinanceConstants {
   static const String quoteTitle = 'Cotizaciones Financieras';
   static const String loadingMessage = 'Cargando cotizaciones...';
   static const String errorLoadingQuotes = 'Error al cargar las cotizaciones';
   static const String emptyList = 'No hay cotizaciones disponibles';
 }
 
-class NewsConstants extends Constants {
+class ErrorConstants {
+  static const String errorUnauthorized = 'No autorizado';
+  static const String errorNotFound = 'No encontrado';
+  static const String errorForbidden = 'Prohibido';
+  static const String errorServer = 'Error del servidor';
+  static const String timeout = 'Tiempo de espera agotado';
+  static const String errorMessage = 'Error al cargar los datos';
+  static const String errorUknown = 'Ocurrió un error desconocido';
+  static const String errorTimeout = 'Tiempo de espera agotado';
+}
+
+class NewsConstants {
   static const String tituloAppNoticias = 'Noticias técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVacia = 'No hay noticias disponibles';
-  static const String mensajeError = 'Error al cargar las noticias';
   static const String defaultcategoriaId= 'Sin categoria';
   
-  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
-  static String get noticiasEndpoint => '$url/noticias';
-
-  static const String errorUnauthorized= "No autorizado";
+  static String get url => dotenv.env['BASE_URL'] ?? 'https://default.url';
+  static String get noticiasEndpoint => '$url/hola/noticias';
+  
+  static const String mensajeError = 'Error al cargar las noticias';
   static const String errorNotFound= "Noticias no encontradas";
-  static const String errorServer= "Error del servidor";
+  static const String errorServer= "Error del servidor al cargar la noticia";
 
+  static const String successCreated = 'Noticia creada';
+  static const String successUpdated = 'Noticia actualizada';
+  static const String successDeleted = 'Noticia eliminada';
 }
-class CategoryConstants extends Constants{
-  static String get url => dotenv.env['base_url'] ?? 'https://default.url';
+class CategoryConstants {
+  static String get url => dotenv.env['BASE_URL'] ?? 'https://default.url';
   static String get categoriaEndpoint => '$url/categorias';
   static const int timeoutSeconds = 10;
-  static const String errorTimeout = 'Tiempo de espera agotado';
-  static const String errorNocategoria= 'Categoría no encontrada';
+  
+  static const String mensajeError = 'Error al cargar las categorias';
+  static const String errorNotFound= "Categorias no encontradas";
+  static const String errorServer= "Error del servidor al cargar la categorias";
+
+  static const String successCreated = 'Categoria creada';
+  static const String successUpdated = 'Categoria actualizada';
+  static const String successDeleted = 'Categoria eliminada';
   
 }
 
