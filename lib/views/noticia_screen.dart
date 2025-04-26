@@ -71,126 +71,128 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     String fuente = '';
     String imagenUrl = '';
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => titulo = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El título es obligatorio';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => descripcion = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La descripción es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fuente',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => fuente = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La fuente es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'URL de la Imagen',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => imagenUrl = value,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      final nuevaNoticia = Noticia(
-                        id: '',
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fuente: fuente,
-                        publicadaEl: DateTime.now(),
-                        imagenUrl: imagenUrl.isNotEmpty
-                            ? imagenUrl
-                            : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
-                        categoriaId: NewsConstants.defaultcategoriaId,
-                      );
-                      try {
-                        await _noticiaRepository.crearNoticia(nuevaNoticia);
-                        setState(() {
-                          _loadNoticias();
-                          _ultimaActualizacion = DateTime.now();
-                        });
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${NewsConstants.successCreated}: ${nuevaNoticia.titulo}'),
-                            backgroundColor: Colors.green),
-                          );
-                        }
-                        
-                      } catch (e) {
-                        if (context.mounted) {
-                          setState(() {
-                            hasError = true;
-                          });
-                        }
-                        String errorMessage='Error al cargar las noticias';
-                        Color errorColor=Colors.grey; 
-                        if (e is ApiException) {
-                          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
-                          errorMessage = errorData['message'];
-                          errorColor = errorData['color'];
-                        }
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                          );
-                        }
+        return AlertDialog(
+          title: const Text('Crear Noticia'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Título',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => titulo = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El título es obligatorio';
                       }
-                    }
-                  },
-                  child: const Text('Guardar Noticia'),
-                ),
-              ],
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => descripcion = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La descripción es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Fuente',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => fuente = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La fuente es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'URL de la Imagen',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => imagenUrl = value,
+                  ),
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final nuevaNoticia = Noticia(
+                    id: '',
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fuente: fuente,
+                    publicadaEl: DateTime.now(),
+                    imagenUrl: imagenUrl.isNotEmpty
+                        ? imagenUrl
+                        : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
+                    categoriaId: NewsConstants.defaultcategoriaId,
+                  );
+                  try {
+                    await _noticiaRepository.crearNoticia(nuevaNoticia);
+                    setState(() {
+                      _loadNoticias();
+                      _ultimaActualizacion = DateTime.now();
+                    });
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${NewsConstants.successCreated}: ${nuevaNoticia.titulo}'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      setState(() {
+                        hasError = true;
+                      });
+                    }
+                    String errorMessage = 'Error al cargar las noticias';
+                    Color errorColor = Colors.grey;
+                    if (e is ApiException) {
+                      final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                      errorMessage = errorData['message'];
+                      errorColor = errorData['color'];
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                      );
+                    }
+                  }
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
         );
       },
     );
@@ -203,132 +205,133 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     String fuente = noticia.fuente;
     String imagenUrl = noticia.imagenUrl;
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: titulo,
-                  decoration: const InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => titulo = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El título es obligatorio';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: descripcion,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => descripcion = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La descripción es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: fuente,
-                  decoration: const InputDecoration(
-                    labelText: 'Fuente',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => fuente = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La fuente es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: imagenUrl,
-                  decoration: const InputDecoration(
-                    labelText: 'URL de la Imagen',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => imagenUrl = value,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      final noticiaActualizada = Noticia(
-                        id: noticia.id,
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fuente: fuente,
-                        publicadaEl: noticia.publicadaEl,
-                        imagenUrl: imagenUrl,
-                        categoriaId: NewsConstants.defaultcategoriaId,
-                      );
-                      try {
-                        await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
-                        
-                        setState(() {
-                          final index = _noticias.indexWhere((n) => n.id == noticia.id);
-                          if (index != -1) {
-                            _loadNoticias();
-                          }
-                        });
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}'),
-                              backgroundColor: Colors.green,
-                            )
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          setState(() {
-                            hasError = true;
-                          });
-                        }
-                        String errorMessage='Error al cargar las noticias';
-                        Color errorColor=Colors.grey; 
-                        if (e is ApiException) {
-                          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
-                          errorMessage = errorData['message'];
-                          errorColor = errorData['color'];
-                        }
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                          );
-                        }
+        return AlertDialog(
+          title: const Text('Actualizar Noticia'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    initialValue: titulo,
+                    decoration: const InputDecoration(
+                      labelText: 'Título',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => titulo = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El título es obligatorio';
                       }
-                    }
-                  },
-                  child: const Text('Actualizar Noticia'),
-                ),
-              ],
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: descripcion,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => descripcion = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La descripción es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: fuente,
+                    decoration: const InputDecoration(
+                      labelText: 'Fuente',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => fuente = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La fuente es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: imagenUrl,
+                    decoration: const InputDecoration(
+                      labelText: 'URL de la Imagen',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => imagenUrl = value,
+                  ),
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final noticiaActualizada = Noticia(
+                    id: noticia.id,
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fuente: fuente,
+                    publicadaEl: noticia.publicadaEl,
+                    imagenUrl: imagenUrl,
+                    categoriaId: NewsConstants.defaultcategoriaId,
+                  );
+                  try {
+                    await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
+
+                    setState(() {
+                      final index = _noticias.indexWhere((n) => n.id == noticia.id);
+                      if (index != -1) {
+                        _loadNoticias();
+                      }
+                    });
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      setState(() {
+                        hasError = true;
+                      });
+                    }
+                    String errorMessage = 'Error al actualizar la noticia';
+                    Color errorColor = Colors.grey;
+                    if (e is ApiException) {
+                      final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                      errorMessage = errorData['message'];
+                      errorColor = errorData['color'];
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                      );
+                    }
+                  }
+                }
+              },
+              child: const Text('Actualizar'),
+            ),
+          ],
         );
       },
     );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/categoria.dart';
-import 'package:dcristaldo/components/custom_form_modal.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
@@ -15,16 +14,15 @@ class CategoriaScreen extends StatefulWidget {
 }
 
 class CategoriaScreenState extends State<CategoriaScreen> {
-  late final CategoriaRepository _categoriaRepository=CategoriaRepository();
+  late final CategoriaRepository _categoriaRepository = CategoriaRepository();
   List<Categoria> _categorias = [];
   bool _isLoading = false;
   bool _hasError = false;
-   
 
   @override
   void initState() {
     super.initState();
-    
+
     _loadCategorias();
   }
 
@@ -45,10 +43,10 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         _isLoading = false;
         _hasError = true;
       });
-      String errorMessage='Error al cargar las categorías';
-      Color errorColor=Colors.grey; 
+      String errorMessage = 'Error al cargar las categorías';
+      Color errorColor = Colors.grey;
       if (e is ApiException) {
-        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,  context: 'categoria');
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'categoria');
         errorMessage = errorData['message'];
         errorColor = errorData['color'];
       }
@@ -58,8 +56,8 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         );
       }
     }
-    
   }
+
   Future<void> _deleteCategoria(String id) async {
     setState(() {
       _isLoading = true;
@@ -78,10 +76,10 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         _isLoading = false;
         _hasError = true;
       });
-      String errorMessage='Error al eliminar la categoría';
-      Color errorColor=Colors.grey; 
+      String errorMessage = 'Error al eliminar la categoría';
+      Color errorColor = Colors.grey;
       if (e is ApiException) {
-        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,context: 'categoria');
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'categoria');
         errorMessage = errorData['message'];
         errorColor = errorData['color'];
       }
@@ -96,6 +94,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       });
     }
   }
+
   void _showDeleteConfirmationDialog(String id) {
     showDialog(
       context: context,
@@ -126,98 +125,131 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       },
     );
   }
+
   void _showCategoriaModal({Categoria? categoria}) {
+    final formKey = GlobalKey<FormState>();
     final nombreController = TextEditingController(text: categoria?.nombre ?? '');
-    final descripcionController =
-        TextEditingController(text: categoria?.descripcion ?? '');
-    final imagenUrlController =
-        TextEditingController(text: categoria?.imagenUrl ?? '');
+    final descripcionController = TextEditingController(text: categoria?.descripcion ?? '');
+    final imagenUrlController = TextEditingController(text: categoria?.imagenUrl ?? '');
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
       builder: (context) {
-        return CustomFormModal(
-          title: categoria == null ? 'Agregar Categoría' : 'Actualizar Categoría',
-          controllers: {
-            'nombre': nombreController,
-            'descripcion': descripcionController,
-            'imagenUrl': imagenUrlController,
-          },
-          fieldLabels: {
-            'nombre': 'Nombre',
-            'descripcion': 'Descripción',
-            'imagenUrl': 'URL de la Imagen',
-          },
-          onSubmit: () async {
-            final nombre = nombreController.text.trim();
-            final descripcion = descripcionController.text.trim();
-            final imagenUrl = imagenUrlController.text.trim();
-
-            if (nombre.isEmpty || descripcion.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Por favor, completa todos los campos obligatorios'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-
-            setState(() {
-              _isLoading = true;
-            });
-
-            try {
-              if (categoria == null) {
-                // Agregar nueva categoría
-                await _categoriaRepository.crearCategoria(
-                  Categoria(
-                    id: '',
-                    nombre: nombre,
-                    descripcion: descripcion,
-                    imagenUrl: imagenUrl,
+        return AlertDialog(
+          title: Text(categoria == null ? 'Agregar Categoría' : 'Actualizar Categoría'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nombreController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El nombre es obligatorio';
+                      }
+                      return null;
+                    },
                   ),
-                );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text(CategoryConstants.successCreated), backgroundColor: Colors.green),
-                  );
-                }
-              } else {
-                // Actualizar categoría existente
-                await _categoriaRepository.actualizarCategoria(
-                  categoria.id!,
-                  Categoria(
-                    id: categoria.id!,
-                    nombre: nombre,
-                    descripcion: descripcion,
-                    imagenUrl: imagenUrl,
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: descripcionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La descripción es obligatoria';
+                      }
+                      return null;
+                    },
                   ),
-                );
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text(CategoryConstants.successUpdated), backgroundColor: Colors.green),
-                  );
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: imagenUrlController,
+                    decoration: const InputDecoration(
+                      labelText: 'URL de la Imagen',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final nombre = nombreController.text.trim();
+                  final descripcion = descripcionController.text.trim();
+                  final imagenUrl = imagenUrlController.text.trim();
+
+                  setState(() {
+                    _isLoading = true;
+                  });
+
+                  try {
+                    if (categoria == null) {
+                      // Agregar nueva categoría
+                      await _categoriaRepository.crearCategoria(
+                        Categoria(
+                          id: '',
+                          nombre: nombre,
+                          descripcion: descripcion,
+                          imagenUrl: imagenUrl,
+                        ),
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text(CategoryConstants.successCreated), backgroundColor: Colors.green),
+                        );
+                      }
+                    } else {
+                      // Actualizar categoría existente
+                      await _categoriaRepository.actualizarCategoria(
+                        categoria.id!,
+                        Categoria(
+                          id: categoria.id!,
+                          nombre: nombre,
+                          descripcion: descripcion,
+                          imagenUrl: imagenUrl,
+                        ),
+                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text(CategoryConstants.successUpdated), backgroundColor: Colors.green),
+                        );
+                      }
+                    }
+                    Navigator.pop(context);
+                    _loadCategorias();
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  } finally {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
                 }
-              }
-              // ignore: use_build_context_synchronously
-              Navigator.pop(context);
-              _loadCategorias();
-            } catch (e) {
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error: ${e.toString()}'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            } finally {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          },
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
         );
       },
     );
@@ -236,13 +268,12 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                   itemBuilder: (context, index) {
                     final categoria = _categorias[index];
                     return ListTile(
-                      leading: 
-                          Image.network(
-                              categoria.imagenUrl,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            ),
+                      leading: Image.network(
+                        categoria.imagenUrl,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
                       title: Text(categoria.nombre),
                       subtitle: Text(categoria.descripcion),
                       trailing: ConstrainedBox(
