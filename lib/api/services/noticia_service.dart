@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dio/dio.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 class NoticiaService {
   final Dio _dio = Dio(

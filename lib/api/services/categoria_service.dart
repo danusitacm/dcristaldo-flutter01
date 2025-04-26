@@ -1,6 +1,6 @@
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dio/dio.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 
 class CategoriaService {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 
 class ErrorHelper {
   /// Devuelve un mensaje y un color basado en el código HTTP y el contexto (noticia o categoría)

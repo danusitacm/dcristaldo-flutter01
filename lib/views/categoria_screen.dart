@@ -4,7 +4,7 @@ import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});

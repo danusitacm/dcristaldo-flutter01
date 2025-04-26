@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:intl/intl.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
