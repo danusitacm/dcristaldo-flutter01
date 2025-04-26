@@ -7,6 +7,8 @@ import 'package:dcristaldo/domain/noticia.dart';
 import 'package:intl/intl.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
+import 'package:dcristaldo/domain/categoria.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
 
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
@@ -17,6 +19,7 @@ class NoticiaScreen extends StatefulWidget {
 class NoticiaScreenState extends State<NoticiaScreen> {
   final NoticiaRepository _noticiaRepository = NoticiaRepository();
   final List<Noticia> _noticias = [];
+  final List<Categoria> _categorias = [];
   bool _isLoading = false;
   bool hasError = false;
   DateTime? _ultimaActualizacion;
@@ -64,12 +67,30 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     }
   }
 
-  void _showCreateNoticiaForm() {
+  void _showCreateNoticiaForm() async {
+    if (_categorias.isEmpty) {
+      try {
+        final categorias = await CategoriaRepository().obtenerCategorias();
+        setState(() {
+          _categorias.addAll(categorias);
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al cargar las categorías'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     final formKey = GlobalKey<FormState>();
     String titulo = '';
     String descripcion = '';
     String fuente = '';
     String imagenUrl = '';
+    String? categoriaSeleccionada;
 
     showDialog(
       context: context,
@@ -131,6 +152,27 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     ),
                     onChanged: (value) => imagenUrl = value,
                   ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: categoriaSeleccionada,
+                    decoration: const InputDecoration(
+                      labelText: 'Categoría',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _categorias.map((categoria) {
+                      return DropdownMenuItem<String>(
+                        value: categoria.id,
+                        child: Text(categoria.nombre),
+                      );
+                    }).toList(),
+                    onChanged: (value) => categoriaSeleccionada = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La categoría es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),
@@ -152,7 +194,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     imagenUrl: imagenUrl.isNotEmpty
                         ? imagenUrl
                         : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
-                    categoriaId: NewsConstants.defaultcategoriaId,
+                    categoriaId: categoriaSeleccionada!,
                   );
                   try {
                     await _noticiaRepository.crearNoticia(nuevaNoticia);
@@ -198,12 +240,29 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     );
   }
 
-  void _showUpdateNoticiaForm(Noticia noticia) {
+  void _showUpdateNoticiaForm(Noticia noticia) async {
+    if (_categorias.isEmpty) {
+      try {
+        final categorias = await CategoriaRepository().obtenerCategorias();
+        setState(() {
+          _categorias.addAll(categorias);
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al cargar las categorías'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+
     final formKey = GlobalKey<FormState>();
     String titulo = noticia.titulo;
     String descripcion = noticia.descripcion;
     String fuente = noticia.fuente;
     String imagenUrl = noticia.imagenUrl;
+    String? categoriaSeleccionada = noticia.categoriaId;
 
     showDialog(
       context: context,
@@ -269,6 +328,27 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     ),
                     onChanged: (value) => imagenUrl = value,
                   ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: categoriaSeleccionada,
+                    decoration: const InputDecoration(
+                      labelText: 'Categoría',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _categorias.map((categoria) {
+                      return DropdownMenuItem<String>(
+                        value: categoria.id,
+                        child: Text(categoria.nombre),
+                      );
+                    }).toList(),
+                    onChanged: (value) => categoriaSeleccionada = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La categoría es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
                 ],
               ),
             ),
@@ -288,7 +368,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     fuente: fuente,
                     publicadaEl: noticia.publicadaEl,
                     imagenUrl: imagenUrl,
-                    categoriaId: NewsConstants.defaultcategoriaId,
+                    categoriaId: categoriaSeleccionada!,
                   );
                   try {
                     await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
@@ -296,7 +376,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     setState(() {
                       final index = _noticias.indexWhere((n) => n.id == noticia.id);
                       if (index != -1) {
-                        _loadNoticias();
+                        _noticias[index] = noticiaActualizada;
                       }
                     });
                     if (context.mounted) {
@@ -384,75 +464,81 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             ),
           if (!_isLoading || _noticias.isNotEmpty)
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0), // Espacio para el botón flotante
-                itemCount: _noticias.length,
-                itemBuilder: (context, index) {
-                  final noticia = _noticias[index];
-                  return NoticiaCard(
-                    noticia: noticia,
-                    onEdit: () => _showUpdateNoticiaForm(noticia),
-                    onDelete: () async {
-                      final confirm = await showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Confirmar eliminación'),
-                          content: const Text('¿Estás seguro de que deseas eliminar esta noticia?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text('Cancelar'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _loadNoticias(); // Llama a la función para recargar las noticias
+                },
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80.0), // Espacio para el botón flotante
+                  itemCount: _noticias.length,
+                  itemBuilder: (context, index) {
+                    final noticia = _noticias[index];
+                    return NoticiaCard(
+                      noticia: noticia,
+                      onEdit: () => _showUpdateNoticiaForm(noticia),
+                      onDelete: () async {
+                        final confirm = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Confirmar eliminación'),
+                            content: const Text('¿Estás seguro de que deseas eliminar esta noticia?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: const Text('Cancelar'),
                               ),
-                              child: const Text('Eliminar'),
-                            ),
-                          ],
-                        ),
-                      );
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Eliminar'),
+                              ),
+                            ],
+                          ),
+                        );
 
-                      if (confirm == true) {
-                        final noticiaEliminada = noticia;
-                        setState(() {
-                          _noticias.removeAt(index);
-                          _ultimaActualizacion = DateTime.now();
-                        });
-
-                        try {
-                          await _noticiaRepository.eliminarNoticia(noticia.id);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${NewsConstants.successDeleted}: ${noticia.titulo}'),
-                                backgroundColor: Colors.green,
-                            ));
-                          }
-                        } catch (e) {
+                        if (confirm == true) {
+                          final noticiaEliminada = noticia;
                           setState(() {
-                            _noticias.insert(index, noticiaEliminada);
-                            hasError = true;
+                            _noticias.removeAt(index);
+                            _ultimaActualizacion = DateTime.now();
                           });
-                          String errorMessage='Error al eliminar la noticia';
-                          Color errorColor=Colors.grey; 
-                          if (e is ApiException) {
-                            final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode,context: 'noticia');
-                            errorMessage = errorData['message'];
-                            errorColor = errorData['color'];
-                          }
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                            );
+
+                          try {
+                            await _noticiaRepository.eliminarNoticia(noticia.id);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${NewsConstants.successDeleted}: ${noticia.titulo}'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            setState(() {
+                              _noticias.insert(index, noticiaEliminada);
+                              hasError = true;
+                            });
+                            String errorMessage = 'Error al eliminar la noticia';
+                            Color errorColor = Colors.grey;
+                            if (e is ApiException) {
+                              final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                              errorMessage = errorData['message'];
+                              errorColor = errorData['color'];
+                            }
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
+                              );
+                            }
                           }
                         }
-                      }
-                    },
-                  );
-                },
+                      },
+                    );
+                  },
+                ),
               ),
             ),
         ],

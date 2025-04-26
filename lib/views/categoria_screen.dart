@@ -263,41 +263,46 @@ class CategoriaScreenState extends State<CategoriaScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _hasError
               ? const Center(child: Text('Error al cargar las categorías'))
-              : ListView.builder(
-                  itemCount: _categorias.length,
-                  itemBuilder: (context, index) {
-                    final categoria = _categorias[index];
-                    return ListTile(
-                      leading: Image.network(
-                        categoria.imagenUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(categoria.nombre),
-                      subtitle: Text(categoria.descripcion),
-                      trailing: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 100), // Limitar el ancho máximo
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () {
-                                _showCategoriaModal(categoria: categoria); // Abrir modal para editar
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                _showDeleteConfirmationDialog(categoria.id!); // Confirmar eliminación
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    await _loadCategorias(); // Recargar las categorías desde la API
                   },
+                  child: ListView.builder(
+                    itemCount: _categorias.length,
+                    itemBuilder: (context, index) {
+                      final categoria = _categorias[index];
+                      return ListTile(
+                        leading: Image.network(
+                          categoria.imagenUrl,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                        title: Text(categoria.nombre),
+                        subtitle: Text(categoria.descripcion),
+                        trailing: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 100), // Limitar el ancho máximo
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  _showCategoriaModal(categoria: categoria); // Abrir modal para editar
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  _showDeleteConfirmationDialog(categoria.id!); // Confirmar eliminación
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

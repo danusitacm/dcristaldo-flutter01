@@ -80,4 +80,20 @@ class CategoriaService {
       throw ApiException('Error al conectar con la API de categorías: $e');
     }
   }
+
+  Future<Categoria> obtenerCategoriaPorId(String id) async {
+    try {
+      final response = await _dio.get('$path/$id');
+      if (response.statusCode == 200) {
+        return Categoria.fromJson(response.data);
+      } else {
+        throw ApiException(
+          'Error al obtener la categoría',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de categorías: $e');
+    }
+  }
 }
