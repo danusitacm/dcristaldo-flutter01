@@ -70,7 +70,7 @@ class NewsConstants {
   static const String defaultcategoriaId= 'Sin categoria';
   
   static String get url => dotenv.env['BASE_URL'] ?? 'https://default.url';
-  static String get noticiasEndpoint => '$url/hola/noticias';
+  static String get noticiasEndpoint => '$url/noticias';
   
   static const String mensajeError = 'Error al cargar las noticias';
   static const String errorNotFound= "Noticias no encontradas";
