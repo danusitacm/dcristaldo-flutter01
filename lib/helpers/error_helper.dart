@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:dcristaldo/constants.dart';
 
 class ErrorHelper {
-  /// Devuelve un mensaje y un color basado en el código HTTP
-  static Map<String, dynamic> getErrorMessageAndColor(int? statusCode) {
+  /// Devuelve un mensaje y un color basado en el código HTTP y el contexto (noticia o categoría)
+  static Map<String, dynamic> getErrorMessageAndColor(int? statusCode, {String? context}) {
     String message;
     Color color;
+
     switch (statusCode) {
       case 400:
         message = ErrorConstants.errorMessage;
@@ -20,15 +21,27 @@ class ErrorHelper {
         color = Colors.redAccent;
         break;
       case 404:
-        message = ErrorConstants.errorNotFound;
+        if (context == 'noticia') {
+          message = NewsConstants.errorNotFound;
+        } else if (context == 'categoria') {
+          message = CategoryConstants.errorNotFound;
+        } else {
+          message = ErrorConstants.errorNotFound;
+        }
         color = Colors.grey;
         break;
       case 500:
-        message = ErrorConstants.errorServer;
+        if (context == 'noticia') {
+          message = NewsConstants.errorServer;
+        } else if (context == 'categoria') {
+          message = CategoryConstants.errorServer;
+        } else {
+          message = ErrorConstants.errorServer;
+        }
         color = Colors.red;
         break;
       default:
-        message = 'Ocurrió un error desconocido.';
+        message = ErrorConstants.errorUknown;
         color = Colors.grey;
         break;
     }
