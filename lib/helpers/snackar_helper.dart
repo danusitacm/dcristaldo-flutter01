@@ -36,11 +36,12 @@ class SnackBarHelper {
   static void showError({
     required BuildContext context,
     required String message,
+    required Color color
   }) {
     showSnackBar(
       context: context,
       message: message,
-      backgroundColor: Colors.red,
+      backgroundColor: color,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
 import 'package:dcristaldo/constants/constants.dart';
+import 'package:dcristaldo/helpers/snackar_helper.dart';
 
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});
@@ -51,9 +52,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         errorColor = errorData['color'];
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-        );
+        SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
       }
     }
   }
@@ -67,9 +66,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       await _categoriaRepository.eliminarCategoria(id);
       _loadCategorias();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(CategoryConstants.successDeleted), backgroundColor: Colors.green),
-        );
+        SnackBarHelper.showSuccess(context: context, message: CategoryConstants.successDeleted);
       }
     } catch (e) {
       setState(() {
@@ -84,9 +81,9 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         errorColor = errorData['color'];
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-        );
+        
+        SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
+    
       }
     } finally {
       setState(() {
@@ -210,9 +207,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                         ),
                       );
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text(CategoryConstants.successCreated), backgroundColor: Colors.green),
-                        );
+                        SnackBarHelper.showSuccess(context: context, message: CategoryConstants.successCreated);
                       }
                     } else {
                       // Actualizar categoría existente
@@ -226,20 +221,19 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                         ),
                       );
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text(CategoryConstants.successUpdated), backgroundColor: Colors.green),
-                        );
+                        SnackBarHelper.showSuccess(context: context, message: CategoryConstants.successUpdated);
+
+
                       }
                     }
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
                     _loadCategorias();
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error: ${e.toString()}'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    if(context.mounted){
+                      SnackBarHelper.showError(context: context, message: 'Error: ${e.toString()}', color: Colors.red);
+                    }
                   } finally {
                     setState(() {
                       _isLoading = false;

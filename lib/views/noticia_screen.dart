@@ -9,7 +9,7 @@ import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
-
+import 'package:dcristaldo/helpers/snackar_helper.dart';
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
   @override
@@ -60,9 +60,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         errorColor = errorData['color'];
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-        );
+        SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
       }
     }
   }
@@ -75,12 +73,11 @@ class NoticiaScreenState extends State<NoticiaScreen> {
           _categorias.addAll(categorias);
         });
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error al cargar las categorías'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        String errorMessage = 'Error al cargar las categorías';
+        if (mounted) {
+          SnackBarHelper.showError(context: context, message: errorMessage, color: Colors.red);
+        }
+
         return;
       }
     }
@@ -93,6 +90,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     String? categoriaSeleccionada;
 
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -204,12 +202,8 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     });
                     if (context.mounted) {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${NewsConstants.successCreated}: ${nuevaNoticia.titulo}'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                      SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successCreated}: ${nuevaNoticia.titulo}');
+
                     }
                   } catch (e) {
                     if (context.mounted) {
@@ -225,9 +219,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                       errorColor = errorData['color'];
                     }
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                      );
+                      SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
                     }
                   }
                 }
@@ -248,12 +240,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
           _categorias.addAll(categorias);
         });
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error al cargar las categorías'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          SnackBarHelper.showError(context: context, message: 'Error al cargar las categorías', color: Colors.red);
+        }
+
       }
     }
 
@@ -265,6 +255,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     String? categoriaSeleccionada = noticia.categoriaId;
 
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -381,12 +372,8 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     });
                     if (context.mounted) {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                      SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}');
+
                     }
                   } catch (e) {
                     if (context.mounted) {
@@ -402,9 +389,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                       errorColor = errorData['color'];
                     }
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                      );
+                      SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
                     }
                   }
                 }
@@ -509,12 +494,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                           try {
                             await _noticiaRepository.eliminarNoticia(noticia.id);
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${NewsConstants.successDeleted}: ${noticia.titulo}'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
+                              SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successDeleted}: ${noticia.titulo}');
                             }
                           } catch (e) {
                             setState(() {
@@ -529,9 +509,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                               errorColor = errorData['color'];
                             }
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-                              );
+                              SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
                             }
                           }
                         }
