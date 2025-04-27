@@ -1,6 +1,6 @@
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dio/dio.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 
 class CategoriaService {
@@ -73,6 +73,22 @@ class CategoriaService {
       if (response.statusCode != 200 && response.statusCode != 204) {
         throw ApiException(
           'Error al eliminar la categoría',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      throw ApiException('Error al conectar con la API de categorías: $e');
+    }
+  }
+
+  Future<Categoria> obtenerCategoriaPorId(String id) async {
+    try {
+      final response = await _dio.get('$path/$id');
+      if (response.statusCode == 200) {
+        return Categoria.fromJson(response.data);
+      } else {
+        throw ApiException(
+          'Error al obtener la categoría',
           statusCode: response.statusCode,
         );
       }

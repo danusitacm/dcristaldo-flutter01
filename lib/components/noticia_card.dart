@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:intl/intl.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
@@ -15,6 +16,15 @@ class NoticiaCard extends StatelessWidget {
     this.onEdit,
     this.onDelete,
   });
+
+  Future<String> _getCategoriaNombre(String categoriaId) async {
+    try {
+      final categoria = await CategoriaRepository().obtenerCategoriaPorId(categoriaId);
+      return categoria.nombre;
+    } catch (e) {
+      return 'Categoría desconocida'; // Mensaje predeterminado si no se encuentra la categoría
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +91,36 @@ class NoticiaCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                       ),
-                      Text (
-                        'categoriaId: ${noticia.categoriaId}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
+                      // Categoría
+                      FutureBuilder<String>(
+                        future: _getCategoriaNombre(noticia.categoriaId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Text(
+                              'Cargando categoría...',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            );
+                          } else if (snapshot.hasError || !snapshot.hasData) {
+                            return const Text(
+                              'Categoría desconocida',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              snapshot.data!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),

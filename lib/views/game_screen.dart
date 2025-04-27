@@ -1,4 +1,4 @@
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/helpers/common_widgets_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/api/services/question_service.dart';

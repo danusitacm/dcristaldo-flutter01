@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dio/dio.dart';
-import 'package:dcristaldo/constants.dart';
-
+import 'package:dcristaldo/constants/constants.dart';
+import 'package:dcristaldo/exceptions/api_exception.dart';
 class NoticiaService {
   final Dio _dio = Dio(
           BaseOptions(
@@ -12,7 +12,7 @@ class NoticiaService {
         );
   final String path=NewsConstants.noticiasEndpoint;
   /// Crear una nueva noticia
-  Future<Noticia> crearNoticia(Noticia noticia) async {
+  Future<void> crearNoticia(Noticia noticia) async {
     try {
       final response = await _dio.post(
         path,
@@ -26,12 +26,13 @@ class NoticiaService {
         },
       );
       if (response.statusCode != 201) {
-        throw Exception('Error al crear la noticia: ${response.statusMessage}');
-      }else{
-        return Noticia.fromJson(response.data);
+        throw ApiException(
+          'Error al crear la categoría',
+          statusCode: response.statusCode,
+        );
       }
     } catch (e) {
-      throw Exception('Error al crear la noticia: $e');
+      throw ApiException('Error al conectar con la API de categorías: $e');
     }
   }
 
@@ -44,10 +45,18 @@ class NoticiaService {
         final List<dynamic> data = response.data ?? [];
         return data.map((json) => Noticia.fromJson(json)).toList();
       } else {
-        throw Exception('Error al obtener las noticias: ${response.statusMessage}');
+        throw ApiException(
+          'Error al obtener las noticias',
+          statusCode: response.statusCode,
+        );
       }
+    } on DioException catch (e) {
+      throw ApiException(
+        'Error al conectar con la API de noticias: $e',
+        statusCode: e.response?.statusCode,
+      );
     } catch (e) {
-      throw Exception('Error al obtener las noticias: $e');
+      throw ApiException('Error desconocido: $e');
     }
   }
 
@@ -80,12 +89,14 @@ class NoticiaService {
           'categoriaId': noticia.categoriaId,
         },
       );
-
       if (response.statusCode != 200) {
-        throw Exception('Error al actualizar la noticia: ${response.statusMessage}');
+        throw ApiException(
+          'Error al editar la noticia',
+          statusCode: response.statusCode,
+        );
       }
     } catch (e) {
-      throw Exception('Error al actualizar la noticia: $e');
+      throw ApiException('Error al conectar con la API de noticias: $e');
     }
   }
 
@@ -93,12 +104,14 @@ class NoticiaService {
   Future<void> eliminarNoticia(String id) async {
     try {
       final response = await _dio.delete('$path/$id');
-
-      if (response.statusCode != 200 && response.statusCode != 204) {
-        throw Exception('Error al eliminar la noticia: ${response.statusMessage}');
+    if (response.statusCode != 200 && response.statusCode != 204) {
+        throw ApiException(
+          'Error al eliminar la noticias',
+          statusCode: response.statusCode,
+        );
       }
     } catch (e) {
-      throw Exception('Error al eliminar la noticia: $e');
+      throw ApiException('Error al conectar con la API de noticias: $e');
     }
   }
   

@@ -1,4 +1,4 @@
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 class Noticia {
   String id;
   final String titulo;

@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:dcristaldo/data/noticia_repository.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/views/base_screen.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:intl/intl.dart';
-
+import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:dcristaldo/helpers/error_helper.dart';
+import 'package:dcristaldo/domain/categoria.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
+import 'package:dcristaldo/helpers/snackar_helper.dart';
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
   @override
@@ -15,6 +19,7 @@ class NoticiaScreen extends StatefulWidget {
 class NoticiaScreenState extends State<NoticiaScreen> {
   final NoticiaRepository _noticiaRepository = NoticiaRepository();
   final List<Noticia> _noticias = [];
+  final List<Categoria> _categorias = [];
   bool _isLoading = false;
   bool hasError = false;
   DateTime? _ultimaActualizacion;
@@ -47,244 +52,351 @@ class NoticiaScreenState extends State<NoticiaScreen> {
         _isLoading = false;
         hasError = true;
       });
+      String errorMessage='Error al cargar las categorías';
+      Color errorColor=Colors.grey; 
+      if (e is ApiException) {
+        final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+        errorMessage = errorData['message'];
+        errorColor = errorData['color'];
+      }
+      if (mounted) {
+        SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
+      }
     }
   }
 
-  void _showCreateNoticiaForm() {
+  void _showCreateNoticiaForm() async {
+    if (_categorias.isEmpty) {
+      try {
+        final categorias = await CategoriaRepository().obtenerCategorias();
+        setState(() {
+          _categorias.addAll(categorias);
+        });
+      } catch (e) {
+        String errorMessage = 'Error al cargar las categorías';
+        if (mounted) {
+          SnackBarHelper.showError(context: context, message: errorMessage, color: Colors.red);
+        }
+
+        return;
+      }
+    }
+
     final formKey = GlobalKey<FormState>();
     String titulo = '';
     String descripcion = '';
     String fuente = '';
     String imagenUrl = '';
+    String? categoriaSeleccionada;
 
-    showModalBottomSheet(
+    showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
-      isScrollControlled: true,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => titulo = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El título es obligatorio';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => descripcion = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La descripción es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Fuente',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => fuente = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La fuente es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'URL de la Imagen',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => imagenUrl = value,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      final nuevaNoticia = Noticia(
-                        id: '',
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fuente: fuente,
-                        publicadaEl: DateTime.now(),
-                        imagenUrl: imagenUrl.isNotEmpty
-                            ? imagenUrl
-                            : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
-                        categoriaId: NewsConstants.defaultcategoriaId,
-                      );
-                      try {
-                        final noticiaCreada = await _noticiaRepository.crearNoticia(nuevaNoticia);
-                        setState(() {
-                          _noticias.insert(0, noticiaCreada);
-                          _ultimaActualizacion = DateTime.now();
-                        });
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Noticia creada: ${noticiaCreada.titulo}')),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          setState(() {
-                            hasError = true;
-                          });
-                        }
+        return AlertDialog(
+          title: const Text('Crear Noticia'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Título',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => titulo = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El título es obligatorio';
                       }
-                    }
-                  },
-                  child: const Text('Guardar Noticia'),
-                ),
-              ],
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => descripcion = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La descripción es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Fuente',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => fuente = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La fuente es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'URL de la Imagen',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => imagenUrl = value,
+                  ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: categoriaSeleccionada,
+                    decoration: const InputDecoration(
+                      labelText: 'Categoría',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _categorias.map((categoria) {
+                      return DropdownMenuItem<String>(
+                        value: categoria.id,
+                        child: Text(categoria.nombre),
+                      );
+                    }).toList(),
+                    onChanged: (value) => categoriaSeleccionada = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La categoría es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final nuevaNoticia = Noticia(
+                    id: '',
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fuente: fuente,
+                    publicadaEl: DateTime.now(),
+                    imagenUrl: imagenUrl.isNotEmpty
+                        ? imagenUrl
+                        : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
+                    categoriaId: categoriaSeleccionada!,
+                  );
+                  try {
+                    await _noticiaRepository.crearNoticia(nuevaNoticia);
+                    setState(() {
+                      _loadNoticias();
+                      _ultimaActualizacion = DateTime.now();
+                    });
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successCreated}: ${nuevaNoticia.titulo}');
+
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      setState(() {
+                        hasError = true;
+                      });
+                    }
+                    String errorMessage = 'Error al cargar las noticias';
+                    Color errorColor = Colors.grey;
+                    if (e is ApiException) {
+                      final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                      errorMessage = errorData['message'];
+                      errorColor = errorData['color'];
+                    }
+                    if (context.mounted) {
+                      SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
+                    }
+                  }
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
         );
       },
     );
   }
 
-  void _showUpdateNoticiaForm(Noticia noticia) {
+  void _showUpdateNoticiaForm(Noticia noticia) async {
+    if (_categorias.isEmpty) {
+      try {
+        final categorias = await CategoriaRepository().obtenerCategorias();
+        setState(() {
+          _categorias.addAll(categorias);
+        });
+      } catch (e) {
+        if (mounted) {
+          SnackBarHelper.showError(context: context, message: 'Error al cargar las categorías', color: Colors.red);
+        }
+
+      }
+    }
+
     final formKey = GlobalKey<FormState>();
     String titulo = noticia.titulo;
     String descripcion = noticia.descripcion;
     String fuente = noticia.fuente;
     String imagenUrl = noticia.imagenUrl;
+    String? categoriaSeleccionada = noticia.categoriaId;
 
-    showModalBottomSheet(
+    showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
-      isScrollControlled: true,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: titulo,
-                  decoration: const InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => titulo = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'El título es obligatorio';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: descripcion,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => descripcion = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La descripción es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: fuente,
-                  decoration: const InputDecoration(
-                    labelText: 'Fuente',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => fuente = value,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'La fuente es obligatoria';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                TextFormField(
-                  initialValue: imagenUrl,
-                  decoration: const InputDecoration(
-                    labelText: 'URL de la Imagen',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) => imagenUrl = value,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      final noticiaActualizada = Noticia(
-                        id: noticia.id,
-                        titulo: titulo,
-                        descripcion: descripcion,
-                        fuente: fuente,
-                        publicadaEl: noticia.publicadaEl,
-                        imagenUrl: imagenUrl,
-                        categoriaId: NewsConstants.defaultcategoriaId,
-                      );
-                      try {
-                        await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
-                        setState(() {
-                          final index = _noticias.indexWhere((n) => n.id == noticia.id);
-                          if (index != -1) {
-                            _noticias[index] = noticiaActualizada;
-                          }
-                        });
-                        if (context.mounted) {
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Noticia actualizada: ${noticiaActualizada.titulo}')),
-                          );
-                        }
-                      } catch (e) {
-                        if (context.mounted) {
-                          setState(() {
-                            hasError = true;
-                          });
-                        }
+        return AlertDialog(
+          title: const Text('Actualizar Noticia'),
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    initialValue: titulo,
+                    decoration: const InputDecoration(
+                      labelText: 'Título',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => titulo = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'El título es obligatorio';
                       }
-                    }
-                  },
-                  child: const Text('Actualizar Noticia'),
-                ),
-              ],
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: descripcion,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => descripcion = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La descripción es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: fuente,
+                    decoration: const InputDecoration(
+                      labelText: 'Fuente',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => fuente = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La fuente es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    initialValue: imagenUrl,
+                    decoration: const InputDecoration(
+                      labelText: 'URL de la Imagen',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) => imagenUrl = value,
+                  ),
+                  const SizedBox(height: 16.0),
+                  DropdownButtonFormField<String>(
+                    value: categoriaSeleccionada,
+                    decoration: const InputDecoration(
+                      labelText: 'Categoría',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _categorias.map((categoria) {
+                      return DropdownMenuItem<String>(
+                        value: categoria.id,
+                        child: Text(categoria.nombre),
+                      );
+                    }).toList(),
+                    onChanged: (value) => categoriaSeleccionada = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'La categoría es obligatoria';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  final noticiaActualizada = Noticia(
+                    id: noticia.id,
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    fuente: fuente,
+                    publicadaEl: noticia.publicadaEl,
+                    imagenUrl: imagenUrl,
+                    categoriaId: categoriaSeleccionada!,
+                  );
+                  try {
+                    await _noticiaRepository.actualizarNoticia(noticia.id, noticiaActualizada);
+
+                    setState(() {
+                      final index = _noticias.indexWhere((n) => n.id == noticia.id);
+                      if (index != -1) {
+                        _noticias[index] = noticiaActualizada;
+                      }
+                    });
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successUpdated}: ${noticiaActualizada.titulo}');
+
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      setState(() {
+                        hasError = true;
+                      });
+                    }
+                    String errorMessage = 'Error al actualizar la noticia';
+                    Color errorColor = Colors.grey;
+                    if (e is ApiException) {
+                      final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                      errorMessage = errorData['message'];
+                      errorColor = errorData['color'];
+                    }
+                    if (context.mounted) {
+                      SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
+                    }
+                  }
+                }
+              },
+              child: const Text('Actualizar'),
+            ),
+          ],
         );
       },
     );
@@ -337,61 +449,74 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             ),
           if (!_isLoading || _noticias.isNotEmpty)
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80.0), // Espacio para el botón flotante
-                itemCount: _noticias.length,
-                itemBuilder: (context, index) {
-                  final noticia = _noticias[index];
-                  return NoticiaCard(
-                    noticia: noticia,
-                    onEdit: () => _showUpdateNoticiaForm(noticia),
-                    onDelete: () async {
-                      final confirm = await showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Confirmar eliminación'),
-                          content: const Text('¿Estás seguro de que deseas eliminar esta noticia?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text('Cancelar'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                              ),
-                              child: const Text('Eliminar'),
-                            ),
-                          ],
-                        ),
-                      );
-
-                      if (confirm == true) {
-                        final noticiaEliminada = noticia;
-                        setState(() {
-                          _noticias.removeAt(index);
-                          _ultimaActualizacion = DateTime.now();
-                        });
-
-                        try {
-                          await _noticiaRepository.eliminarNoticia(noticia.id);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Noticia eliminada: ${noticia.titulo}')),
-                            );
-                          }
-                        } catch (e) {
-                          setState(() {
-                            _noticias.insert(index, noticiaEliminada);
-                            hasError = true;
-                          });
-                        }
-                      }
-                    },
-                  );
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _loadNoticias(); // Llama a la función para recargar las noticias
                 },
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80.0), // Espacio para el botón flotante
+                  itemCount: _noticias.length,
+                  itemBuilder: (context, index) {
+                    final noticia = _noticias[index];
+                    return NoticiaCard(
+                      noticia: noticia,
+                      onEdit: () => _showUpdateNoticiaForm(noticia),
+                      onDelete: () async {
+                        final confirm = await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Confirmar eliminación'),
+                            content: const Text('¿Estás seguro de que deseas eliminar esta noticia?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(false),
+                                child: const Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(true),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Eliminar'),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true) {
+                          final noticiaEliminada = noticia;
+                          setState(() {
+                            _noticias.removeAt(index);
+                            _ultimaActualizacion = DateTime.now();
+                          });
+
+                          try {
+                            await _noticiaRepository.eliminarNoticia(noticia.id);
+                            if (context.mounted) {
+                              SnackBarHelper.showSuccess(context: context, message: '${NewsConstants.successDeleted}: ${noticia.titulo}');
+                            }
+                          } catch (e) {
+                            setState(() {
+                              _noticias.insert(index, noticiaEliminada);
+                              hasError = true;
+                            });
+                            String errorMessage = 'Error al eliminar la noticia';
+                            Color errorColor = Colors.grey;
+                            if (e is ApiException) {
+                              final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode, context: 'noticia');
+                              errorMessage = errorData['message'];
+                              errorColor = errorData['color'];
+                            }
+                            if (context.mounted) {
+                              SnackBarHelper.showError(context: context, message: errorMessage, color: errorColor);
+                            }
+                          }
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
             ),
         ],

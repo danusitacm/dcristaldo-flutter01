@@ -1,4 +1,4 @@
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/game_screen.dart';

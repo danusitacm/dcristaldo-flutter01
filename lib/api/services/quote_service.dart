@@ -1,6 +1,6 @@
 import 'package:dcristaldo/data/quote_repository.dart';
 import 'package:dcristaldo/domain/quote.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 
 class QuoteService {
   final QuoteRepository _repository = QuoteRepository();

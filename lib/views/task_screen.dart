@@ -1,7 +1,7 @@
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/views/detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/constants.dart';
+import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/api/services/task_service.dart';
 import 'package:dcristaldo/domain/task.dart';
 import 'package:dcristaldo/components/task_card_helper.dart'; // Importa TaskCardHelper

@@ -60,4 +60,16 @@ class CategoriaRepository {
       }
     }
   }
+  Future<Categoria> obtenerCategoriaPorId(String id) async {
+    try {
+      return await _service.obtenerCategoriaPorId(id);
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        rethrow;
+      } else {
+        throw Exception('Error desconocido: $e');
+      }
+    }
+  }
 }
