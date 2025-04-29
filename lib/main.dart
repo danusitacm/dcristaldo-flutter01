@@ -9,15 +9,20 @@ import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/views/mi_screen.dart';
 import 'package:dcristaldo/views/task_screen.dart';
 import 'package:dcristaldo/views/quote_screen.dart';
-import 'package:dcristaldo/views/noticia_screen.dart';
+import 'package:dcristaldo/views/news_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dcristaldo/views/counter_screen.dart';
-import 'package:dcristaldo/views/categoria_screen.dart';
+//import 'package:dcristaldo/views/categoria_screen.dart';
 import 'package:dcristaldo/bloc/counter_bloc.dart';
+import 'package:dcristaldo/bloc/news_bloc.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
+import 'package:dcristaldo/di/locator.dart';
+import 'package:dcristaldo/bloc/category/category_bloc.dart';
+import 'package:dcristaldo/views/category_screen.dart'; 
 Future<void> main() async {
   await dotenv.load();
+  await initLocator();
   runApp(const MyApp());
 }
 
@@ -26,8 +31,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CounterBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CounterBloc>(
+          create: (context) => CounterBloc(),
+        ),
+        BlocProvider<NewsBloc>(
+          create: (context) => NewsBloc(),
+        ),
+        BlocProvider<CategoriaBloc>(create: (context) => CategoriaBloc()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -46,7 +59,7 @@ class MyApp extends StatelessWidget {
           '/start_game': (context) => const StartScreen(),
           '/game': (context) => const GameScreen(),
           '/quote': (context) => const QuoteScreen(),
-          '/noticias': (context) => const NoticiaScreen(),
+          '/noticias': (context) => const NewsScreen(),
           '/categorias': (context) => const CategoriaScreen(),
         },
       ),
