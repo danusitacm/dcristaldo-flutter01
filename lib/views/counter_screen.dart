@@ -16,7 +16,7 @@ class CounterScreen extends StatelessWidget {
       ),
       body: BlocBuilder<CounterBloc, CounterState>(
         builder: (context, state) {
-          print('State: $state');
+          //print('State: $state');
           if (state is CounterLoadSuccess) {
             // Determinar el color del texto según el valor del contador
             Color textColor;

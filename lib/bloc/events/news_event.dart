@@ -6,23 +6,49 @@ sealed class NewsEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
 // Cuando se inicia la pantalla noticias
 final class NewsStarted extends NewsEvent {
   const NewsStarted();
 }
+
 // Cuando se carga la pantalla noticias
 final class NewsLoaded extends NewsEvent {
   const NewsLoaded();
 }
-// Cuando se agrega
+
+// Cuando se agrega una noticia
 final class NewsAdded extends NewsEvent {
-  const NewsAdded();
+  final Noticia noticia;
+  
+  const NewsAdded(this.noticia);
+  
+  @override
+  List<Object> get props => [noticia];
 }
+
 // Cuando se actualiza una noticia
 final class NewsUpdated extends NewsEvent {
-  const NewsUpdated();
+  final String id;
+  final Noticia noticia;
+  
+  const NewsUpdated(this.id, this.noticia);
+  
+  @override
+  List<Object> get props => [id, noticia];
 }
+
 // Cuando se elimina una noticia
 final class NewsDeleted extends NewsEvent {
-  const NewsDeleted();
+  final String id;
+  
+  const NewsDeleted(this.id);
+  
+  @override
+  List<Object> get props => [id];
+}
+
+// Cuando se solicitan categorías para el selector
+final class NewsCategoriesRequested extends NewsEvent {
+  const NewsCategoriesRequested();
 }
