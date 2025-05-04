@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class DeleteConfirmationDialog extends StatelessWidget {
   final String title;
   final String message;
-  final VoidCallback onDelete;
-
+  final Function() onDelete;
+  
   const DeleteConfirmationDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     required this.onDelete,
-  }) : super(key: key);
-
+  });
+  
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -27,9 +27,9 @@ class DeleteConfirmationDialog extends StatelessWidget {
             onDelete();
             Navigator.of(context).pop();
           },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
+          style: const ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.red),
+            foregroundColor: WidgetStatePropertyAll(Colors.white),
           ),
           child: const Text('Eliminar'),
         ),

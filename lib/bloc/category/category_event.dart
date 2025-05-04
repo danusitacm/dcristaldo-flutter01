@@ -1,38 +1,38 @@
-part of 'category_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:dcristaldo/domain/categoria.dart';
 
-abstract class CategoryEvent extends Equatable {
-  const CategoryEvent();
-
+abstract class CategoriaEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class CategoriaInitEvent extends CategoryEvent {}
+class CategoriaInitEvent extends CategoriaEvent { 
+}
 
-class CategoriaCreateEvent extends CategoryEvent {
+class CategoriaCreateEvent extends CategoriaEvent {
   final Categoria categoria;
-  
-  const CategoriaCreateEvent(this.categoria);
-  
+
+  CategoriaCreateEvent(this.categoria);
+
   @override
   List<Object?> get props => [categoria];
 }
 
-class CategoriaUpdateEvent extends CategoryEvent {
+class CategoriaUpdateEvent extends CategoriaEvent {
   final String id;
   final Categoria categoria;
-  
-  const CategoriaUpdateEvent(this.id, this.categoria);
-  
+
+  CategoriaUpdateEvent({required this.id, required this.categoria});
+
   @override
   List<Object?> get props => [id, categoria];
 }
 
-class CategoriaDeleteEvent extends CategoryEvent {
+class CategoriaDeleteEvent extends CategoriaEvent {
   final String id;
-  
-  const CategoriaDeleteEvent(this.id);
-  
+
+  CategoriaDeleteEvent(this.id);
+
   @override
   List<Object?> get props => [id];
 }
