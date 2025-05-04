@@ -22,20 +22,27 @@ class CategoryCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(8),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: Image.network(
-            categoria.imagenUrl,
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
+          child: categoria.imagenUrl?.isNotEmpty == true
+            ? Image.network(
+                categoria.imagenUrl ?? '',
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 60,
+                    height: 60,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.broken_image),
+                  );
+                },
+              )
+            : Container(
                 width: 60,
                 height: 60,
                 color: Colors.grey[300],
-                child: const Icon(Icons.broken_image),
-              );
-            },
-          ),
+                child: const Icon(Icons.image_not_supported),
+              ),
         ),
         title: Text(
           categoria.nombre,

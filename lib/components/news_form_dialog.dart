@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dcristaldo/bloc/news_bloc.dart';
+import 'package:dcristaldo/bloc/news/news_bloc.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/constants/constants.dart';
@@ -19,7 +19,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
   late final TextEditingController tituloController;
   late final TextEditingController descripcionController;
   late final TextEditingController fuenteController;
-  late final TextEditingController imagenUrlController;
+  late final TextEditingController urlImagenController;
   late String categoriaId;
   late DateTime publicadaEl;
   
@@ -29,7 +29,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
     tituloController = TextEditingController(text: widget.noticia?.titulo ?? '');
     descripcionController = TextEditingController(text: widget.noticia?.descripcion ?? '');
     fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
-    imagenUrlController = TextEditingController(text: widget.noticia?.imagenUrl ?? '');
+    urlImagenController = TextEditingController(text: widget.noticia?.urlImagen ?? '');
     publicadaEl = widget.noticia?.publicadaEl ?? DateTime.now();
     categoriaId = widget.noticia?.categoriaId ?? NewsConstants.defaultcategoriaId;
   }
@@ -39,7 +39,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
     tituloController.dispose();
     descripcionController.dispose();
     fuenteController.dispose();
-    imagenUrlController.dispose();
+    urlImagenController.dispose();
     super.dispose();
   }
   
@@ -97,7 +97,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
               ),
               const SizedBox(height: 16.0),
               TextFormField(
-                controller: imagenUrlController,
+                controller: urlImagenController,
                 decoration: const InputDecoration(
                   labelText: 'URL de la Imagen',
                   border: OutlineInputBorder(),
@@ -195,7 +195,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
       final titulo = tituloController.text.trim();
       final descripcion = descripcionController.text.trim();
       final fuente = fuenteController.text.trim();
-      final imagenUrl = imagenUrlController.text.trim();
+      final urlImagen = urlImagenController.text.trim();
 
       final nuevaNoticia = Noticia(
         id: widget.noticia?.id ?? '',
@@ -203,7 +203,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
         descripcion: descripcion,
         fuente: fuente,
         publicadaEl: publicadaEl,
-        imagenUrl: imagenUrl,
+        urlImagen: urlImagen,
         categoriaId: categoriaId,
       );
 

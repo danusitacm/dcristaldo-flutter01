@@ -75,7 +75,6 @@ class CategoriaRepository {
     }
   }
 
-
   // Eliminar una categoría
   Future<void> eliminarCategoria(String id) async {
     try {

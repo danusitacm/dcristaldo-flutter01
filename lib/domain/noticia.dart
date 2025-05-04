@@ -5,7 +5,7 @@ class Noticia {
   final String descripcion;
   final String fuente;
   final DateTime publicadaEl;
-  final String imagenUrl;
+  final String urlImagen;
   String categoriaId=NewsConstants.defaultcategoriaId;
 
   Noticia({
@@ -13,7 +13,7 @@ class Noticia {
     required this.descripcion,
     required this.fuente,
     required this.publicadaEl,
-    required this.imagenUrl,
+    required this.urlImagen,
     required this.id,
     required this.categoriaId,
   });
@@ -25,7 +25,7 @@ class Noticia {
       descripcion: json['descripcion'] ?? 'Sin descripción',
       fuente: json['fuente']?? 'Fuente desconocida',
       publicadaEl: DateTime.parse(json['publicadaEl'] ?? DateTime.now().toIso8601String()),
-      imagenUrl: json['urlImage'] ?? 'https://demofree.sirv.com/nope-not-here.jpg?w=150', // Si no hay imagen, se asigna una cadena vacía
+      urlImagen: json['urlImage'] ?? 'https://demofree.sirv.com/nope-not-here.jpg?w=150', // Si no hay imagen, se asigna una cadena vacía
       categoriaId: json['categoriaId'],);
   }
   Map<String, dynamic> toJson() {
@@ -34,7 +34,7 @@ class Noticia {
       'descripcion': descripcion,
       'fuente': fuente,
       'publicadaEl': publicadaEl.toIso8601String(),
-      'urlImage': imagenUrl,
+      'urlImage': urlImagen,
       'categoriaId': categoriaId,
     };
   }

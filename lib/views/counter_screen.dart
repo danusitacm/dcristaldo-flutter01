@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/views/base_screen.dart';
-import 'package:dcristaldo/bloc/counter_bloc.dart';
+import 'package:dcristaldo/bloc/counter/counter_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CounterScreen extends StatelessWidget {

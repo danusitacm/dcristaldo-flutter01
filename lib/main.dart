@@ -13,13 +13,15 @@ import 'package:dcristaldo/views/news_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dcristaldo/views/counter_screen.dart';
 //import 'package:dcristaldo/views/categoria_screen.dart';
-import 'package:dcristaldo/bloc/counter_bloc.dart';
-import 'package:dcristaldo/bloc/news_bloc.dart';
+import 'package:dcristaldo/bloc/counter/counter_bloc.dart';
+import 'package:dcristaldo/bloc/news/news_bloc.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
 import 'package:dcristaldo/di/locator.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/views/category_screen.dart'; 
+import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
+
 Future<void> main() async {
   await dotenv.load();
   await initLocator();
@@ -39,7 +41,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<NewsBloc>(
           create: (context) => NewsBloc(),
         ),
-        BlocProvider<CategoriaBloc>(create: (context) => CategoriaBloc()),
+        BlocProvider<CategoriaBloc>(
+          create: (context) => CategoriaBloc()),
+        BlocProvider<PreferenciaBloc>(
+          create: (context) => PreferenciaBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -60,30 +65,9 @@ class MyApp extends StatelessWidget {
           '/game': (context) => const GameScreen(),
           '/quote': (context) => const QuoteScreen(),
           '/noticias': (context) => const NewsScreen(),
-          '/categorias': (context) => const CategoriaScreen(),
+          '/categorias': (context) => const CategoryScreen(),
         },
       ),
     );
   }
 }
-
-/*void _showWarningDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Advertencia'),
-        content: const Text('Esto es una advertencia importante.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cerrar'),
-          ),
-        ],
-      );
-    },
-  );
-}
-*/

@@ -36,7 +36,7 @@ class SnackBarHelper {
   static void showError({
     required BuildContext context,
     required String message,
-    required Color color
+    Color color = Colors.red,
   }) {
     showSnackBar(
       context: context,

@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/noticia.dart';
+import 'package:dcristaldo/domain/categoria.dart';
 import 'package:intl/intl.dart';
 import 'package:dcristaldo/constants/constants.dart';
-import 'package:dcristaldo/data/categoria_repository.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
   final Color iconColor = Colors.black;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final List<Categoria>? categorias;
 
   const NoticiaCard({
     super.key,
     required this.noticia,
     this.onEdit,
     this.onDelete,
+    this.categorias,
   });
 
-  Future<String> _getCategoriaNombre(String categoriaId) async {
-    try {
-      final categoria = await CategoriaRepository().obtenerCategoriaPorId(categoriaId);
+  String _getCategoriaNombre(String categoriaId) {
+    if (categorias != null) {
+      final categoria = categorias!.firstWhere(
+        (c) => c.id == categoriaId,
+        orElse: () => Categoria(
+          id: '',
+          nombre: 'Categoría desconocida',
+          descripcion: '',
+          imagenUrl: '',
+        ),
+      );
       return categoria.nombre;
-    } catch (e) {
-      return 'Categoría desconocida'; // Mensaje predeterminado si no se encuentra la categoría
     }
+    return 'Categoría desconocida';
   }
 
   @override
@@ -92,35 +101,12 @@ class NoticiaCard extends StatelessWidget {
                         ),
                       ),
                       // Categoría
-                      FutureBuilder<String>(
-                        future: _getCategoriaNombre(noticia.categoriaId),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Text(
-                              'Cargando categoría...',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            );
-                          } else if (snapshot.hasError || !snapshot.hasData) {
-                            return const Text(
-                              'Categoría desconocida',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            );
-                          } else {
-                            return Text(
-                              snapshot.data!,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            );
-                          }
-                        },
+                      Text(
+                        _getCategoriaNombre(noticia.categoriaId),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -137,8 +123,8 @@ class NoticiaCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
                   child: Image.network(
-                    noticia.imagenUrl.isNotEmpty
-                        ? noticia.imagenUrl
+                    noticia.urlImagen.isNotEmpty
+                        ? noticia.urlImagen
                         : 'https://via.placeholder.com/150',
                     width: 120,
                     height: 80,

@@ -5,13 +5,13 @@ import 'package:dcristaldo/bloc/category/category_event.dart';
 import 'package:dcristaldo/bloc/category/category_state.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/views/base_screen.dart';
-import 'package:dcristaldo/helpers/snackar_helper.dart';
+import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/components/delete_confirmation_dialog.dart';
-import 'package:dcristaldo/components/category_card.dart';
 import 'package:dcristaldo/components/category_form_dialog.dart';
+import 'package:dcristaldo/components/category_card.dart';
 
-class CategoriaScreen extends StatelessWidget {
-  const CategoriaScreen({super.key});
+class CategoryScreen extends StatelessWidget {
+  const CategoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class CategoriaScreen extends StatelessWidget {
                   final categoria = categorias[index];
                   return CategoryCard(
                     categoria: categoria,
-                    onEdit: () => _showEditCategoriaDialog(context, categoria),
+                    onEdit: () => _showEditCategoryDialog(context, categoria),
                     onDelete: () => _showDeleteConfirmationDialog(context, categoria.id!),
                   );
                 },
@@ -88,7 +88,7 @@ class CategoriaScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddCategoriaDialog(context),
+        onPressed: () => _showAddCategoryDialog(context),
         child: const Icon(Icons.add),
       ),
     );
@@ -105,14 +105,14 @@ class CategoriaScreen extends StatelessWidget {
     );
   }
 
-  void _showAddCategoriaDialog(BuildContext context) {
+  void _showAddCategoryDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => const CategoryFormDialog(),
     );
   }
 
-  void _showEditCategoriaDialog(BuildContext context, Categoria categoria) {
+  void _showEditCategoryDialog(BuildContext context, Categoria categoria) {
     showDialog(
       context: context,
       builder: (context) => CategoryFormDialog(categoria: categoria),

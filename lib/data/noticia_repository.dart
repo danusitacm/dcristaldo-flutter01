@@ -74,7 +74,7 @@ class NoticiaRepository {
     if (noticia.fuente.trim().isEmpty) {
       throw ArgumentError('La fuente de la noticia no puede estar vacía.');
     }
-    if (noticia.imagenUrl.trim().isEmpty) {
+    if (noticia.urlImagen.trim().isEmpty) {
       throw ArgumentError('La URL de la imagen no puede estar vacía.');
     }
   }

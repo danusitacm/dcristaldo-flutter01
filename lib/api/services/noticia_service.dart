@@ -21,7 +21,7 @@ class NoticiaService {
           'descripcion': noticia.descripcion,
           'fuente': noticia.fuente,
           'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.imagenUrl,
+          'urlImage': noticia.urlImagen,
           'categoriaId': noticia.categoriaId,
         },
       );
@@ -85,7 +85,7 @@ class NoticiaService {
           'descripcion': noticia.descripcion,
           'fuente': noticia.fuente,
           'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.imagenUrl,
+          'urlImage': noticia.urlImagen,
           'categoriaId': noticia.categoriaId,
         },
       );
@@ -144,7 +144,7 @@ class NoticiaService {
           'descripcion': noticia.descripcion,
           'fuente': noticia.fuente,
           'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.imagenUrl,
+          'urlImage': noticia.urlImagen,
         },
       );
     } catch (e) {
