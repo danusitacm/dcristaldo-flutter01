@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
+import 'package:dcristaldo/bloc/category/category_event.dart'; // Añadido la importación del evento
 import 'package:dcristaldo/domain/categoria.dart';
 
 class CategoriaFormDialog extends StatefulWidget {
@@ -43,22 +44,41 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
       final descripcion = _descripcionController.text.trim();
       final imagenUrl = _imagenUrlController.text.trim();
 
+      // Validación adicional para la URL de imagen
+      final imagenUrlFinal = imagenUrl.isEmpty ? null : imagenUrl;
+
       final categoria = Categoria(
-        id: widget.categoria?.id ?? '',
+        id: widget.categoria?.id, // Puede ser null si es nueva categoría
         nombre: nombre,
         descripcion: descripcion,
-        imagenUrl: imagenUrl,
+        imagenUrl: imagenUrlFinal,
       );
 
-      if (widget.categoria == null) {
-        // Crear nueva categoría
-        context.read<CategoriaBloc>().add(CategoriaCreateEvent(categoria));
-      } else {
-        // Actualizar categoría existente
-        context.read<CategoriaBloc>().add(CategoriaUpdateEvent(widget.categoria!.id!, categoria));
+      try {
+        if (widget.categoria == null) {
+          // Crear nueva categoría - no pasamos ID, el backend lo asignará
+          context.read<CategoriaBloc>().add(CategoriaCreateEvent(categoria));
+          Navigator.of(context).pop();
+        } else {
+          // Actualizar categoría existente - aseguramos que el ID no es nulo
+          if (widget.categoria?.id != null) {
+            context.read<CategoriaBloc>().add(CategoriaUpdateEvent(
+              id: widget.categoria!.id!, 
+              categoria: categoria
+            ));
+            Navigator.of(context).pop();
+          } else {
+            // Manejar caso donde el ID es nulo (no debería ocurrir)
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error: ID de categoría no válido'))
+            );
+          }
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al guardar la categoría: ${e.toString()}'))
+        );
       }
-
-      Navigator.of(context).pop();
     }
   }
 

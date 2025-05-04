@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
+import 'package:dcristaldo/bloc/category/category_event.dart';
+import 'package:dcristaldo/bloc/category/category_state.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_state.dart';
@@ -61,6 +63,11 @@ class PreferenciasScreen extends StatelessWidget {
           builder: (context, state) {
             // Determinar si el botón debe estar habilitado
             final bool isEnabled = state is! PreferenciaError;
+            
+            // Para los estados de error, tratamos categoriasSeleccionadas como una lista vacía
+            final int selectedCount = state is PreferenciaError 
+                ? 0 
+                : state.categoriasSeleccionadas.length;
 
             return BottomAppBar(
               child: Padding(
@@ -71,7 +78,7 @@ class PreferenciasScreen extends StatelessWidget {
                     Text(
                       state is PreferenciaError
                         ? 'Error al cargar preferencias'
-                        : 'Categorías seleccionadas: ${state.categoriasSeleccionadas.length}',
+                        : 'Categorías seleccionadas: $selectedCount',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: state is PreferenciaError ? Colors.red : null,
                       ),

@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
           '/game': (context) => const GameScreen(),
           '/quote': (context) => const QuoteScreen(),
           '/noticias': (context) => const NewsScreen(),
-          '/categorias': (context) => const CategoriaScreen(),
+          '/categorias': (context) => const CategoryScreen(),
         },
       ),
     );
