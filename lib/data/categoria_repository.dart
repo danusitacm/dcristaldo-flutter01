@@ -1,13 +1,19 @@
 import 'package:dcristaldo/api/services/categoria_service.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+
 class CategoriaRepository {
-  final CategoriaService _service= CategoriaService();
-  
+  final CategoriaService _service = CategoriaService();
+  // Caché de categorías para mejorar el rendimiento
+  List<Categoria>? _categoriasCache;
+
   // Obtener todas las categorías
   Future<List<Categoria>> obtenerCategorias() async {
     try {
-      return await _service.obtenerCategorias();
+      final categorias = await _service.obtenerCategorias();
+      // Actualizar caché
+      _categoriasCache = categorias;
+      return categorias;
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
@@ -16,6 +22,14 @@ class CategoriaRepository {
         throw Exception('Error desconocido: $e');
       }
     }
+  }
+
+  // Método para obtener categorías de la caché o de la API si la caché está vacía
+  Future<List<Categoria>> obtenerCategoriasCache() async {
+    if (_categoriasCache != null) {
+      return _categoriasCache!;
+    }
+    return await obtenerCategorias();
   }
 
   // Crear una nueva categoría
@@ -46,7 +60,6 @@ class CategoriaRepository {
     }
   }
 
-
   // Eliminar una categoría
   Future<void> eliminarCategoria(String id) async {
     try {
@@ -60,6 +73,7 @@ class CategoriaRepository {
       }
     }
   }
+
   Future<Categoria> obtenerCategoriaPorId(String id) async {
     try {
       return await _service.obtenerCategoriaPorId(id);

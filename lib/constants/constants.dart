@@ -91,7 +91,19 @@ class CategoryConstants {
 
   static const String successCreated = 'Categoria creada';
   static const String successUpdated = 'Categoria actualizada';
-  static const String successDeleted = 'Categoria eliminada';
+  static const String successDeleted = 'Categoria eliminada'; 
+}
+class PreferenciaConstants {
+  static String get url => dotenv.env['BASE_URL'] ?? 'https://default.url';
+  static String get preferenciasEndpoint => '$url/preferencias';
+  static const int timeoutSeconds = 10;
   
+  static const String mensajeError = 'Error al cargar las preferencias';
+  static const String errorNotFound= "Preferencias no encontradas";
+  static const String errorServer= "Error del servidor al cargar la preferencias";
+
+  static const String successCreated = 'Preferencia creada';
+  static const String successUpdated = 'Preferencia actualizada';
+  static const String successDeleted = 'Preferencia eliminada'; 
 }
 

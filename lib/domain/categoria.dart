@@ -3,13 +3,13 @@ class Categoria {
   final String? id; // ID asignado por la API (opcional, para operaciones CRUD)
   final String nombre; // Nombre de la categoría (por ejemplo, "Inteligencia Artificial")
   final String descripcion; // Descripción breve (por ejemplo, "Noticias sobre IA")
-  String imagenUrl="https://picsum.photos/seed/picsum/200/300"; // URL de la imagen representativa de la categoría
+  final String? imagenUrl; // URL de la imagen representativa de la categoría
 
   Categoria({
     this.id, // Puede ser null al crear una categoría, se asigna al guardarla
     required this.nombre,
     required this.descripcion,
-    required imagenUrl,
+    required this.imagenUrl,
   }){
     //this.imagenUrl = imagenUrl;
   }
@@ -20,7 +20,7 @@ class Categoria {
       id: json['_id'] as String?, // El ID lo asigna CrudCrud
       nombre: json['nombre'] as String,
       descripcion: json['descripcion'] as String,
-      imagenUrl: json['imagenUrl'] as String,
+      imagenUrl: json['imagenUrl'] as String?,
     );
   }
 

@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
 import 'package:dcristaldo/constants/constants.dart';
-import 'package:dcristaldo/helpers/snackar_helper.dart';
+import 'package:dcristaldo/helpers/snackbar_helper.dart';
 
 class CategoriaScreen extends StatefulWidget {
   const CategoriaScreen({super.key});
@@ -307,3 +307,4 @@ class CategoriaScreenState extends State<CategoriaScreen> {
     );
   }
 }
+*/

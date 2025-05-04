@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:dcristaldo/data/noticia_repository.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/views/base_screen.dart';
@@ -9,7 +9,7 @@ import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/error_helper.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
-import 'package:dcristaldo/helpers/snackar_helper.dart';
+import 'package:dcristaldo/helpers/snackbar_helper.dart';
 class NoticiaScreen extends StatefulWidget {
   const NoticiaScreen({super.key});
   @override
@@ -189,7 +189,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     descripcion: descripcion,
                     fuente: fuente,
                     publicadaEl: DateTime.now(),
-                    imagenUrl: imagenUrl.isNotEmpty
+                    urlImagen: imagenUrl.isNotEmpty
                         ? imagenUrl
                         : 'https://demofree.sirv.com/nope-not-here.jpg?w=150',
                     categoriaId: categoriaSeleccionada!,
@@ -251,7 +251,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     String titulo = noticia.titulo;
     String descripcion = noticia.descripcion;
     String fuente = noticia.fuente;
-    String imagenUrl = noticia.imagenUrl;
+    String imagenUrl = noticia.urlImagen;
     String? categoriaSeleccionada = noticia.categoriaId;
 
     showDialog(
@@ -358,7 +358,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                     descripcion: descripcion,
                     fuente: fuente,
                     publicadaEl: noticia.publicadaEl,
-                    imagenUrl: imagenUrl,
+                    urlImagen: imagenUrl,
                     categoriaId: categoriaSeleccionada!,
                   );
                   try {
@@ -528,3 +528,4 @@ class NoticiaScreenState extends State<NoticiaScreen> {
     );
   }
 }
+*/

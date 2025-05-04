@@ -123,4 +123,10 @@ sonar-project.properties
 .scannerwork
 
 #Variables de entorno
-.env*
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+!.env.sample

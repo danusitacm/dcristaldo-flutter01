@@ -1,0 +1,225 @@
+import 'package:dcristaldo/bloc/category/category_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dcristaldo/bloc/news/news_bloc.dart';
+import 'package:dcristaldo/components/noticia_card.dart';
+import 'package:dcristaldo/domain/noticia.dart';
+import 'package:dcristaldo/helpers/snackbar_helper.dart';
+import 'package:dcristaldo/views/base_screen.dart';
+import 'package:dcristaldo/components/news_form_dialog.dart';
+import 'package:dcristaldo/components/delete_confirmation_dialog.dart';
+import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
+import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
+import 'package:dcristaldo/views/preferencia_screen.dart';
+
+class NewsScreen extends StatelessWidget {
+  const NewsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Emit the event to load news when the screen is built
+    context.read<NewsBloc>().add(const NewsStarted());
+    
+    // También solicitamos las categorías al NewsBloc
+    context.read<NewsBloc>().add(const NewsCategoriesRequested());
+    
+    // Cargar las preferencias del usuario
+    context.read<PreferenciaBloc>().add(const CargarPreferencias());
+    
+    return BaseScreen(
+      appBar: AppBar(
+        title: const Text('Noticias'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () => _navigateToPreferenciasScreen(context),
+            tooltip: 'Filtrar por categorías',
+          ),
+        ],
+      ),
+      body: BlocConsumer<NewsBloc, NewsState>(
+        listener: _handleStateChanges,
+        builder: (context, state) => _buildBody(context, state),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddNewsDialog(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  // Navegar a la pantalla de preferencias
+  void _navigateToPreferenciasScreen(BuildContext context) async {
+    // Solicitar categorías para la pantalla de preferencias
+    context.read<CategoriaBloc>().add(CategoriaInitEvent());
+    
+    // Navegar a la pantalla de preferencias y esperar resultado
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PreferenciasScreen(),
+      ),
+    );
+    
+    // Recargar las noticias después de actualizar las preferencias
+    if (context.mounted) {
+      context.read<NewsBloc>().add(const NewsStarted());
+    }
+  }
+
+  // Manejador de cambios de estado
+  void _handleStateChanges(BuildContext context, NewsState state) {
+    if (state is NewsLoadFailure) {
+      SnackBarHelper.showError(
+        context: context,
+        message: 'Error: ${state.error}',
+        color: Colors.red,
+      );
+    } else if (state is NewsLoadSucces) {
+      // Opcional: Mostrar un mensaje de éxito después de operaciones CRUD
+    }
+  }
+
+  // Constructor del contenido principal
+  Widget _buildBody(BuildContext context, NewsState state) {
+    final preferenciaState = context.watch<PreferenciaBloc>().state;
+    final filtrosActivos = preferenciaState.categoriasSeleccionadas.isNotEmpty;
+    
+    if (state is NewsLoadInProgress) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is NewsLoadSucces) {
+      final allNews = state.news;
+      
+      // Filtrar noticias según las preferencias del usuario
+      final filteredNews = filtrosActivos 
+          ? allNews.where((noticia) => 
+              preferenciaState.categoriasSeleccionadas.contains(noticia.categoriaId))
+              .toList()
+          : allNews;
+      
+      if (filteredNews.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'No hay noticias disponibles con los filtros actuales.',
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              if (filtrosActivos) ...[
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () => context.read<PreferenciaBloc>().add(const ReiniciarFiltros()),
+                  icon: const Icon(Icons.filter_list_off),
+                  label: const Text('Quitar filtros'),
+                ),
+              ]
+            ],
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          // Mostrar indicador de filtros activos
+          if (filtrosActivos)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              color: Colors.blue.withOpacity(0.1),
+              child: Row(
+                children: [
+                  const Icon(Icons.filter_list, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Mostrando ${filteredNews.length} de ${allNews.length} noticias',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => context.read<PreferenciaBloc>().add(const ReiniciarFiltros()),
+                    child: const Text('Quitar filtros'),
+                  )
+                ],
+              ),
+            ),
+          // Lista de noticias filtradas
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<NewsBloc>().add(const NewsStarted());
+              },
+              child: ListView.builder(
+                itemCount: filteredNews.length,
+                itemBuilder: (context, index) {
+                  final news = filteredNews[index];
+                  return NoticiaCard(
+                    noticia: news,
+                    categorias: state.categorias,
+                    onEdit: () => _showEditNewsDialog(context, news),
+                    onDelete: () => _showDeleteNewsDialog(context, news.id),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (state is NewsLoadFailure) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Error: ${state.error}',
+              style: const TextStyle(color: Colors.red, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                context.read<NewsBloc>().add(const NewsStarted());
+              },
+              child: const Text('Reintentar'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return const Center(
+        child: Text(
+          'No hay noticias disponibles.',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
+    }
+  }
+  
+  // Método para mostrar el diálogo de agregar noticia
+  void _showAddNewsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const NewsFormDialog(),
+    );
+  }
+  
+  // Método para mostrar el diálogo de editar noticia
+  void _showEditNewsDialog(BuildContext context, Noticia noticia) {
+    showDialog(
+      context: context,
+      builder: (context) => NewsFormDialog(noticia: noticia),
+    );
+  }
+  
+  // Método para mostrar el diálogo de eliminar noticia
+  void _showDeleteNewsDialog(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (context) => DeleteConfirmationDialog(
+        title: 'Eliminar Noticia',
+        message: '¿Estás seguro de que deseas eliminar esta noticia?',
+        onDelete: () => context.read<NewsBloc>().add(NewsDeleted(id)),
+      ),
+    );
+  }
+}
