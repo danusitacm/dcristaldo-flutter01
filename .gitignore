@@ -129,4 +129,4 @@ sonar-project.properties
 .env.test
 .env.production
 .env.staging
-!.env.sample
+!.env.example
