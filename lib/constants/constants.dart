@@ -61,6 +61,7 @@ class ErrorConstants {
   static const String errorMessage = 'Error al cargar los datos';
   static const String errorUknown = 'Ocurrió un error desconocido';
   static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String errorNoInternet = 'Sin conexión a internet';  
 }
 
 class NewsConstants {

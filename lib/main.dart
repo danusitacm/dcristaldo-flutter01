@@ -17,7 +17,7 @@ import 'package:dcristaldo/bloc/counter/counter_bloc.dart';
 import 'package:dcristaldo/bloc/news/news_bloc.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
-import 'package:dcristaldo/di/locator.dart';
+import 'package:dcristaldo/core/locator.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/views/category_screen.dart'; 
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
