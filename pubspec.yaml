@@ -36,13 +36,17 @@ dependencies:
   cupertino_icons: ^1.0.8
   intl: ^0.18.1
   dio: ^5.8.0+1
-  flutter_dotenv: ^5.0.2
+  flutter_dotenv: ^5.2.1
   bloc: ^9.0.0
-  equatable: ^2.0.7
-  flutter_bloc: ^9.1.0
+  equatable: ^2.0.6
+  flutter_bloc: ^9.0.0
   shared_preferences: ^2.3.2
   get_it: ^8.0.2
   watch_it: ^1.5.1
+  dart_mappable: ^4.5.0
+  flutter_secure_storage: ^9.2.4
+  connectivity_plus: ^6.1.4
+
   
 dev_dependencies:
   flutter_test:
@@ -55,7 +59,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  
+  build_runner: ^2.4.15
+  dart_mappable_builder: ^4.5.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
