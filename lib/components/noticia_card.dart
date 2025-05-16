@@ -102,7 +102,7 @@ class NoticiaCard extends StatelessWidget {
                       ),
                       // Categoría
                       Text(
-                        _getCategoriaNombre(noticia.categoriaId),
+                        _getCategoriaNombre(noticia.categoriaId!),
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,

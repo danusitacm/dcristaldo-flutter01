@@ -6,4 +6,9 @@ class Preferencia with PreferenciaMappable {
   Preferencia({
     required this.categoriasSeleccionadas,
   });
+  factory Preferencia.empty(){
+    return Preferencia(
+      categoriasSeleccionadas: [],
+    );
+  }
 }

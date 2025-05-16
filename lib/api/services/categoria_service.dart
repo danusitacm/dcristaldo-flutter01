@@ -1,11 +1,11 @@
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dio/dio.dart';
-import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:dcristaldo/core/api_config.dart';
 
 class CategoriaService {
   final Dio _dio = Dio();
-  final String path=CategoryConstants.categoriaEndpoint;
+  final String path=ApiConfig.beeceptorBaseUrl;
   // Obtener todas las categorías
    Future<List<Categoria>> obtenerCategorias() async {
     try {
@@ -13,7 +13,7 @@ class CategoriaService {
 
       if (response.statusCode == 200) {
         final List<dynamic> categoriasJson = response.data;
-        return categoriasJson.map((json) => Categoria.fromJson(json)).toList();
+        return categoriasJson.map((json) => CategoriaMapper.fromJson(json)).toList();
       } else {
         throw ApiException(
           'Error al obtener las categorías',
@@ -85,7 +85,7 @@ class CategoriaService {
     try {
       final response = await _dio.get('$path/$id');
       if (response.statusCode == 200) {
-        return Categoria.fromJson(response.data);
+        return CategoriaMapper.fromJson(response.data);
       } else {
         throw ApiException(
           'Error al obtener la categoría',

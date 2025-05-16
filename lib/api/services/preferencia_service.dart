@@ -5,9 +5,12 @@ import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/domain/preferencia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dcristaldo/core/api_config.dart';
 
 class PreferenciaService {
   final Dio _dio = Dio();
+  final String path=ApiConfig.beeceptorBaseUrl;
+
 
   // Clave para almacenar el ID en SharedPreferences
   static const String _preferenciaIdKey = 'preferencia_id';
@@ -44,7 +47,7 @@ class PreferenciaService {
           '${PreferenciaConstants.preferenciasEndpoint}/$_preferenciaId',
         );
         // Si la respuesta es exitosa, convertir a objeto Preferencia
-        return Preferencia.fromJson(response.data);
+        return PreferenciaMapper.fromJson(response.data);
       }
       return await _crearPreferenciasVacias();
     } on DioException catch (e) {
@@ -66,7 +69,7 @@ class PreferenciaService {
   Future<void> guardarPreferencias(Preferencia preferencia) async {
     try {
       await _dio.put(
-        '${PreferenciaConstants.preferenciasEndpoint}/$_preferenciaId',
+        '$path/$_preferenciaId',
         data: preferencia.toJson(),
       );
     } on DioException catch (e) {
@@ -86,7 +89,7 @@ class PreferenciaService {
 
       // Crear un nuevo registro en la API
       final Response response = await _dio.post(
-        PreferenciaConstants.preferenciasEndpoint,
+        path,
         data: preferenciasVacias.toJson(),
       );
 

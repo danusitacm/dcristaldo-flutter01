@@ -3,6 +3,8 @@ import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dio/dio.dart';
 import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:dcristaldo/core/api_config.dart';
+import 'package:flutter/cupertino.dart';
 class NoticiaService {
   final Dio _dio = Dio(
           BaseOptions(
@@ -10,7 +12,8 @@ class NoticiaService {
             receiveTimeout:const  Duration(seconds: CategoryConstants.timeoutSeconds),
           ),
         );
-  final String path=NewsConstants.noticiasEndpoint;
+  final String path='${ApiConfig.beeceptorBaseUrl}/noticias';
+
   /// Crear una nueva noticia
   Future<void> crearNoticia(Noticia noticia) async {
     try {
@@ -43,7 +46,7 @@ class NoticiaService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data ?? [];
-        return data.map((json) => Noticia.fromJson(json)).toList();
+        return data.map((json) => NoticiaMapper.fromJson(json)).toList();
       } else {
         throw ApiException(
           'Error al obtener las noticias',
@@ -66,7 +69,7 @@ class NoticiaService {
       final response = await _dio.get('$path/$id');
 
       if (response.statusCode == 200) {
-        return Noticia.fromJson(response.data);
+        return NoticiaMapper.fromJson(response.data);
       } else {
         throw Exception('Error al obtener la noticia: ${response.statusMessage}');
       }

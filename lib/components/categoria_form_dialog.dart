@@ -51,7 +51,7 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
         id: widget.categoria?.id, // Puede ser null si es nueva categoría
         nombre: nombre,
         descripcion: descripcion,
-        imagenUrl: imagenUrlFinal,
+        imagenUrl: imagenUrlFinal!,
       );
 
       try {

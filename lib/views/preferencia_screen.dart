@@ -139,23 +139,13 @@ class PreferenciasScreen extends StatelessWidget {
   void _aplicarFiltros(BuildContext context, PreferenciaState state) {
     // Verificar que no sea un estado de error
     if (state is PreferenciaError) {
-      SnackBarHelper.showSnackBar(
-        context: context, 
-        message: 'No se pueden aplicar los filtros debido a un error'
-      );
+      
       return;
     }
 
     // Continuar con el flujo normal
     context.read<PreferenciaBloc>().add(
       SavePreferencias(categoriasSeleccionadas: state.categoriasSeleccionadas),
-    );
-
-    SnackBarHelper.showSuccess(
-      context: context,
-      message: state.categoriasSeleccionadas.isEmpty
-        ? 'Mostrando todas las noticias'
-        : 'Filtros aplicados correctamente'
     );
 
     Navigator.pop(context, state.categoriasSeleccionadas);

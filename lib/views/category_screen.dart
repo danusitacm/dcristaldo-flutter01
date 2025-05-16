@@ -26,21 +26,13 @@ class CategoryScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is CategoriaError) {
             // Muestra un mensaje de error cuando ocurre un problema
-            SnackBarHelper.showError(
-              context: context,
-              message: 'Error: ${state.message}',
-              color: Colors.red
-            );
+            
           } else if (state is CategoriaLoaded) {
             // Puedes mostrar un mensaje cuando se cargan las categorías exitosamente
             // pero solo si es resultado de una acción específica, no al cargar inicialmente
             final now = DateTime.now();
             if (now.difference(state.lastUpdated).inSeconds < 3) {
               // Esto evita mostrar el mensaje en la carga inicial
-              SnackBarHelper.showSuccess(
-                context: context,
-                message: 'Categorías actualizadas correctamente',
-              );
             }
           }
         },

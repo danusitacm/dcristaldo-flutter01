@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/news/news_bloc.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/components/news_form_dialog.dart';
 import 'package:dcristaldo/components/delete_confirmation_dialog.dart';
@@ -18,13 +17,8 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Emit the event to load news when the screen is built
     context.read<NewsBloc>().add(const NewsStarted());
-    
-    // También solicitamos las categorías al NewsBloc
     context.read<NewsBloc>().add(const NewsCategoriesRequested());
-    
-    // Cargar las preferencias del usuario
     context.read<PreferenciaBloc>().add(const CargarPreferencias());
     
     return BaseScreen(
@@ -49,38 +43,26 @@ class NewsScreen extends StatelessWidget {
     );
   }
 
-  // Navegar a la pantalla de preferencias
   void _navigateToPreferenciasScreen(BuildContext context) async {
-    // Solicitar categorías para la pantalla de preferencias
     context.read<CategoriaBloc>().add(CategoriaInitEvent());
-    
-    // Navegar a la pantalla de preferencias y esperar resultado
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const PreferenciasScreen(),
       ),
     );
-    
-    // Recargar las noticias después de actualizar las preferencias
     if (context.mounted) {
       context.read<NewsBloc>().add(const NewsStarted());
     }
   }
 
-  // Manejador de cambios de estado
   void _handleStateChanges(BuildContext context, NewsState state) {
     if (state is NewsLoadFailure) {
-      SnackBarHelper.showError(
-        context: context,
-        message: 'Error: ${state.error}',
-        color: Colors.red,
-      );
+      
     } else if (state is NewsLoadSucces) {
       // Opcional: Mostrar un mensaje de éxito después de operaciones CRUD
     }
   }
 
-  // Constructor del contenido principal
   Widget _buildBody(BuildContext context, NewsState state) {
     final preferenciaState = context.watch<PreferenciaBloc>().state;
     final filtrosActivos = preferenciaState.categoriasSeleccionadas.isNotEmpty;
@@ -158,7 +140,7 @@ class NewsScreen extends StatelessWidget {
                     noticia: news,
                     categorias: state.categorias,
                     onEdit: () => _showEditNewsDialog(context, news),
-                    onDelete: () => _showDeleteNewsDialog(context, news.id),
+                    onDelete: () => _showDeleteNewsDialog(context, news.id!),
                   );
                 },
               ),
@@ -196,7 +178,7 @@ class NewsScreen extends StatelessWidget {
     }
   }
   
-  // Método para mostrar el diálogo de agregar noticia
+  /// Método para mostrar el diálogo de agregar noticia
   void _showAddNewsDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -204,7 +186,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
   
-  // Método para mostrar el diálogo de editar noticia
+  /// Método para mostrar el diálogo de editar noticia
   void _showEditNewsDialog(BuildContext context, Noticia noticia) {
     showDialog(
       context: context,
@@ -212,7 +194,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
   
-  // Método para mostrar el diálogo de eliminar noticia
+  /// Método para mostrar el diálogo de eliminar noticia
   void _showDeleteNewsDialog(BuildContext context, String id) {
     showDialog(
       context: context,
