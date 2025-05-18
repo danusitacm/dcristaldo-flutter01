@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/domain/reporte.dart';
-import 'package:intl/intl.dart';
 
 class ReportFormDialog extends StatefulWidget {
   final String noticiaId;
@@ -43,13 +42,6 @@ class _ReportFormDialogState extends State<ReportFormDialog> {
       setState(() {
         _isSubmitting = true;
       });
-
-      // Crear un objeto Reporte con el motivo seleccionado
-      final reporte = Reporte(
-        noticiaId: widget.noticiaId,
-        fecha: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        motivo: _motivoSeleccionado,
-      );
 
       // Ejecutar la función onReport que viene desde fuera
       widget.onReport();
