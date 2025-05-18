@@ -29,45 +29,6 @@ class NoticiaService extends BaseService {
     }
   }
   
-  /// Leer noticias con paginación
-  Future<List<Noticia>> obtenerNoticiasPaginadas({
-    required int pagina,
-    required int tamanoPagina,
-  }) async {
-    try {
-      final queryParams = {
-        'page': pagina.toString(),
-        'size': tamanoPagina.toString(),
-      };
-      
-      final data = await get(
-        ApiConstants.noticias,
-        queryParameters: queryParams,
-        requireAuthToken: false,
-      );
-      
-      if (data is List) {
-        // La API devuelve una lista de mapas directamente
-        return data.map((json) => NoticiaMapper.fromMap(json)).toList();
-      } else if (data is Map && data.containsKey('items')) {
-        // Formato alternativo: objeto con propiedad "items" que contiene la lista
-        final List<dynamic> items = data['items'];
-        return items.map((json) => NoticiaMapper.fromMap(json)).toList();
-      } else {
-        debugPrint('⚠️ Formato de respuesta inesperado: $data');
-        throw ApiException(
-          NewsConstants.errorNotFound,
-          statusCode: 500,
-        );
-      }
-    } on ApiException {
-      rethrow;
-    } catch (e) {
-      debugPrint('❌ Error al obtener noticias paginadas: ${e.toString()}');
-      throw ApiException(NewsConstants.mensajeError);
-    }
-  }
-  
   /// Crear una nueva noticia
   Future<void> crearNoticia(Noticia noticia) async {
     try {
