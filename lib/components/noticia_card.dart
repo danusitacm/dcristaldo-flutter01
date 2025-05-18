@@ -9,6 +9,7 @@ class NoticiaCard extends StatelessWidget {
   final Color iconColor = Colors.black;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onReport;
   final List<Categoria>? categorias;
 
   const NoticiaCard({
@@ -17,6 +18,7 @@ class NoticiaCard extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.categorias,
+    this.onReport,
   });
 
   String _getCategoriaNombre(String categoriaId) {
@@ -156,9 +158,12 @@ class NoticiaCard extends StatelessWidget {
                 icon: const Icon(Icons.more_vert, color: Colors.black),
                 onSelected: (value) {
                   if (value == 'edit' && onEdit != null) {
-                    onEdit!(); // Llamar al callback de edición
+                    onEdit!(); 
                   } else if (value == 'delete' && onDelete != null) {
-                    onDelete!(); // Llamar al callback de eliminación
+                    onDelete!(); 
+                  }
+                  if (value == 'report' && onReport != null) {
+                    onReport!(); 
                   }
                 },
                 itemBuilder: (context) => [
@@ -169,6 +174,10 @@ class NoticiaCard extends StatelessWidget {
                   const PopupMenuItem(
                     value: 'delete',
                     child: Text('Eliminar'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'report',
+                    child: Text('Reportar'),
                   ),
                 ],
               ),

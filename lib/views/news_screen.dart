@@ -8,9 +8,16 @@ import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/components/news_form_dialog.dart';
 import 'package:dcristaldo/components/delete_confirmation_dialog.dart';
+import 'package:dcristaldo/components/report_form_dialog.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/views/preferencia_screen.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_event.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_state.dart';
+import 'package:dcristaldo/domain/reporte.dart';
+import 'package:intl/intl.dart';
+
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
@@ -19,26 +26,45 @@ class NewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<NewsBloc>().add(const NewsStarted());
     context.read<NewsBloc>().add(const NewsCategoriesRequested());
-    context.read<PreferenciaBloc>().add(const CargarPreferencias());
+    //context.read<PreferenciaBloc>().add(const CargarPreferencias());
     
-    return BaseScreen(
-      appBar: AppBar(
-        title: const Text('Noticias'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _navigateToPreferenciasScreen(context),
-            tooltip: 'Filtrar por categorías',
-          ),
-        ],
-      ),
-      body: BlocConsumer<NewsBloc, NewsState>(
-        listener: _handleStateChanges,
-        builder: (context, state) => _buildBody(context, state),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddNewsDialog(context),
-        child: const Icon(Icons.add),
+    return BlocListener<ReporteBloc, ReporteState>(
+      listener: (context, state) {
+        if (state is ReporteSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Reporte enviado correctamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is ReporteError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: BaseScreen(
+        appBar: AppBar(
+          title: const Text('Noticias'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: () => _navigateToPreferenciasScreen(context),
+              tooltip: 'Filtrar por categorías',
+            ),
+          ],
+        ),
+        body: BlocConsumer<NewsBloc, NewsState>(
+          listener: _handleStateChanges,
+          builder: (context, state) => _buildBody(context, state),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showAddNewsDialog(context),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -108,7 +134,7 @@ class NewsScreen extends StatelessWidget {
           if (filtrosActivos)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue,
               child: Row(
                 children: [
                   const Icon(Icons.filter_list, size: 20),
@@ -141,6 +167,7 @@ class NewsScreen extends StatelessWidget {
                     categorias: state.categorias,
                     onEdit: () => _showEditNewsDialog(context, news),
                     onDelete: () => _showDeleteNewsDialog(context, news.id!),
+                    onReport: () => _showReportDialog(context, news.id!),
                   );
                 },
               ),
@@ -202,6 +229,22 @@ class NewsScreen extends StatelessWidget {
         title: 'Eliminar Noticia',
         message: '¿Estás seguro de que deseas eliminar esta noticia?',
         onDelete: () => context.read<NewsBloc>().add(NewsDeleted(id)),
+      ),
+    );
+  }
+  void _showReportDialog(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (context) => ReportFormDialog(
+        noticiaId: id,
+        title: 'Reportar Noticia',
+        onReport: () => context.read<ReporteBloc>().add(ReporteSubmitted(
+          Reporte(
+            noticiaId: id,
+            fecha: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            motivo: MotivoReporte.noticiaInapropiada, // El motivo se maneja internamente en ReportFormDialog
+          )
+        )),
       ),
     );
   }
