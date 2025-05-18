@@ -5,12 +5,9 @@ import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/domain/preferencia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dcristaldo/core/api_config.dart';
+import 'package:dcristaldo/core/service/base_service.dart';
 
-class PreferenciaService {
-  final Dio _dio = Dio();
-  final String path=ApiConfig.beeceptorBaseUrl;
-
+class PreferenciaService extends BaseService{
 
   // Clave para almacenar el ID en SharedPreferences
   static const String _preferenciaIdKey = 'preferencia_id';
@@ -43,12 +40,14 @@ class PreferenciaService {
     try {
       // Si no hay ID almacenado, devolver preferencias vacías sin consultar API
       if (_preferenciaId != null && _preferenciaId!.isNotEmpty) {
-        final response = await _dio.get(
-          '${PreferenciaConstants.preferenciasEndpoint}/$_preferenciaId',
+        final data = await get(
+          '${ApiConstants.preferencias}/$_preferenciaId',
+          requireAuthToken: false,
         );
-        // Si la respuesta es exitosa, convertir a objeto Preferencia
-        return PreferenciaMapper.fromJson(response.data);
-      }
+        if (data != null) {
+          
+        }
+        }
       return await _crearPreferenciasVacias();
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
@@ -68,8 +67,8 @@ class PreferenciaService {
   /// Guarda las preferencias del usuario (Actualiza)
   Future<void> guardarPreferencias(Preferencia preferencia) async {
     try {
-      await _dio.put(
-        '$path/$_preferenciaId',
+      await put(
+        '${ApiConstants.preferencias}/$_preferenciaId',
         data: preferencia.toJson(),
       );
     } on DioException catch (e) {
@@ -88,8 +87,8 @@ class PreferenciaService {
       final preferenciasVacias = Preferencia.empty();
 
       // Crear un nuevo registro en la API
-      final Response response = await _dio.post(
-        path,
+      final Response response = await post(
+        ApiConstants.preferencias,
         data: preferenciasVacias.toJson(),
       );
 
