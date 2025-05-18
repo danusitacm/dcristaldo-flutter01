@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/api/services/auth_service.dart';
-import 'package:dcristaldo/views/welcome_screen.dart'; // Importa la pantalla de bienvenida
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_event.dart';
+import 'package:dcristaldo/bloc/auth/auth_state.dart';
+import 'package:dcristaldo/views/welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -10,10 +13,47 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
-    final AuthService authService = AuthService();
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Inicio de Sesión')),
-      body: Padding(
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthLoading) {
+            // Mostrar indicador de carga
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          } else if (state is AuthAuthenticated) {
+            // Cerrar diálogo de carga si está abierto
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            // Navegar a Welcome Screen
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => const WelcomeScreen())
+            );
+          } else if (state is AuthError) {
+            // Cerrar diálogo de carga si está abierto
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            // Mostrar mensaje de error
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          } else if (state is AuthUnauthenticated) {
+            // Cerrar diálogo de carga si está abierto
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          }
+        },
+        child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -52,60 +92,18 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final username = usernameController.text.trim();
                     final password = passwordController.text.trim();
-
-                    // Muestra un indicador de carga mientras se realiza la autenticación
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return const Center(child: CircularProgressIndicator());
-                      },
+                    
+                    // Dispara el evento de login a través del BLoC
+                    context.read<AuthBloc>().add(
+                      AuthLogin(
+                        email: username,
+                        password: password,
+                      )
                     );
-
-                    try {
-                      final success = await authService.login(
-                        username,
-                        password,
-                      );
-
-                      if (!context.mounted) {
-                        return; // Verifica si el widget sigue montado
-                      }
-                      Navigator.pop(context); // Cierra el indicador de carga
-
-                      if (success) {
-                        if (!context.mounted) {
-                          return; // Verifica si el widget sigue montado
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const WelcomeScreen(),
-                          ),
-                        );
-                      } else {
-                        if (!context.mounted) {
-                          return; // Verifica si el widget sigue montado
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Inicio de sesión fallido'),
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      if (!context.mounted) {
-                        return; // Verifica si el widget sigue montado
-                      }
-                      Navigator.pop(context); // Cierra el indicador de carga
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                    }
                   }
                 },
                 child: const Text('Iniciar Sesión'),
@@ -114,6 +112,7 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
+      )
     );
   }
 }
