@@ -21,6 +21,7 @@ import 'package:dcristaldo/core/locator.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/views/category_screen.dart'; 
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
 
 Future<void> main() async {
   await dotenv.load();
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
           create: (context) => CategoriaBloc()),
         BlocProvider<PreferenciaBloc>(
           create: (context) => PreferenciaBloc()),
+        BlocProvider<ReporteBloc>(
+          create: (context) => ReporteBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
