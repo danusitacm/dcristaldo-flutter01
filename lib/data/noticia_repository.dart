@@ -1,9 +1,13 @@
 import 'package:dcristaldo/api/services/noticia_service.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
+import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:watch_it/watch_it.dart';
 
 class NoticiaRepository {
   final NoticiaService _service = NoticiaService();
+  final CategoriaRepository _categoriaRepository = di<CategoriaRepository>();
 
   /// Obtener todas las noticias sin paginación
   Future<List<Noticia>> obtenerNoticias() async {
@@ -16,6 +20,17 @@ class NoticiaRepository {
       } else {
         throw Exception('Error desconocido: $e');
       }
+    }
+  }
+
+  /// Obtener categoría asociada a una noticia (usando la caché)
+  Future<Categoria?> obtenerCategoriaDeNoticia(String? categoriaId) async {
+    if (categoriaId == null) return null;
+    try {
+      return await _categoriaRepository.obtenerCategoriaPorId(categoriaId);
+    } catch (e) {
+      // Si hay error, retornamos null en lugar de propagar el error
+      return null;
     }
   }
 

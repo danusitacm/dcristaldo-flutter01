@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart'; // Para debugPrint
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/data/noticia_repository.dart';
@@ -24,12 +25,22 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     emit(NewsLoadInProgress());
     try {
       final noticias = await _noticiaRepository.obtenerNoticias();
+      List<Categoria>? categorias;
+      
       // Si ya teníamos categorías cargadas, las mantenemos
       if (state is NewsLoadSucces && (state as NewsLoadSucces).categorias != null) {
-        emit(NewsLoadSucces(noticias, categorias: (state as NewsLoadSucces).categorias));
+        categorias = (state as NewsLoadSucces).categorias;
       } else {
-        emit(NewsLoadSucces(noticias));
+        // Si no teníamos categorías, las cargamos desde la caché
+        try {
+          categorias = await _categoriaRepository.obtenerCategoriasCache();
+        } catch (e) {
+          // Si falla la carga de categorías, continuamos sin ellas
+          debugPrint('Error al cargar categorías: $e');
+        }
       }
+      
+      emit(NewsLoadSucces(noticias, categorias: categorias));
     } catch (e) {
       emit(NewsLoadFailure(e.toString()));
     }
@@ -47,6 +58,14 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     // Preservar las categorías si existen
     if (currentState is NewsLoadSucces && currentState.categorias != null) {
       categorias = currentState.categorias;
+    } else {
+      // Si no tenemos categorías, intentar cargarlas de la caché
+      try {
+        categorias = await _categoriaRepository.obtenerCategoriasCache();
+      } catch (e) {
+        // Si falla, continuar sin categorías
+        debugPrint('Error al cargar categorías: $e');
+      }
     }
     
     emit(NewsLoadInProgress());
@@ -89,6 +108,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
   Future<void> _onCategoriesRequested(NewsCategoriesRequested event, Emitter<NewsState> emit) async {
     try {
+      // Usamos el método con caché para minimizar llamadas a la API
       final categorias = await _categoriaRepository.obtenerCategoriasCache();
       
       // Si ya tenemos noticias cargadas, actualizamos el estado preservando las noticias
@@ -96,7 +116,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
         final currentState = state as NewsLoadSucces;
         emit(NewsLoadSucces(currentState.news, categorias: categorias));
       } else {
-        // Si aún no tenemos noticias, solo emitimos el estado de categorías
+        // Si aún no tenemos noticias, emitimos un estado especial para categorías
         emit(NewsCategoriesLoaded(categorias));
       }
     } catch (e) {

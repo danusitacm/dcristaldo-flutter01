@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:intl/intl.dart';
 import 'package:dcristaldo/constants/constants.dart';
+import 'package:watch_it/watch_it.dart';
 
-class NoticiaCard extends StatelessWidget {
+class NoticiaCard extends StatefulWidget {
   final Noticia noticia;
-  final Color iconColor = Colors.black;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onReport;
@@ -23,18 +24,62 @@ class NoticiaCard extends StatelessWidget {
     this.onComment,
   });
 
-  String _getCategoriaNombre(String categoriaId) {
-    if (categorias != null) {
-      final categoria = categorias!.firstWhere(
-        (c) => c.id == categoriaId,
-        orElse: () => Categoria(
-          id: '',
-          nombre: 'Categoría desconocida',
-          descripcion: '',
-          imagenUrl: '',
-        ),
-      );
-      return categoria.nombre;
+  @override
+  State<NoticiaCard> createState() => _NoticiaCardState();
+}
+
+class _NoticiaCardState extends State<NoticiaCard> {
+  final Color iconColor = Colors.black;
+  Categoria? _categoria;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarCategoria();
+  }
+
+  Future<void> _cargarCategoria() async {
+    if (widget.noticia.categoriaId == null) return;
+
+    // Si ya tenemos categorías pasadas como prop, usarlas primero
+    if (widget.categorias != null) {
+      final categoriaEncontrada = widget.categorias!.where((c) => c.id == widget.noticia.categoriaId).firstOrNull;
+      if (categoriaEncontrada != null) {
+        setState(() {
+          _categoria = categoriaEncontrada;
+        });
+        return;
+      }
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Obtener de la caché
+      final categoriaRepository = di<CategoriaRepository>();
+      final categoria = await categoriaRepository.obtenerCategoriaPorId(widget.noticia.categoriaId!);
+
+      if (mounted) {
+        setState(() {
+          _categoria = categoria;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  String get categoriaNombre {
+    if (_categoria != null) {
+      return _categoria!.nombre;
     }
     return 'Categoría desconocida';
   }
@@ -66,7 +111,7 @@ class NoticiaCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Text(
-                          noticia.titulo,
+                          widget.noticia.titulo,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -79,7 +124,7 @@ class NoticiaCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 4.0),
                         child: Text(
-                          noticia.fuente,
+                          widget.noticia.fuente,
                           style: const TextStyle(
                             fontStyle: FontStyle.italic,
                             fontSize: 12,
@@ -90,7 +135,7 @@ class NoticiaCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Text(
-                          noticia.descripcion,
+                          widget.noticia.descripcion,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 14),
@@ -98,7 +143,7 @@ class NoticiaCard extends StatelessWidget {
                       ),
                       // Fecha
                       Text(
-                        dateFormat.format(noticia.publicadaEl),
+                        dateFormat.format(widget.noticia.publicadaEl),
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -106,7 +151,7 @@ class NoticiaCard extends StatelessWidget {
                       ),
                       // Categoría
                       Text(
-                        _getCategoriaNombre(noticia.categoriaId!),
+                        categoriaNombre,
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -127,8 +172,8 @@ class NoticiaCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
                   child: Image.network(
-                    noticia.urlImagen.isNotEmpty
-                        ? noticia.urlImagen
+                    widget.noticia.urlImagen.isNotEmpty
+                        ? widget.noticia.urlImagen
                         : 'https://via.placeholder.com/150',
                     width: 120,
                     height: 80,
@@ -144,7 +189,7 @@ class NoticiaCard extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.comment_outlined),
-                onPressed: onComment,
+                onPressed: widget.onComment,
                 color: iconColor,
                 tooltip: 'Comentarios',
               ),
@@ -167,13 +212,13 @@ class NoticiaCard extends StatelessWidget {
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.black),
                 onSelected: (value) {
-                  if (value == 'edit' && onEdit != null) {
-                    onEdit!(); 
-                  } else if (value == 'delete' && onDelete != null) {
-                    onDelete!(); 
+                  if (value == 'edit' && widget.onEdit != null) {
+                    widget.onEdit!();
+                  } else if (value == 'delete' && widget.onDelete != null) {
+                    widget.onDelete!();
                   }
-                  if (value == 'report' && onReport != null) {
-                    onReport!(); 
+                  if (value == 'report' && widget.onReport != null) {
+                    widget.onReport!();
                   }
                 },
                 itemBuilder: (context) => [

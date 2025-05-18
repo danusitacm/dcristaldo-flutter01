@@ -26,9 +26,10 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Cargar noticias y categorías desde la caché al iniciar
     context.read<NewsBloc>().add(const NewsStarted());
     context.read<NewsBloc>().add(const NewsCategoriesRequested());
-    //context.read<PreferenciaBloc>().add(const CargarPreferencias());
+    context.read<PreferenciaBloc>().add(const CargarPreferencias());
     
     return BlocListener<ReporteBloc, ReporteState>(
       listener: (context, state) {
