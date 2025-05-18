@@ -10,6 +10,7 @@ class NoticiaCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onReport;
+  final VoidCallback? onComment;
   final List<Categoria>? categorias;
 
   const NoticiaCard({
@@ -19,6 +20,7 @@ class NoticiaCard extends StatelessWidget {
     this.onDelete,
     this.categorias,
     this.onReport,
+    this.onComment,
   });
 
   String _getCategoriaNombre(String categoriaId) {
@@ -141,11 +143,18 @@ class NoticiaCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
+                icon: const Icon(Icons.comment_outlined),
+                onPressed: onComment,
+                color: iconColor,
+                tooltip: 'Comentarios',
+              ),
+              IconButton(
                 icon: const Icon(Icons.star_border_rounded),
                 onPressed: () {
                   // Acción para marcar como favorito
                 },
                 color: iconColor,
+                tooltip: 'Favorito',
               ),
               IconButton(
                 icon: const Icon(Icons.share),
@@ -153,6 +162,7 @@ class NoticiaCard extends StatelessWidget {
                   // Acción para compartir
                 },
                 color: iconColor,
+                tooltip: 'Compartir',
               ),
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.black),

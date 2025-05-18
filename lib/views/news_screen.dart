@@ -17,6 +17,8 @@ import 'package:dcristaldo/bloc/reporte/reporte_event.dart';
 import 'package:dcristaldo/bloc/reporte/reporte_state.dart';
 import 'package:dcristaldo/domain/reporte.dart';
 import 'package:intl/intl.dart';
+import 'package:dcristaldo/components/comentario_dialog.dart';
+import 'package:dcristaldo/bloc/comentarios/comentario_bloc.dart';
 
 
 class NewsScreen extends StatelessWidget {
@@ -168,6 +170,7 @@ class NewsScreen extends StatelessWidget {
                     onEdit: () => _showEditNewsDialog(context, news),
                     onDelete: () => _showDeleteNewsDialog(context, news.id!),
                     onReport: () => _showReportDialog(context, news.id!),
+                    onComment: () => _showComentariosDialog(context, news),
                   );
                 },
               ),
@@ -245,6 +248,20 @@ class NewsScreen extends StatelessWidget {
             motivo: MotivoReporte.noticiaInapropiada, // El motivo se maneja internamente en ReportFormDialog
           )
         )),
+      ),
+    );
+  }
+  
+  /// Método para mostrar el diálogo de comentarios
+  void _showComentariosDialog(BuildContext context, Noticia noticia) {
+    showDialog(
+      context: context,
+      builder: (context) => BlocProvider(
+        create: (context) => ComentarioBloc(),
+        child: ComentarioDialog(
+          noticiaId: noticia.id!,
+          titulo: noticia.titulo,
+        ),
       ),
     );
   }
