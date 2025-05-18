@@ -23,6 +23,9 @@ import 'package:dcristaldo/views/category_screen.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
 import 'package:dcristaldo/bloc/comentarios/comentario_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_event.dart';
+import 'package:dcristaldo/bloc/auth/auth_state.dart';
 
 Future<void> main() async {
   await dotenv.load();
@@ -37,6 +40,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc()..add(AuthCheckStatus()),
+        ),
         BlocProvider<CounterBloc>(
           create: (context) => CounterBloc(),
         ),
