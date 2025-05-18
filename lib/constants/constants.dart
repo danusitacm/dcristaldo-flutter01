@@ -50,12 +50,12 @@ class ApiConstants {
   static final String newsurl = ApiConfig.beeceptorBaseUrl;
   
   // Endpoints
-  static final String noticiasUrl = '$newsurl/noticias';
-  static final String categoriasUrl = '$newsurl/categorias';
-  static final String preferenciasUrl = '$newsurl/preferencias';
-  static final String comentariosUrl = '$newsurl/comentarios';
-  static final String reportesUrl = '$newsurl/reportes';
-  static final String loginUrl = '$newsurl/login';
+  static final String noticias = '/noticias';
+  static final String categorias = '/categorias';
+  static final String preferencias = '/preferencias';
+  static final String comentarios = '/comentarios';
+  static final String reportes = '/reportes';
+  static final String login = '/login';
   
   // Timeouts
   static const int timeoutSeconds = 10;

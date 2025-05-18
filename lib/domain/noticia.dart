@@ -12,12 +12,12 @@ class Noticia with NoticiaMappable {
   final String? categoriaId;
 
   Noticia({
+    this.id,
     required this.titulo,
     required this.descripcion,
     required this.fuente,
     required this.publicadaEl,
     required this.urlImagen,
-    this.id,
     this.categoriaId,
   });
 

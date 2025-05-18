@@ -1,6 +1,7 @@
 import 'package:dcristaldo/api/services/noticia_service.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+
 class NoticiaRepository {
   final NoticiaService _service = NoticiaService();
 
@@ -14,6 +15,19 @@ class NoticiaRepository {
         rethrow;
       } else {
         throw Exception('Error desconocido: $e');
+      }
+    }
+  }
+
+  /// Obtener una noticia por su ID
+  Future<Noticia> obtenerNoticiaPorId(String id) async {
+    try {
+      return await _service.obtenerNoticiaPorId(id);
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw Exception('Error al obtener la noticia: $e');
       }
     }
   }
@@ -33,7 +47,7 @@ class NoticiaRepository {
   }
 
   /// Actualizar una noticia
-  Future<void> actualizarNoticia(String id, Noticia noticia)async {
+  Future<void> actualizarNoticia(String id, Noticia noticia) async {
     try {
       await _service.actualizarNoticia(id, noticia);
     } catch (e) {
@@ -78,31 +92,4 @@ class NoticiaRepository {
       throw ArgumentError('La URL de la imagen no puede estar vacía.');
     }
   }
-
-  /// Obtener noticias paginadas
-  /*Future<List<Noticia>> obtenerNoticiasPaginadas({
-    required int numeroPagina,
-    required int tamanoPaginaConst,
-  }) async {
-    // Validar que numeroPagina sea mayor o igual a 1 y tamañoPagina mayor a 0
-    if (numeroPagina < 1) {
-      throw ArgumentError('El número de página debe ser mayor o igual a 1.');
-    }
-    if (tamanoPaginaConst <= 0) {
-      throw ArgumentError('El tamaño de página debe ser mayor a 0.');
-    }
-
-    // Obtener las noticias paginadas desde el repositorio
-    final noticias = await _service.obtenerNoticias(
-      numeroPagina: numeroPagina,
-      tamanoPagina: tamanoPaginaConst,
-    );
-
-    // Validar que las noticias tengan datos válidos
-    for (final noticia in noticias) {
-      validarNoticia(noticia);
-    }
-
-    return noticias;
-  }*/
 }
