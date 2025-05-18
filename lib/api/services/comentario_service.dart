@@ -288,7 +288,7 @@ class ComentariosService extends BaseService {
       // Añadir el nuevo subcomentario a la lista existente
       final subcomentariosActualizados = [
         ...subcomentariosActuales,
-        nuevoSubcomentario.toJson()
+        nuevoSubcomentario.toMap() // Usar toMap() en lugar de toJson() para conservar el formato de objeto
       ];      // Actualizar el comentario con todos sus subcomentarios
       await put(
         '/comentarios/$comentarioId',
