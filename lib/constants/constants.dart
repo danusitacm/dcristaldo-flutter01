@@ -52,7 +52,7 @@ class ApiConstants {
   // Endpoints
   static final String noticias = '/noticias';
   static final String categorias = '/categorias';
-  static final String preferencias = '/preferencias';
+  static final String preferencias = '/preferenciasEmail';
   static final String comentarios = '/comentarios';
   static final String reportes = '/reportes';
   static final String login = '/login';

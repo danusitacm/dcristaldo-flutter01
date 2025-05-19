@@ -7,12 +7,24 @@ import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_state.dart';
 import 'package:dcristaldo/domain/categoria.dart';
-import 'package:dcristaldo/helpers/snackbar_helper.dart';
 
-class PreferenciasScreen extends StatelessWidget {
 
+class PreferenciasScreen extends StatefulWidget {
   const PreferenciasScreen({super.key});
 
+  @override
+  State<PreferenciasScreen> createState() => _PreferenciasScreenState();
+}
+
+class _PreferenciasScreenState extends State<PreferenciasScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Cargar las preferencias actuales del usuario al entrar a la pantalla
+    // con forceReload en true para asegurar que obtenemos los datos más recientes
+    context.read<PreferenciaBloc>().add(const CargarPreferencias(forceReload: true));
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,14 +151,38 @@ class PreferenciasScreen extends StatelessWidget {
   void _aplicarFiltros(BuildContext context, PreferenciaState state) {
     // Verificar que no sea un estado de error
     if (state is PreferenciaError) {
-      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pueden aplicar los filtros debido a un error.'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
+    // Mostrar indicador de carga
+    final saveSnackBar = ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Guardando preferencias...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+    
     // Continuar con el flujo normal
     context.read<PreferenciaBloc>().add(
       SavePreferencias(categoriasSeleccionadas: state.categoriasSeleccionadas),
     );
+
+    // Limpiar SnackBar después de guardar
+    saveSnackBar.closed.then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preferencias guardadas correctamente'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 1),
+        ),
+      );
+    });
 
     Navigator.pop(context, state.categoriasSeleccionadas);
   }

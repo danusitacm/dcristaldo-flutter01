@@ -23,7 +23,13 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     Emitter<PreferenciaState> emit,
   ) async {
     try {
+      // Forzar invalidación de caché si se especifica
+      if (event.forceReload) {
+        _preferenciasRepository.invalidarCache();
+      }
+      
       // Obtener solo las categorías seleccionadas del repositorio existente
+      // Ahora esto cargará las preferencias asociadas al usuario actual
       final categoriasSeleccionadas = await _preferenciasRepository.obtenerCategoriasSeleccionadas();
 
       // Como el repositorio original solo almacena categorías, el resto de valores serían por defecto

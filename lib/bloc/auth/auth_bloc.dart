@@ -2,9 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/auth/auth_event.dart';
 import 'package:dcristaldo/bloc/auth/auth_state.dart';
 import 'package:dcristaldo/data/auth_repository.dart';
+import 'package:dcristaldo/data/preferencia_repository.dart';
+import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository = AuthRepository();
+  final PreferenciaRepository _preferenciaRepository = PreferenciaRepository();
 
   AuthBloc() : super(AuthInitial()) {
     on<AuthLogin>(_onLogin);
@@ -22,6 +25,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       
       if (success) {
         final token = await _authRepository.getAuthToken();
+        
+        // Asociar el username con las preferencias
+        try {
+          await _preferenciaRepository.setUsername(event.email);
+        } catch (prefError) {
+          // Log error but don't fail login
+          print('Error al asociar preferencias con usuario: $prefError');
+        }
+        
         emit(AuthAuthenticated(
           email: event.email,
           token: token ?? '',
@@ -38,6 +50,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.logout();
+      
+      // Limpiar la asociación de preferencias con el usuario
+      _preferenciaRepository.invalidarCache();
+      
       emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError('Error al cerrar sesión: ${e.toString()}'));
@@ -55,6 +71,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final email = await _authRepository.getUserEmail();
         
         if (token != null && email != null) {
+          // Asociar el username con las preferencias
+          try {
+            await _preferenciaRepository.setUsername(email);
+          } catch (prefError) {
+            // Log error but don't fail auth check
+            print('Error al asociar preferencias con usuario: $prefError');
+          }
+          
           emit(AuthAuthenticated(
             email: email,
             token: token,

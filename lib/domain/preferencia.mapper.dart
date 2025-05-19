@@ -24,15 +24,20 @@ class PreferenciaMapper extends ClassMapperBase<Preferencia> {
       v.categoriasSeleccionadas;
   static const Field<Preferencia, List<String>> _f$categoriasSeleccionadas =
       Field('categoriasSeleccionadas', _$categoriasSeleccionadas);
+  static String? _$email(Preferencia v) => v.email;
+  static const Field<Preferencia, String> _f$email =
+      Field('email', _$email, opt: true);
 
   @override
   final MappableFields<Preferencia> fields = const {
     #categoriasSeleccionadas: _f$categoriasSeleccionadas,
+    #email: _f$email,
   };
 
   static Preferencia _instantiate(DecodingData data) {
     return Preferencia(
-        categoriasSeleccionadas: data.dec(_f$categoriasSeleccionadas));
+        categoriasSeleccionadas: data.dec(_f$categoriasSeleccionadas),
+        email: data.dec(_f$email));
   }
 
   @override
@@ -89,7 +94,7 @@ abstract class PreferenciaCopyWith<$R, $In extends Preferencia, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
       get categoriasSeleccionadas;
-  $R call({List<String>? categoriasSeleccionadas});
+  $R call({List<String>? categoriasSeleccionadas, String? email});
   PreferenciaCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -108,14 +113,17 @@ class _PreferenciaCopyWithImpl<$R, $Out>
           (v, t) => ObjectCopyWith(v, $identity, t),
           (v) => call(categoriasSeleccionadas: v));
   @override
-  $R call({List<String>? categoriasSeleccionadas}) => $apply(FieldCopyWithData({
+  $R call({List<String>? categoriasSeleccionadas, Object? email = $none}) =>
+      $apply(FieldCopyWithData({
         if (categoriasSeleccionadas != null)
-          #categoriasSeleccionadas: categoriasSeleccionadas
+          #categoriasSeleccionadas: categoriasSeleccionadas,
+        if (email != $none) #email: email
       }));
   @override
   Preferencia $make(CopyWithData data) => Preferencia(
       categoriasSeleccionadas: data.get(#categoriasSeleccionadas,
-          or: $value.categoriasSeleccionadas));
+          or: $value.categoriasSeleccionadas),
+      email: data.get(#email, or: $value.email));
 
   @override
   PreferenciaCopyWith<$R2, Preferencia, $Out2> $chain<$R2, $Out2>(

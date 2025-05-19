@@ -1,6 +1,7 @@
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/bloc/category/category_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/news/news_bloc.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
@@ -26,10 +27,23 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Cargar noticias y categorías desde la caché al iniciar
-    context.read<NewsBloc>().add(const NewsStarted());
-    context.read<NewsBloc>().add(const NewsCategoriesRequested());
-    context.read<PreferenciaBloc>().add(const CargarPreferencias());
+    // Asegurarnos de que las preferencias se cargan primero
+    // y luego las noticias, para evitar problemas de sincronización
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        debugPrint('🔄 NewsScreen: Iniciando carga de preferencias...');
+        context.read<PreferenciaBloc>().add(const CargarPreferencias());
+        
+        // Pequeño delay para asegurar que las preferencias se cargan primero
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (context.mounted) {
+            debugPrint('🔄 NewsScreen: Iniciando carga de noticias y categorías...');
+            context.read<NewsBloc>().add(const NewsStarted());
+            context.read<NewsBloc>().add(const NewsCategoriesRequested());
+          }
+        });
+      }
+    });
     
     return BlocListener<ReporteBloc, ReporteState>(
       listener: (context, state) {
@@ -96,10 +110,16 @@ class NewsScreen extends StatelessWidget {
     final preferenciaState = context.watch<PreferenciaBloc>().state;
     final filtrosActivos = preferenciaState.categoriasSeleccionadas.isNotEmpty;
     
+    debugPrint('📱 NewsScreen: Estado de filtros - categorias: ${preferenciaState.categoriasSeleccionadas}');
+    debugPrint('📱 NewsScreen: Filtros activos: $filtrosActivos');
+    
     if (state is NewsLoadInProgress) {
       return const Center(child: CircularProgressIndicator());
     } else if (state is NewsLoadSucces) {
       final allNews = state.news;
+      
+      debugPrint('📱 NewsScreen: Total noticias cargadas: ${allNews.length}');
+      debugPrint('📱 NewsScreen: Categorias IDs en noticias: ${allNews.map((e) => e.categoriaId).toSet().toList()}');
       
       // Filtrar noticias según las preferencias del usuario
       final filteredNews = filtrosActivos 
@@ -107,8 +127,31 @@ class NewsScreen extends StatelessWidget {
               preferenciaState.categoriasSeleccionadas.contains(noticia.categoriaId))
               .toList()
           : allNews;
+          
+      debugPrint('📱 NewsScreen: Noticias después de filtrar: ${filteredNews.length}');
       
+      // Si no hay noticias después del filtrado, mostramos mensaje adecuado
       if (filteredNews.isEmpty) {
+        debugPrint('⚠️ NewsScreen: No hay noticias después del filtrado');
+        
+        // Si allNews también está vacío, significa que no hay noticias en general
+        if (allNews.isEmpty) {
+          debugPrint('⚠️ NewsScreen: No hay noticias disponibles en la aplicación');
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No hay noticias disponibles en este momento.',
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+        
+        // Si hay noticias pero el filtrado las eliminó todas
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
