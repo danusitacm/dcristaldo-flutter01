@@ -1,10 +1,48 @@
 import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/api/services/comentario_service.dart';
+import 'package:dcristaldo/data/base_repository.dart';
 import 'package:dcristaldo/domain/comentario.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 
-class ComentarioRepository {
+class ComentarioRepository extends BaseRepository<Comentario> {
   final ComentariosService _service = ComentariosService();
+  
+  ComentarioRepository({super.cacheDuration});
+    
+  @override
+  Future<List<Comentario>> obtenerElementosDelServicio() async {
+    throw UnimplementedError('Se requiere ID de noticia para obtener comentarios');
+  }
+  
+  @override
+  Future<void> crearElementoEnServicio(Comentario elemento) async {
+    await _service.agregarComentario(
+      elemento.noticiaId,
+      elemento.texto,
+      elemento.autor,
+      elemento.fecha,
+    );
+  }
+  
+  @override
+  Future<void> actualizarElementoEnServicio(String id, Comentario elemento) async {
+    throw UnimplementedError('Actualizar comentario no está implementado');
+  }
+  
+  @override
+  Future<void> eliminarElementoEnServicio(String id) async {
+    throw UnimplementedError('Eliminar comentario no está implementado');
+  }
+  
+  @override
+  Future<Comentario> obtenerElementoPorIdDelServicio(String id) async {
+    throw UnimplementedError('Obtener comentario individual no está implementado');
+  }
+  
+  @override
+  String obtenerIdDelElemento(Comentario elemento) {
+    return elemento.id ?? '';
+  }
 
   /// Obtiene los comentarios asociados a una noticia específica
   Future<List<Comentario>> obtenerComentariosPorNoticia(String noticiaId) async {
@@ -12,11 +50,8 @@ class ComentarioRepository {
       final comentarios = await _service.obtenerComentariosPorNoticia(noticiaId);
       return comentarios;
     } catch (e) {
-      if (e is ApiException) {
-        rethrow; // Relanza la excepción para que la maneje el BLoC
-      }
-      debugPrint('Error inesperado al obtener comentarios: $e');
-      throw ApiException('Error inesperado al obtener comentarios.');
+      return manejarError<List<Comentario>>(e, 
+        mensajePersonalizado: 'Error inesperado al obtener comentarios');
     }
   }
 
@@ -31,19 +66,19 @@ class ComentarioRepository {
       throw ApiException('El texto del comentario no puede estar vacío.');
     }
     
+    final comentario = Comentario(
+      noticiaId: noticiaId,
+      texto: texto,
+      autor: autor,
+      fecha: fecha,
+      likes: 0,
+      dislikes: 0,
+    );
+    
     try {
-      await _service.agregarComentario(
-        noticiaId,
-        texto,
-        autor,
-        fecha,
-      );
+      await crearElementoEnServicio(comentario);
     } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
-      debugPrint('Error inesperado al agregar comentario: $e');
-      throw ApiException('Error inesperado al agregar comentario.');
+      manejarError(e, mensajePersonalizado: 'Error inesperado al agregar comentario');
     }
   }
 
@@ -53,11 +88,9 @@ class ComentarioRepository {
       final count = await _service.obtenerNumeroComentarios(noticiaId);
       return count;
     } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
       debugPrint('Error al obtener número de comentarios: $e');
-      return 0; // En caso de error, retornamos 0 como valor seguro
+      // En caso de error, retornamos 0 como valor seguro
+      return 0;
     }
   }
 
@@ -72,11 +105,7 @@ class ComentarioRepository {
         tipoReaccion: tipoReaccion,
       );
     } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
-      debugPrint('Error inesperado al reaccionar al comentario: $e');
-      throw ApiException('Error inesperado al reaccionar al comentario.');
+      manejarError(e, mensajePersonalizado: 'Error inesperado al reaccionar al comentario');
     }
   }
 
