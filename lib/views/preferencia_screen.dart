@@ -140,6 +140,8 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
   }
 
   void _toggleCategoria(BuildContext context, String categoriaId, bool isSelected) {
+    // Solo actualizamos el estado local del BLoC
+    // Los cambios se guardarán en la API cuando se presione "Aplicar filtros"
     context.read<PreferenciaBloc>().add(
       CambiarCategoria(
         categoria: categoriaId,
@@ -168,7 +170,7 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
       ),
     );
     
-    // Continuar con el flujo normal
+    // Ahora sí enviamos todas las preferencias a la API de una sola vez
     context.read<PreferenciaBloc>().add(
       SavePreferencias(categoriasSeleccionadas: state.categoriasSeleccionadas),
     );

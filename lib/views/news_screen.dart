@@ -110,16 +110,10 @@ class NewsScreen extends StatelessWidget {
     final preferenciaState = context.watch<PreferenciaBloc>().state;
     final filtrosActivos = preferenciaState.categoriasSeleccionadas.isNotEmpty;
     
-    debugPrint('📱 NewsScreen: Estado de filtros - categorias: ${preferenciaState.categoriasSeleccionadas}');
-    debugPrint('📱 NewsScreen: Filtros activos: $filtrosActivos');
-    
     if (state is NewsLoadInProgress) {
       return const Center(child: CircularProgressIndicator());
     } else if (state is NewsLoadSucces) {
       final allNews = state.news;
-      
-      debugPrint('📱 NewsScreen: Total noticias cargadas: ${allNews.length}');
-      debugPrint('📱 NewsScreen: Categorias IDs en noticias: ${allNews.map((e) => e.categoriaId).toSet().toList()}');
       
       // Filtrar noticias según las preferencias del usuario
       final filteredNews = filtrosActivos 
