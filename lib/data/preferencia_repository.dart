@@ -1,23 +1,37 @@
 import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/api/services/preferencia_service.dart';
+import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/preferencia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:watch_it/watch_it.dart';
 
 class PreferenciaRepository {
-  final PreferenciaService _preferenciaService = PreferenciaService(); // o new PreferenciaService()
+  final PreferenciaService _preferenciaService = PreferenciaService();
+  final CategoriaRepository _categoriaRepository = di<CategoriaRepository>();
 
   // Caché de preferencias para minimizar llamadas a la API
   Preferencia? _cachedPreferencias;
+  
+  /// Establece el username del usuario actual para las preferencias
+  Future<void> setUsername(String username) async {
+    await _preferenciaService.setUsername(username);
+    // Invalidar la caché para forzar una recarga con el nuevo username
+    invalidarCache();
+  }
 
   /// Obtiene las categorías seleccionadas para filtrar las noticias
   Future<List<String>> obtenerCategoriasSeleccionadas() async {
     try {
+      debugPrint('🔍 PreferenciaRepository: Obteniendo categorías seleccionadas...');
+      
       // Si no hay caché o es la primera vez, obtener de la API
       _cachedPreferencias ??= await _preferenciaService.getPreferencias();
 
+      debugPrint('✅ PreferenciaRepository: Categorías seleccionadas obtenidas: ${_cachedPreferencias!.categoriasSeleccionadas}');
+      
       return _cachedPreferencias!.categoriasSeleccionadas;
     } catch (e) {
-      debugPrint('Error al obtener categorías seleccionadas: $e');
+      debugPrint('❌ PreferenciaRepository: Error al obtener categorías seleccionadas: $e');
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
         rethrow;
@@ -28,15 +42,38 @@ class PreferenciaRepository {
     }
   }
 
+  /// Verifica que las categorías seleccionadas existan realmente en el sistema
+  /// Esto evita guardar IDs de categorías que ya no existen
+  Future<List<String>> validarCategoriasSeleccionadas(List<String> categoriaIds) async {
+    try {
+      // Obtener todas las categorías desde la caché
+      final todasLasCategorias = await _categoriaRepository.obtenerCategoriasCache();
+      final categoriasValidas = categoriaIds.where(
+        (id) => todasLasCategorias.any((c) => c.id == id)
+      ).toList();
+      
+      return categoriasValidas;
+    } catch (e) {
+      // Si hay error al validar, asumimos que todas son válidas
+      debugPrint('Error al validar categorías: $e');
+      return categoriaIds;
+    }
+  }
+
   /// Guarda las categorías seleccionadas para filtrar las noticias
   Future<void> guardarCategoriasSeleccionadas(List<String> categoriaIds) async {
     try {
       // Si no hay caché o es la primera vez, obtener de la API
       _cachedPreferencias ??= await _preferenciaService.getPreferencias();
 
+      // Validar las categorías antes de guardar
+      final categoriasValidas = await validarCategoriasSeleccionadas(categoriaIds);
 
-      // Actualizar el objeto en caché
-      _cachedPreferencias = Preferencia(categoriasSeleccionadas: categoriaIds);
+      // Actualizar el objeto en caché, preservando el username
+      _cachedPreferencias = Preferencia(
+        categoriasSeleccionadas: categoriasValidas,
+        email: _cachedPreferencias?.email,
+      );
 
       // Guardar en la API
       await _preferenciaService.guardarPreferencias(_cachedPreferencias!);
@@ -92,9 +129,10 @@ class PreferenciaRepository {
     try {
       await guardarCategoriasSeleccionadas([]);
 
-      // Limpiar también la caché
+      // Limpiar también la caché, preservando el username
       if (_cachedPreferencias != null) {
-        _cachedPreferencias = Preferencia.empty();
+        final username = _cachedPreferencias?.email;
+        _cachedPreferencias = Preferencia.empty(username: username);
       }
     } catch (e) {
       debugPrint('Error al limpiar filtros: $e');

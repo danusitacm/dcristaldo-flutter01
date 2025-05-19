@@ -209,8 +209,8 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
 
       if (widget.noticia == null) {
         context.read<NewsBloc>().add(NewsAdded(nuevaNoticia));
-      } else {
-        context.read<NewsBloc>().add(NewsUpdated(widget.noticia!.id, nuevaNoticia));
+      } else if (widget.noticia?.id != null) {
+        context.read<NewsBloc>().add(NewsUpdated(widget.noticia!.id!, nuevaNoticia));
       }
 
       Navigator.of(context).pop();

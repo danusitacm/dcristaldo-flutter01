@@ -23,7 +23,13 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
     Emitter<PreferenciaState> emit,
   ) async {
     try {
+      // Forzar invalidación de caché si se especifica
+      if (event.forceReload) {
+        _preferenciasRepository.invalidarCache();
+      }
+      
       // Obtener solo las categorías seleccionadas del repositorio existente
+      // Ahora esto cargará las preferencias asociadas al usuario actual
       final categoriasSeleccionadas = await _preferenciasRepository.obtenerCategoriasSeleccionadas();
 
       // Como el repositorio original solo almacena categorías, el resto de valores serían por defecto
@@ -45,12 +51,12 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
   void _onCambiarCategoria(
     CambiarCategoria event,
     Emitter<PreferenciaState> emit,
-  ) async {
+  ) {
     try {
       // 1. Crear una copia de las categorías actuales para modificar
       final List<String> categoriasActualizadas = [...state.categoriasSeleccionadas];
 
-      // 2. Actualizar localmente primero para feedback inmediato
+      // 2. Actualizar localmente solo para feedback inmediato
       if (event.seleccionada) {
         if (!categoriasActualizadas.contains(event.categoria)) {
           categoriasActualizadas.add(event.categoria);
@@ -60,23 +66,11 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
       }
 
       // 3. Emitir estado actualizado inmediatamente para UI responsiva
+      // Esto solo afecta al estado local, no envía nada a la API
       emit(state.copyWith(categoriasSeleccionadas: categoriasActualizadas));
-
-      // 4. Luego intentar persistir el cambio (sin bloquear la UI)
-      try {
-        if (event.seleccionada) {
-          await _preferenciasRepository.agregarCategoriaFiltro(event.categoria);
-        } else {
-          await _preferenciasRepository.eliminarCategoriaFiltro(event.categoria);
-        }
-      } catch (e) {
-        // Si falla la persistencia, no interrumpir la experiencia del usuario
-        // pero registrar el error para depuración
-        print('Error al persistir cambio de categoría: $e');
-
-        // Opcionalmente, podrías emitir un estado de "sincronización pendiente"
-        // para indicar que los cambios locales no se han guardado aún
-      }
+      
+      // Ya no enviamos los cambios a la API inmediatamente
+      // El envío a la API solo sucederá cuando el usuario presione el botón "Aplicar filtros"
     } catch (e) {
       // Este catch solo atraparía errores graves en la lógica del bloc
       emit(PreferenciaError('Error al cambiar categoría: ${e.toString()}'));

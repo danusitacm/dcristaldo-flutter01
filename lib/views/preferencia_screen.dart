@@ -7,12 +7,24 @@ import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_state.dart';
 import 'package:dcristaldo/domain/categoria.dart';
-import 'package:dcristaldo/helpers/snackbar_helper.dart';
 
-class PreferenciasScreen extends StatelessWidget {
 
+class PreferenciasScreen extends StatefulWidget {
   const PreferenciasScreen({super.key});
 
+  @override
+  State<PreferenciasScreen> createState() => _PreferenciasScreenState();
+}
+
+class _PreferenciasScreenState extends State<PreferenciasScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Cargar las preferencias actuales del usuario al entrar a la pantalla
+    // con forceReload en true para asegurar que obtenemos los datos más recientes
+    context.read<PreferenciaBloc>().add(const CargarPreferencias(forceReload: true));
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,6 +140,8 @@ class PreferenciasScreen extends StatelessWidget {
   }
 
   void _toggleCategoria(BuildContext context, String categoriaId, bool isSelected) {
+    // Solo actualizamos el estado local del BLoC
+    // Los cambios se guardarán en la API cuando se presione "Aplicar filtros"
     context.read<PreferenciaBloc>().add(
       CambiarCategoria(
         categoria: categoriaId,
@@ -139,24 +153,38 @@ class PreferenciasScreen extends StatelessWidget {
   void _aplicarFiltros(BuildContext context, PreferenciaState state) {
     // Verificar que no sea un estado de error
     if (state is PreferenciaError) {
-      SnackBarHelper.showSnackBar(
-        context: context, 
-        message: 'No se pueden aplicar los filtros debido a un error'
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pueden aplicar los filtros debido a un error.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
-    // Continuar con el flujo normal
+    // Mostrar indicador de carga
+    final saveSnackBar = ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Guardando preferencias...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+    
+    // Ahora sí enviamos todas las preferencias a la API de una sola vez
     context.read<PreferenciaBloc>().add(
       SavePreferencias(categoriasSeleccionadas: state.categoriasSeleccionadas),
     );
 
-    SnackBarHelper.showSuccess(
-      context: context,
-      message: state.categoriasSeleccionadas.isEmpty
-        ? 'Mostrando todas las noticias'
-        : 'Filtros aplicados correctamente'
-    );
+    // Limpiar SnackBar después de guardar
+    saveSnackBar.closed.then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Preferencias guardadas correctamente'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 1),
+        ),
+      );
+    });
 
     Navigator.pop(context, state.categoriasSeleccionadas);
   }

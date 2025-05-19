@@ -1,86 +1,111 @@
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/bloc/category/category_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/news/news_bloc.dart';
 import 'package:dcristaldo/components/noticia_card.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/views/base_screen.dart';
 import 'package:dcristaldo/components/news_form_dialog.dart';
 import 'package:dcristaldo/components/delete_confirmation_dialog.dart';
+import 'package:dcristaldo/components/report_form_dialog.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/views/preferencia_screen.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_event.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_state.dart';
+import 'package:dcristaldo/domain/reporte.dart';
+import 'package:intl/intl.dart';
+import 'package:dcristaldo/components/comentario_dialog.dart';
+import 'package:dcristaldo/bloc/comentarios/comentario_bloc.dart';
+
 
 class NewsScreen extends StatelessWidget {
   const NewsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Emit the event to load news when the screen is built
-    context.read<NewsBloc>().add(const NewsStarted());
+    // Asegurarnos de que las preferencias se cargan primero
+    // y luego las noticias, para evitar problemas de sincronización
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        debugPrint('🔄 NewsScreen: Iniciando carga de preferencias...');
+        context.read<PreferenciaBloc>().add(const CargarPreferencias());
+        
+        // Pequeño delay para asegurar que las preferencias se cargan primero
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (context.mounted) {
+            debugPrint('🔄 NewsScreen: Iniciando carga de noticias y categorías...');
+            context.read<NewsBloc>().add(const NewsStarted());
+            context.read<NewsBloc>().add(const NewsCategoriesRequested());
+          }
+        });
+      }
+    });
     
-    // También solicitamos las categorías al NewsBloc
-    context.read<NewsBloc>().add(const NewsCategoriesRequested());
-    
-    // Cargar las preferencias del usuario
-    context.read<PreferenciaBloc>().add(const CargarPreferencias());
-    
-    return BaseScreen(
-      appBar: AppBar(
-        title: const Text('Noticias'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _navigateToPreferenciasScreen(context),
-            tooltip: 'Filtrar por categorías',
-          ),
-        ],
-      ),
-      body: BlocConsumer<NewsBloc, NewsState>(
-        listener: _handleStateChanges,
-        builder: (context, state) => _buildBody(context, state),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddNewsDialog(context),
-        child: const Icon(Icons.add),
+    return BlocListener<ReporteBloc, ReporteState>(
+      listener: (context, state) {
+        if (state is ReporteSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Reporte enviado correctamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is ReporteError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${state.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: BaseScreen(
+        appBar: AppBar(
+          title: const Text('Noticias'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: () => _navigateToPreferenciasScreen(context),
+              tooltip: 'Filtrar por categorías',
+            ),
+          ],
+        ),
+        body: BlocConsumer<NewsBloc, NewsState>(
+          listener: _handleStateChanges,
+          builder: (context, state) => _buildBody(context, state),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showAddNewsDialog(context),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
 
-  // Navegar a la pantalla de preferencias
   void _navigateToPreferenciasScreen(BuildContext context) async {
-    // Solicitar categorías para la pantalla de preferencias
     context.read<CategoriaBloc>().add(CategoriaInitEvent());
-    
-    // Navegar a la pantalla de preferencias y esperar resultado
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const PreferenciasScreen(),
       ),
     );
-    
-    // Recargar las noticias después de actualizar las preferencias
     if (context.mounted) {
       context.read<NewsBloc>().add(const NewsStarted());
     }
   }
 
-  // Manejador de cambios de estado
   void _handleStateChanges(BuildContext context, NewsState state) {
     if (state is NewsLoadFailure) {
-      SnackBarHelper.showError(
-        context: context,
-        message: 'Error: ${state.error}',
-        color: Colors.red,
-      );
+      
     } else if (state is NewsLoadSucces) {
       // Opcional: Mostrar un mensaje de éxito después de operaciones CRUD
     }
   }
 
-  // Constructor del contenido principal
   Widget _buildBody(BuildContext context, NewsState state) {
     final preferenciaState = context.watch<PreferenciaBloc>().state;
     final filtrosActivos = preferenciaState.categoriasSeleccionadas.isNotEmpty;
@@ -96,8 +121,31 @@ class NewsScreen extends StatelessWidget {
               preferenciaState.categoriasSeleccionadas.contains(noticia.categoriaId))
               .toList()
           : allNews;
+          
+      debugPrint('📱 NewsScreen: Noticias después de filtrar: ${filteredNews.length}');
       
+      // Si no hay noticias después del filtrado, mostramos mensaje adecuado
       if (filteredNews.isEmpty) {
+        debugPrint('⚠️ NewsScreen: No hay noticias después del filtrado');
+        
+        // Si allNews también está vacío, significa que no hay noticias en general
+        if (allNews.isEmpty) {
+          debugPrint('⚠️ NewsScreen: No hay noticias disponibles en la aplicación');
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'No hay noticias disponibles en este momento.',
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+        
+        // Si hay noticias pero el filtrado las eliminó todas
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -126,7 +174,7 @@ class NewsScreen extends StatelessWidget {
           if (filtrosActivos)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              color: Colors.blue.withOpacity(0.1),
+              color: Colors.blue,
               child: Row(
                 children: [
                   const Icon(Icons.filter_list, size: 20),
@@ -158,7 +206,9 @@ class NewsScreen extends StatelessWidget {
                     noticia: news,
                     categorias: state.categorias,
                     onEdit: () => _showEditNewsDialog(context, news),
-                    onDelete: () => _showDeleteNewsDialog(context, news.id),
+                    onDelete: () => _showDeleteNewsDialog(context, news.id!),
+                    onReport: () => _showReportDialog(context, news.id!),
+                    onComment: () => _showComentariosDialog(context, news),
                   );
                 },
               ),
@@ -196,7 +246,7 @@ class NewsScreen extends StatelessWidget {
     }
   }
   
-  // Método para mostrar el diálogo de agregar noticia
+  /// Método para mostrar el diálogo de agregar noticia
   void _showAddNewsDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -204,7 +254,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
   
-  // Método para mostrar el diálogo de editar noticia
+  /// Método para mostrar el diálogo de editar noticia
   void _showEditNewsDialog(BuildContext context, Noticia noticia) {
     showDialog(
       context: context,
@@ -212,7 +262,7 @@ class NewsScreen extends StatelessWidget {
     );
   }
   
-  // Método para mostrar el diálogo de eliminar noticia
+  /// Método para mostrar el diálogo de eliminar noticia
   void _showDeleteNewsDialog(BuildContext context, String id) {
     showDialog(
       context: context,
@@ -220,6 +270,36 @@ class NewsScreen extends StatelessWidget {
         title: 'Eliminar Noticia',
         message: '¿Estás seguro de que deseas eliminar esta noticia?',
         onDelete: () => context.read<NewsBloc>().add(NewsDeleted(id)),
+      ),
+    );
+  }
+  void _showReportDialog(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (context) => ReportFormDialog(
+        noticiaId: id,
+        title: 'Reportar Noticia',
+        onReport: () => context.read<ReporteBloc>().add(ReporteSubmitted(
+          Reporte(
+            noticiaId: id,
+            fecha: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            motivo: MotivoReporte.noticiaInapropiada, // El motivo se maneja internamente en ReportFormDialog
+          )
+        )),
+      ),
+    );
+  }
+  
+  /// Método para mostrar el diálogo de comentarios
+  void _showComentariosDialog(BuildContext context, Noticia noticia) {
+    showDialog(
+      context: context,
+      builder: (context) => BlocProvider(
+        create: (context) => ComentarioBloc(),
+        child: ComentarioDialog(
+          noticiaId: noticia.id!,
+          titulo: noticia.titulo,
+        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
 
   CategoriaBloc() : super(CategoriaInitial()) {
     on<CategoriaInitEvent>(_onInit);
+    on<CategoriaRefreshEvent>(_onRefresh);
     on<CategoriaCreateEvent>(_onCreate);
     on<CategoriaUpdateEvent>(_onUpdate);
     on<CategoriaDeleteEvent>(_onDelete);
@@ -19,10 +20,31 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     emit(CategoriaLoading());
 
     try {
-      final categorias = await categoriaRepository.obtenerCategorias();
+      // Usamos obtenerCategoriasCache para aprovechar la caché
+      final categorias = await categoriaRepository.obtenerCategoriasCache();
       emit(CategoriaLoaded(categorias, DateTime.now()));
     } catch (e) {
-      emit(CategoriaError('Failed to load categories: ${e.toString()}'));
+      emit(CategoriaError('Error al cargar categorías: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onRefresh(CategoriaRefreshEvent event, Emitter<CategoriaState> emit) async {
+    emit(CategoriaLoading());
+
+    try {
+      // Primero invalidamos explícitamente la caché
+      categoriaRepository.invalidarCache();
+      
+      // Luego forzamos la actualización desde la API
+      final categorias = await categoriaRepository.forzarActualizacionCategorias();
+      emit(CategoriaLoaded(categorias, DateTime.now()));
+    } catch (e) {
+      emit(CategoriaError('Error al actualizar las categorías desde la API: ${e.toString()}'));
+      
+      // Si teníamos un estado válido anterior, restaurarlo
+      if (state is CategoriaLoaded) {
+        emit(state);
+      }
     }
   }
 
@@ -38,7 +60,8 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     
     try {
       await operacion();
-      final categorias = await categoriaRepository.obtenerCategorias();
+      // Usar forzarActualizacionCategorias para asegurar datos frescos
+      final categorias = await categoriaRepository.forzarActualizacionCategorias();
       emit(CategoriaLoaded(categorias, DateTime.now()));
     } catch (e) {
       emit(CategoriaError('$mensajeError: ${e.toString()}'));

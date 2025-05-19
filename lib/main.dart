@@ -17,10 +17,15 @@ import 'package:dcristaldo/bloc/counter/counter_bloc.dart';
 import 'package:dcristaldo/bloc/news/news_bloc.dart';
 //import 'package:dcristaldo/views/mi_screen.dart';
 //import 'package:dcristaldo/views/color_change_screen.dart';
-import 'package:dcristaldo/di/locator.dart';
+import 'package:dcristaldo/core/locator.dart';
 import 'package:dcristaldo/bloc/category/category_bloc.dart';
 import 'package:dcristaldo/views/category_screen.dart'; 
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
+import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
+import 'package:dcristaldo/bloc/comentarios/comentario_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_bloc.dart';
+import 'package:dcristaldo/bloc/auth/auth_event.dart';
+import 'package:dcristaldo/bloc/auth/auth_state.dart';
 
 Future<void> main() async {
   await dotenv.load();
@@ -35,6 +40,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc()..add(AuthCheckStatus()),
+        ),
         BlocProvider<CounterBloc>(
           create: (context) => CounterBloc(),
         ),
@@ -45,6 +53,10 @@ class MyApp extends StatelessWidget {
           create: (context) => CategoriaBloc()),
         BlocProvider<PreferenciaBloc>(
           create: (context) => PreferenciaBloc()),
+        BlocProvider<ReporteBloc>(
+          create: (context) => ReporteBloc()),
+        BlocProvider<ComentarioBloc>(
+          create: (context) => ComentarioBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -30,6 +30,24 @@ class CategoriaRepository {
     }
   }
 
+  // Forzar actualización de las categorías desde la API (ignorando la caché)
+  Future<List<Categoria>> forzarActualizacionCategorias() async {
+    try {
+      final categorias = await _service.obtenerCategorias();
+      // Actualizar la caché con los datos nuevos
+      _categoriasCache = categorias;
+      _ultimaActualizacion = DateTime.now();
+      return categorias;
+    } catch (e) {
+      if (e is ApiException) {
+        // Propaga el mensaje contextual de ApiException
+        rethrow;
+      } else {
+        throw Exception('Error al actualizar categorías: $e');
+      }
+    }
+  }
+
   // Obtener categorías de la caché o cargarlas si es necesario
   Future<List<Categoria>> obtenerCategoriasCache() async {
     // Si tenemos caché válida, la devolvemos
@@ -43,12 +61,18 @@ class CategoriaRepository {
     return await obtenerCategorias();
   }
 
+  // Invalidar explícitamente la caché de categorías
+  void invalidarCache() {
+    _categoriasCache = null;
+    _ultimaActualizacion = null;
+  }
+
   // Crear una nueva categoría
   Future<void> crearCategoria(Categoria categoria) async {
     try {
       await _service.crearCategoria(categoria);
-      // Invalidar caché
-      _categoriasCache = null;
+      // Invalidar caché usando el nuevo método
+      invalidarCache();
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
@@ -63,8 +87,8 @@ class CategoriaRepository {
   Future<void> actualizarCategoria(String id, Categoria categoria) async {
     try {
       await _service.actualizarCategoria(id, categoria);
-      // Invalidar caché
-      _categoriasCache = null;
+      // Invalidar caché usando el nuevo método
+      invalidarCache();
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
@@ -79,8 +103,8 @@ class CategoriaRepository {
   Future<void> eliminarCategoria(String id) async {
     try {
       await _service.eliminarCategoria(id);
-      // Invalidar caché
-      _categoriasCache = null;
+      // Invalidar caché usando el nuevo método
+      invalidarCache();
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException

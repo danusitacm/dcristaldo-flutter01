@@ -9,6 +9,10 @@ abstract class CategoriaEvent extends Equatable {
 class CategoriaInitEvent extends CategoriaEvent { 
 }
 
+/// Evento para forzar la actualización de las categorías desde la API
+class CategoriaRefreshEvent extends CategoriaEvent { 
+}
+
 class CategoriaCreateEvent extends CategoriaEvent {
   final Categoria categoria;
 

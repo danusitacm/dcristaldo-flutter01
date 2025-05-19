@@ -1,154 +1,106 @@
 import 'dart:async';
+import 'package:dcristaldo/core/service/base_service.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/constants/constants.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
-class NoticiaService {
-  final Dio _dio = Dio(
-          BaseOptions(
-            connectTimeout: const Duration(seconds: CategoryConstants.timeoutSeconds),
-            receiveTimeout:const  Duration(seconds: CategoryConstants.timeoutSeconds),
-          ),
-        );
-  final String path=NewsConstants.noticiasEndpoint;
-  /// Crear una nueva noticia
-  Future<void> crearNoticia(Noticia noticia) async {
-    try {
-      final response = await _dio.post(
-        path,
-        data: {
-          'titulo': noticia.titulo,
-          'descripcion': noticia.descripcion,
-          'fuente': noticia.fuente,
-          'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.urlImagen,
-          'categoriaId': noticia.categoriaId,
-        },
-      );
-      if (response.statusCode != 201) {
-        throw ApiException(
-          'Error al crear la categoría',
-          statusCode: response.statusCode,
-        );
-      }
-    } catch (e) {
-      throw ApiException('Error al conectar con la API de categorías: $e');
-    }
-  }
 
+class NoticiaService extends BaseService { 
+  
   /// Leer todas las noticias
   Future<List<Noticia>> obtenerNoticias() async {
     try {
-      final response = await _dio.get(path);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data ?? [];
-        return data.map((json) => Noticia.fromJson(json)).toList();
-      } else {
+      final data = await get(ApiConstants.noticias, requireAuthToken: false);
+      
+      if (data is List) {
+        return data.map((json) => NoticiaMapper.fromMap(json)).toList();
+      }else {
+        debugPrint('⚠️ Formato de respuesta inesperado: $data');
         throw ApiException(
-          'Error al obtener las noticias',
-          statusCode: response.statusCode,
+          NewsConstants.errorNotFound,
+          statusCode: 500,
         );
       }
-    } on DioException catch (e) {
-      throw ApiException(
-        'Error al conectar con la API de noticias: $e',
-        statusCode: e.response?.statusCode,
-      );
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw ApiException('Error desconocido: $e');
+      debugPrint('❌ Error al obtener noticias: ${e.toString()}');
+      throw ApiException(NewsConstants.mensajeError);
     }
   }
-
+  
+  /// Crear una nueva noticia
+  Future<void> crearNoticia(Noticia noticia) async {
+    try {
+      final data = noticia.toJson();
+      
+      await post(
+        ApiConstants.noticias,
+        data: data,
+        requireAuthToken: false,
+      );
+      
+      debugPrint('✅ Noticia creada correctamente');
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      debugPrint('❌ Error al crear la noticia: ${e.toString()}');
+      throw ApiException('Error al conectar con la API de noticias: ${NewsConstants.errorServer}');
+    }
+  }
+  
   /// Leer una noticia por ID
   Future<Noticia> obtenerNoticiaPorId(String id) async {
     try {
-      final response = await _dio.get('$path/$id');
-
-      if (response.statusCode == 200) {
-        return Noticia.fromJson(response.data);
-      } else {
-        throw Exception('Error al obtener la noticia: ${response.statusMessage}');
-      }
+      final data = await get(
+        '${ApiConstants.noticias}/$id',
+        requireAuthToken: false,
+      );
+      
+      debugPrint('✅ Noticia obtenida correctamente: $id');
+      return NoticiaMapper.fromMap(data);
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw Exception('Error al obtener la noticia: $e');
+      debugPrint('❌ Error al obtener la noticia: ${e.toString()}');
+      throw ApiException(NewsConstants.errorNotFound, statusCode: 404);
     }
   }
 
   /// Actualizar una noticia
   Future<void> actualizarNoticia(String id, Noticia noticia) async {
     try {
-      final response = await _dio.put(
-        '$path/$id',
-        data: {
-          'titulo': noticia.titulo,
-          'descripcion': noticia.descripcion,
-          'fuente': noticia.fuente,
-          'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.urlImagen,
-          'categoriaId': noticia.categoriaId,
-        },
+      final data = noticia.toJson();
+      
+      await put(
+        '${ApiConstants.noticias}/$id',
+        data: data,
+        requireAuthToken: false,
       );
-      if (response.statusCode != 200) {
-        throw ApiException(
-          'Error al editar la noticia',
-          statusCode: response.statusCode,
-        );
-      }
+      
+      debugPrint('✅ Noticia actualizada correctamente');
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw ApiException('Error al conectar con la API de noticias: $e');
+      debugPrint('❌ Error al actualizar la noticia: ${e.toString()}');
+      throw ApiException(NewsConstants.errorServer);
     }
   }
 
   /// Eliminar una noticia
   Future<void> eliminarNoticia(String id) async {
     try {
-      final response = await _dio.delete('$path/$id');
-    if (response.statusCode != 200 && response.statusCode != 204) {
-        throw ApiException(
-          'Error al eliminar la noticias',
-          statusCode: response.statusCode,
-        );
-      }
+      await delete(
+        '${ApiConstants.noticias}/$id',
+        requireAuthToken: false,
+      );
+      
+      debugPrint('✅ Noticia eliminada correctamente: $id');
+    } on ApiException {
+      rethrow;
     } catch (e) {
-      throw ApiException('Error al conectar con la API de noticias: $e');
+      debugPrint('❌ Error al eliminar la noticia: ${e.toString()}');
+      throw ApiException(NewsConstants.errorServer);
     }
   }
-  
-  /*Future<List<Noticia>> obtenerNoticiasDesdeApi({
-    required int numeroPagina,
-    required int tamanoPagina,
-  }) async {
-    try {
-      // Realizar la solicitud HTTP a la API
-      final response = await _dio.get(
-        NewsConstants.url,
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data ?? [];
-        return data.map((json) => Noticia.fromJson(json)).toList();
-      } else {
-        throw Exception('Error al obtener las noticias: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error al realizar la solicitud: $e');
-    }
-  }
-  Future<void> crearNoticia(Noticia noticia) async {
-    try {
-      await _dio.post(
-        NewsConstants.url, // Cambia esta URL por la de tu API
-        data: {
-          'titulo': noticia.titulo,
-          'descripcion': noticia.descripcion,
-          'fuente': noticia.fuente,
-          'publicadaEl': noticia.publicadaEl.toIso8601String(),
-          'urlImage': noticia.urlImagen,
-        },
-      );
-    } catch (e) {
-      throw Exception('Error al crear la noticia: $e');
-    }
-  }*/
 }

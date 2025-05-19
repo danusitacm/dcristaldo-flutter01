@@ -8,7 +8,12 @@ import 'package:equatable/equatable.dart';
  }
 
  class CargarPreferencias extends PreferenciaEvent {
-   const CargarPreferencias();
+   final bool forceReload;
+   
+   const CargarPreferencias({this.forceReload = false});
+   
+   @override
+   List<Object> get props => [forceReload];
  }
 
  class CambiarCategoria extends PreferenciaEvent {

@@ -1,28 +1,19 @@
-class Preferencia {
+import 'package:dart_mappable/dart_mappable.dart';
+part 'preferencia.mapper.dart';
+@MappableClass()
+class Preferencia with PreferenciaMappable {
   final List<String> categoriasSeleccionadas;
+  final String? email;
+  
   Preferencia({
     required this.categoriasSeleccionadas,
+    this.email,
   });
-  factory Preferencia.empty(){
+  
+  factory Preferencia.empty({String? username}) {
     return Preferencia(
       categoriasSeleccionadas: [],
-    );
-  }
-  Preferencia copyWith({
-    List<String>? categoriasSeleccionadas,
-  }) {
-    return Preferencia(
-      categoriasSeleccionadas: categoriasSeleccionadas ?? this.categoriasSeleccionadas,
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'categoriasSeleccionadas': categoriasSeleccionadas,
-    };
-  }
-  factory Preferencia.fromJson(Map<String, dynamic> json) {
-    return Preferencia(
-      categoriasSeleccionadas: List<String>.from(json['categoriasSeleccionadas'] ?? []),
+      email: username,
     );
   }
 }

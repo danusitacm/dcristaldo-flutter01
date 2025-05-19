@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/data/noticia_repository.dart';
@@ -23,11 +24,21 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   Future<void> _onNewsStarted(NewsStarted event, Emitter<NewsState> emit) async {
     emit(NewsLoadInProgress());
     try {
+      debugPrint('🔄 NewsBloc: Iniciando carga de noticias...');
       final noticias = await _noticiaRepository.obtenerNoticias();
+      debugPrint('✅ NewsBloc: ${noticias.length} noticias obtenidas');
+      
       final categorias = await _categoriaRepository.obtenerCategorias();
+      debugPrint('✅ NewsBloc: ${categorias.length} categorías obtenidas');
+      
+      // Verificamos que haya datos antes de emitir el estado de éxito
+      if (noticias.isEmpty) {
+        debugPrint('⚠️ NewsBloc: No se obtuvieron noticias, verificando si es un error de API');
+      }
       
       emit(NewsLoadSucces(noticias, categorias: categorias));
     } catch (e) {
+      debugPrint('❌ NewsBloc: Error al cargar noticias: $e');
       emit(NewsLoadFailure(e.toString()));
     }
   }
