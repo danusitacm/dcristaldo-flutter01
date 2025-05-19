@@ -31,7 +31,6 @@ class NoticiaCard extends StatefulWidget {
 class _NoticiaCardState extends State<NoticiaCard> {
   final Color iconColor = Colors.black;
   Categoria? _categoria;
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -54,7 +53,6 @@ class _NoticiaCardState extends State<NoticiaCard> {
     }
 
     setState(() {
-      _isLoading = true;
     });
 
     try {
@@ -65,13 +63,11 @@ class _NoticiaCardState extends State<NoticiaCard> {
       if (mounted) {
         setState(() {
           _categoria = categoria;
-          _isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isLoading = false;
         });
       }
     }

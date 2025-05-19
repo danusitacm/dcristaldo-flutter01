@@ -25,7 +25,7 @@ import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
 import 'package:dcristaldo/bloc/comentarios/comentario_bloc.dart';
 import 'package:dcristaldo/bloc/auth/auth_bloc.dart';
 import 'package:dcristaldo/bloc/auth/auth_event.dart';
-import 'package:dcristaldo/bloc/auth/auth_state.dart';
+
 
 Future<void> main() async {
   await dotenv.load();

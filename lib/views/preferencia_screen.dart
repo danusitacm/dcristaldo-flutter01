@@ -177,6 +177,7 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
 
     // Limpiar SnackBar después de guardar
     saveSnackBar.closed.then((_) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Preferencias guardadas correctamente'),
