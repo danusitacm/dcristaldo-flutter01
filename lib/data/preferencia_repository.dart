@@ -1,16 +1,50 @@
 import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/api/services/preferencia_service.dart';
+import 'package:dcristaldo/data/base_repository.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
 import 'package:dcristaldo/domain/preferencia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
-class PreferenciaRepository {
+class PreferenciaRepository extends BaseRepository<Preferencia> {
   final PreferenciaService _preferenciaService = PreferenciaService();
   final CategoriaRepository _categoriaRepository = di<CategoriaRepository>();
 
-  // Caché de preferencias para minimizar llamadas a la API
+  // Caché específica de preferencias (separada de la caché genérica de BaseRepository)
   Preferencia? _cachedPreferencias;
+  
+  PreferenciaRepository({super.cacheDuration = const Duration(minutes: 15)});
+    
+  @override
+  Future<List<Preferencia>> obtenerElementosDelServicio() async {
+    final preferencia = await _preferenciaService.getPreferencias();
+    return [preferencia];
+  }
+  
+  @override
+  Future<void> crearElementoEnServicio(Preferencia elemento) async {
+    await _preferenciaService.guardarPreferencias(elemento);
+  }
+  
+  @override
+  Future<void> actualizarElementoEnServicio(String id, Preferencia elemento) async {
+    await _preferenciaService.guardarPreferencias(elemento);
+  }
+  
+  @override
+  Future<void> eliminarElementoEnServicio(String id) async {
+    throw UnimplementedError('No se pueden eliminar preferencias');
+  }
+  
+  @override
+  Future<Preferencia> obtenerElementoPorIdDelServicio(String id) async {
+    return await _preferenciaService.getPreferencias();
+  }
+  
+  @override
+  String obtenerIdDelElemento(Preferencia elemento) {
+    return elemento.email ?? 'default';
+  }
   
   /// Establece el username del usuario actual para las preferencias
   Future<void> setUsername(String username) async {
@@ -77,6 +111,7 @@ class PreferenciaRepository {
 
       // Guardar en la API
       await _preferenciaService.guardarPreferencias(_cachedPreferencias!);
+      super.invalidarCache();
     } catch (e) {
       debugPrint('Error al guardar categorías seleccionadas: $e');
       if (e is ApiException) {
@@ -146,7 +181,9 @@ class PreferenciaRepository {
   }
 
   /// Limpia la caché para forzar una recarga desde la API
+  @override
   void invalidarCache() {
     _cachedPreferencias = null;
+    super.invalidarCache();
   }
 }
