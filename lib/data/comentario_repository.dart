@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:dcristaldo/api/services/comentario_service.dart';
 import 'package:dcristaldo/data/base_repository.dart';
+import 'package:dcristaldo/data/comments_cache_service.dart';
 import 'package:dcristaldo/domain/comentario.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 
 class ComentarioRepository extends BaseRepository<Comentario> {
   final ComentariosService _service = ComentariosService();
+  final CommentsCacheService _cacheService = CommentsCacheService();
   
   ComentarioRepository({super.cacheDuration});
     
@@ -45,11 +47,36 @@ class ComentarioRepository extends BaseRepository<Comentario> {
   }
 
   /// Obtiene los comentarios asociados a una noticia específica
+  /// Implementa caché local con SharedPreferences
   Future<List<Comentario>> obtenerComentariosPorNoticia(String noticiaId) async {
     try {
+      // Intentar obtener comentarios desde la caché local
+      final isCacheValid = await _cacheService.isCacheValid(noticiaId, cacheDuration);
+      
+      if (isCacheValid) {
+        final cachedComments = await _cacheService.getCommentsFromCache(noticiaId);
+        if (cachedComments != null && cachedComments.isNotEmpty) {
+          debugPrint('Obteniendo comentarios de caché local para noticia: $noticiaId');
+          return cachedComments;
+        }
+      }
+      
+      // Si no hay caché válida, obtener desde el servicio
+      debugPrint('Obteniendo comentarios desde API para noticia: $noticiaId');
       final comentarios = await _service.obtenerComentariosPorNoticia(noticiaId);
+      
+      // Guardar en caché local
+      await _cacheService.saveCommentsToCache(noticiaId, comentarios);
+      
       return comentarios;
     } catch (e) {
+      // En caso de error de red, intentar obtener desde caché aunque haya expirado
+      final cachedComments = await _cacheService.getCommentsFromCache(noticiaId);
+      if (cachedComments != null && cachedComments.isNotEmpty) {
+        debugPrint('Usando caché expirada debido a error de red');
+        return cachedComments;
+      }
+      
       return manejarError<List<Comentario>>(e, 
         mensajePersonalizado: 'Error inesperado al obtener comentarios');
     }
@@ -65,6 +92,9 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     if (texto.isEmpty) {
       throw ApiException('El texto del comentario no puede estar vacío.');
     }
+    
+    // Limpiar caché cuando se agrega un nuevo comentario
+    await _cacheService.clearCommentsCache(noticiaId);
     
     final comentario = Comentario(
       noticiaId: noticiaId,
@@ -98,12 +128,16 @@ class ComentarioRepository extends BaseRepository<Comentario> {
   Future<void> reaccionarComentario({
     required String comentarioId,
     required String tipoReaccion,
+    required String noticiaId, // Agregado para manejar caché
   }) async {
     try {
       await _service.reaccionarComentario(
         comentarioId: comentarioId,
         tipoReaccion: tipoReaccion,
       );
+      
+      // Invalidar caché cuando se reacciona a un comentario
+      await _cacheService.clearCommentsCache(noticiaId);
     } catch (e) {
       manejarError(e, mensajePersonalizado: 'Error inesperado al reaccionar al comentario');
     }
@@ -114,6 +148,7 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     required String comentarioId,
     required String texto,
     required String autor,
+    required String noticiaId, // Agregado para manejar caché
   }) async {
     if (texto.isEmpty) {
       return {
@@ -128,6 +163,10 @@ class ComentarioRepository extends BaseRepository<Comentario> {
         texto: texto,
         autor: autor,
       );
+      
+      // Invalidar caché cuando se agrega un subcomentario
+      await _cacheService.clearCommentsCache(noticiaId);
+      
       return resultado;
     } catch (e) {
       debugPrint('Error inesperado al agregar subcomentario: $e');
