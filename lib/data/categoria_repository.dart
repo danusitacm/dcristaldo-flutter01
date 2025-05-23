@@ -1,53 +1,80 @@
-import 'package:dcristaldo/api/services/categoria_service.dart';
+import 'package:dcristaldo/api/service/categoria_service.dart';
+import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/data/base_repository.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 
-class CategoriaRepository extends BaseRepository<Categoria> {
-  final CategoriaService _service = CategoriaService();
-  
-  CategoriaRepository({super.cacheDuration});
-  
+/// Repositorio de categorías con capacidad de caché
+class CategoriaRepository extends CacheableRepository<Categoria> {
+  final CategoriaService _categoriaService = CategoriaService();
+
+  // Timestamp de la última actualización
+  DateTime? _lastRefreshed;
+
   @override
-  Future<List<Categoria>> obtenerElementosDelServicio() async {
-    return await _service.obtenerCategorias();
+  void validarEntidad(Categoria categoria) {
+    validarNoVacio(categoria.nombre, ValidacionConstantes.nombreCategoria);
+    validarNoVacio(
+      categoria.descripcion,
+      ValidacionConstantes.descripcionCategoria,
+    );
+    validarNoVacio(categoria.imagenUrl, ValidacionConstantes.imagenUrl);
   }
-  
+
+  /// Implementación del método abstracto de CacheableRepository
   @override
-  Future<void> crearElementoEnServicio(Categoria elemento) async {
-    await _service.crearCategoria(elemento);
+  Future<List<Categoria>> cargarDatos() async {
+    final categorias = await manejarExcepcion(
+      () => _categoriaService.obtenerCategorias(),
+      mensajeError: CategoriaConstantes.mensajeError,
+    );
+    _lastRefreshed = DateTime.now();
+    return categorias;
   }
-  
-  @override
-  Future<void> actualizarElementoEnServicio(String id, Categoria elemento) async {
-    await _service.actualizarCategoria(id, elemento);
+
+  /// Obtiene el timestamp de la última actualización
+  DateTime? get lastRefreshed => _lastRefreshed;
+
+  /// Obtiene todas las categorías desde el repositorio
+  /// Si hay caché, devolverá los datos en caché
+  Future<List<Categoria>> obtenerCategorias({
+    bool forzarRecarga = false,
+  }) async {
+    return obtenerDatos(forzarRecarga: forzarRecarga);
   }
-  
-  @override
-  Future<void> eliminarElementoEnServicio(String id) async {
-    await _service.eliminarCategoria(id);
+
+  /// Crea una nueva categoría
+  /// Retorna la categoría creada con su ID asignado por el servidor
+  Future<Categoria> crearCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaCreada = await _categoriaService.crearCategoria(categoria);
+      invalidarCache();
+      return categoriaCreada;
+    }, mensajeError: CategoriaConstantes.errorCreated);
   }
-  
-  @override
-  Future<Categoria> obtenerElementoPorIdDelServicio(String id) async {
-    return await _service.obtenerCategoriaPorId(id);
+
+  /// Edita una categoría existente
+  Future<Categoria> actualizarCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaActualizada = await _categoriaService.editarCategoria(categoria);
+      invalidarCache();
+      return categoriaActualizada;
+    }, mensajeError: CategoriaConstantes.errorUpdated);
   }
-  
-  @override
-  String obtenerIdDelElemento(Categoria elemento) {
-    return elemento.id ?? '';
+
+  /// Elimina una categoría
+  Future<void> eliminarCategoria(String id) async {
+    return manejarExcepcion(() async {
+      validarId(id);
+      await _categoriaService.eliminarCategoria(id);
+      invalidarCache();
+    }, mensajeError: CategoriaConstantes.errorDelete);
   }
-  
-  Future<List<Categoria>> obtenerCategorias() => obtenerTodos();
-  
-  Future<List<Categoria>> forzarActualizacionCategorias() => forzarActualizacion();
-  
-  Future<List<Categoria>> obtenerCategoriasCache() => obtenerDeCache();
-  
-  Future<void> crearCategoria(Categoria categoria) => crear(categoria);
-  
-  Future<void> actualizarCategoria(String id, Categoria categoria) => actualizar(id, categoria);
-  
-  Future<void> eliminarCategoria(String id) => eliminar(id);
-  
-  Future<Categoria> obtenerCategoriaPorId(String id) => obtenerPorId(id);
+
+  /// Limpia la caché de categorías (método público)
+  void limpiarCache() {
+    invalidarCache();
+    _lastRefreshed = null;
+  }
 }

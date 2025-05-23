@@ -1,196 +1,224 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dcristaldo/bloc/category/category_bloc.dart';
-import 'package:dcristaldo/bloc/category/category_event.dart';
-import 'package:dcristaldo/bloc/category/category_state.dart';
+import 'package:dcristaldo/bloc/categoria/categoria_bloc.dart';
+import 'package:dcristaldo/bloc/categoria/categoria_event.dart';
+import 'package:dcristaldo/bloc/categoria/categoria_state.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_bloc.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_event.dart';
 import 'package:dcristaldo/bloc/preferencia/preferencia_state.dart';
 import 'package:dcristaldo/domain/categoria.dart';
+import 'package:dcristaldo/helpers/snackbar_helper.dart';
+import 'package:dcristaldo/helpers/snackbar_manager.dart';
 
+class PreferenciaScreen extends StatelessWidget {
+  const PreferenciaScreen({super.key});
 
-class PreferenciasScreen extends StatefulWidget {
-  const PreferenciasScreen({super.key});
-
-  @override
-  State<PreferenciasScreen> createState() => _PreferenciasScreenState();
-}
-
-class _PreferenciasScreenState extends State<PreferenciasScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Cargar las preferencias actuales del usuario al entrar a la pantalla
-    // con forceReload en true para asegurar que obtenemos los datos más recientes
-    context.read<PreferenciaBloc>().add(const CargarPreferencias(forceReload: true));
-  }
-  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Preferencias'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () => context.read<PreferenciaBloc>().add(const ReiniciarFiltros()),
-              tooltip: 'Restablecer filtros',
-            ),
-          ],
+    // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    });
+    
+    // Obtener referencia al NoticiaBloc existente para filtrar después
+    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+    
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PreferenciaBloc>(
+          create: (context) => PreferenciaBloc()..add(LoadPreferences()),
         ),
-        body: BlocBuilder<CategoriaBloc, CategoriaState>(
-          builder: (context, categoriaState) {
-            if (categoriaState is CategoriaLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (categoriaState is CategoriaError) {
-              return _buildErrorWidget(
-                context,
-                'Error al cargar categorías: ${categoriaState.message}',
-                () => context.read<CategoriaBloc>().add(CategoriaInitEvent())
-              );
-            } else if (categoriaState is CategoriaLoaded) {
-              return BlocBuilder<PreferenciaBloc, PreferenciaState>(
-                builder: (context, preferenciasState) {
-                  if (preferenciasState is PreferenciaError) {
-                    return _buildErrorWidget(
-                      context,
-                      'Error de preferencias: ${preferenciasState.mensaje}',
-                      () => context.read<PreferenciaBloc>().add(const CargarPreferencias())
-                    );
-                  }
-
-                  return _buildListaCategorias(
-                    context,
-                    preferenciasState,
-                    categoriaState.categorias,
-                  );
-                },
-              );
-            } else {
-              return const Center(child: Text('Estado desconocido'));
-            }
-          },
+        BlocProvider<CategoriaBloc>(
+          create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
         ),
-        bottomNavigationBar: BlocBuilder<PreferenciaBloc, PreferenciaState>(
-          builder: (context, state) {
-            // Determinar si el botón debe estar habilitado
-            final bool isEnabled = state is! PreferenciaError;
+      ],
+      child: BlocConsumer<PreferenciaBloc, PreferenciaState>(
+        listener: (context, state) {
+          if (state is PreferenciaError) {
+            SnackBarHelper.manejarError(
+              context,
+              state.error,
+            );          } else if (state is PreferenciasSaved) {           
             
-            // Para los estados de error, tratamos categoriasSeleccionadas como una lista vacía
-            final int selectedCount = state is PreferenciaError 
-                ? 0 
-                : state.categoriasSeleccionadas.length;
-
-            return BottomAppBar(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      state is PreferenciaError
-                        ? 'Error al cargar preferencias'
-                        : 'Categorías seleccionadas: $selectedCount',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: state is PreferenciaError ? Colors.red : null,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: isEnabled ? () => _aplicarFiltros(context, state) : null,
-                      child: const Text('Aplicar filtros'),
-                    ),
-                  ],
-                ),
-              ),
+            // Emitimos evento para filtrar noticias inmediatamente
+            noticiaBloc.add(
+              FilterNoticiasByPreferenciasEvent(state.categoriasSeleccionadas),
             );
-          },
-        ),
-      );
+            
+            // Mostramos mensaje de éxito
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: 'Preferencias guardadas correctamente',
+            );
+            
+            // Cerramos pantalla después de un breve delay
+            Future.delayed(const Duration(milliseconds: 800), () {
+              if (context.mounted) {
+                Navigator.pop(context, state.categoriasSeleccionadas);
+              }
+            });
+          } 
+        },
+        builder: (context, prefState) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Preferencias'),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'Restablecer filtros',
+                  onPressed: () => context.read<PreferenciaBloc>().add(ResetFilters()),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.white,
+            body: _construirCuerpoPreferencias(context, prefState),
+            bottomNavigationBar: _construirBarraInferior(context, prefState),
+          );
+        },
+      ),
+    );
   }
 
-  Widget _buildListaCategorias(
+  Widget _construirCuerpoPreferencias(
+    BuildContext context, 
+    PreferenciaState prefState,
+  ) {
+    return BlocBuilder<CategoriaBloc, CategoriaState>(
+      builder: (context, catState) {
+        if (catState is CategoriaLoading || prefState is PreferenciaLoading ||prefState is PreferenciasSaved) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (catState is CategoriaError) {
+          return _construirWidgetError(
+            context,
+            'Error al cargar categorías: ${catState.error.message}',
+            () => context.read<CategoriaBloc>().add(CategoriaInitEvent()),
+          );
+        } else if (prefState is PreferenciaError) {
+          return _construirWidgetError(
+            context,
+            'Error de preferencias: ${prefState.mensaje}',
+            () => context.read<PreferenciaBloc>().add(LoadPreferences()),
+          );
+        } else if (catState is CategoriaLoaded) {
+          final categorias = catState.categorias;
+          return _construirListaCategorias(context, prefState, categorias);
+        }
+        return const Center(child: Text('Estado desconocido'));
+      },
+    );
+  }
+
+  Widget _construirListaCategorias(
     BuildContext context,
     PreferenciaState state,
     List<Categoria> categorias,
   ) {
+    if (categorias.isEmpty) {
+      return const Center(
+        child: Text('No hay categorías disponibles'),
+      );
+    }
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: categorias.length,
       separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final categoria = categorias[index];
-        final isSelected = state.categoriasSeleccionadas.contains(categoria.id);
-
-        return CheckboxListTile(
-          title: Text(
-            categoria.nombre,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          subtitle: Text(
-            categoria.descripcion,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          value: isSelected,
-          onChanged: (_) => _toggleCategoria(context, categoria.id!, isSelected),
-          controlAffinity: ListTileControlAffinity.leading,
-          activeColor: Theme.of(context).colorScheme.primary,
+        // Verificar que el ID no sea nulo
+        if (categoria.id == null || categoria.id!.isEmpty) {
+          return const ListTile(
+            title: Text('Categoría sin identificador válido'),
+            leading: Icon(Icons.error_outline, color: Colors.red),
+          );
+        }
+        
+        // Usar BlocBuilder aislado para este ítem específico
+        return BlocBuilder<PreferenciaBloc, PreferenciaState>(
+          // Usar el buildWhen para reducir reconstrucciones innecesarias
+          buildWhen: (previous, current) {
+            // Solo reconstruir si cambia la selección de esta categoría específica
+            if (previous is PreferenciasLoaded && current is PreferenciasLoaded) {
+              final prevSelected = previous.categoriasSeleccionadas.contains(categoria.id);
+              final currSelected = current.categoriasSeleccionadas.contains(categoria.id);
+              return prevSelected != currSelected;
+            }
+            return true;
+          },
+          builder: (context, state) {
+            final isSelected = state is PreferenciasLoaded && 
+                              state.categoriasSeleccionadas.contains(categoria.id);
+            
+            return CheckboxListTile(
+              title: Text(
+                categoria.nombre,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              subtitle: Text(
+                categoria.descripcion,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              value: isSelected,
+              onChanged: (_) => _toggleCategoria(context, categoria.id!, isSelected),
+              controlAffinity: ListTileControlAffinity.leading,
+              activeColor: Theme.of(context).colorScheme.primary,
+              secondary: isSelected
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : null,
+            );
+          },
         );
       },
     );
   }
 
-  void _toggleCategoria(BuildContext context, String categoriaId, bool isSelected) {
-    // Solo actualizamos el estado local del BLoC
-    // Los cambios se guardarán en la API cuando se presione "Aplicar filtros"
-    context.read<PreferenciaBloc>().add(
-      CambiarCategoria(
-        categoria: categoriaId,
-        seleccionada: !isSelected,
+  Widget _construirBarraInferior(BuildContext context, PreferenciaState state) {
+    // Determinar si el botón debe estar habilitado
+    final bool isEnabled = state is! PreferenciaError && state is! PreferenciaLoading;
+
+    // Obtener el número de categorías seleccionadas de manera segura
+    final int numCategorias = state is PreferenciasLoaded 
+        ? state.categoriasSeleccionadas.length 
+        : 0;
+
+    return SafeArea(
+      child: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                state is PreferenciaError 
+                    ? 'Error al cargar preferencias'
+                    : 'Categorías seleccionadas: $numCategorias',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: state is PreferenciaError ? Colors.red : null,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: isEnabled ? () => _aplicarFiltros(context, state) : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Aplicar filtros'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  void _aplicarFiltros(BuildContext context, PreferenciaState state) {
-    // Verificar que no sea un estado de error
-    if (state is PreferenciaError) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pueden aplicar los filtros debido a un error.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    // Mostrar indicador de carga
-    final saveSnackBar = ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Guardando preferencias...'),
-        duration: Duration(seconds: 1),
-      ),
-    );
-    
-    // Ahora sí enviamos todas las preferencias a la API de una sola vez
-    context.read<PreferenciaBloc>().add(
-      SavePreferencias(categoriasSeleccionadas: state.categoriasSeleccionadas),
-    );
-
-    // Limpiar SnackBar después de guardar
-    saveSnackBar.closed.then((_) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Preferencias guardadas correctamente'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 1),
-        ),
-      );
-    });
-
-    Navigator.pop(context, state.categoriasSeleccionadas);
-  }
-
-  Widget _buildErrorWidget(BuildContext context, String message, VoidCallback onRetry) {
+  Widget _construirWidgetError(BuildContext context, String message, VoidCallback onRetry) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -211,5 +239,49 @@ class _PreferenciasScreenState extends State<PreferenciasScreen> {
         ],
       ),
     );
+  }
+
+  void _toggleCategoria(BuildContext context, String categoriaId, bool isSelected) {
+    // Implementar actualización local para feedback inmediato
+    final currentState = context.read<PreferenciaBloc>().state;
+    if (currentState is PreferenciasLoaded) {
+      // Luego enviar el evento para persistir el cambio
+      context.read<PreferenciaBloc>().add(
+        ChangeCategory(
+          category: categoriaId,
+          selected: !isSelected,
+        ),
+      );
+    }
+  }
+  void _aplicarFiltros(BuildContext context, PreferenciaState state) {
+    // Verificar que no sea un estado de error
+    if (state is PreferenciaError) {
+      SnackBarHelper.mostrarAdvertencia(
+        context, 
+        mensaje: 'No se pueden aplicar los filtros debido a un error',
+      );
+      return;
+    }
+    
+    // Verificar que sea un estado que tenga categorías seleccionadas
+    if (state is PreferenciasLoaded) {
+      // Obtener el NoticiaBloc para verificar que los filtros se apliquen inmediatamente
+      final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+      
+      // También aplicar filtro inmediatamente para actualizar la UI de fondo
+      noticiaBloc.add(FilterNoticiasByPreferenciasEvent(state.categoriasSeleccionadas));
+      
+      // Guardar preferencias
+      context.read<PreferenciaBloc>().add(
+        SavePreferences(selectedCategories: state.categoriasSeleccionadas),
+      );
+    } else {
+      // Manejar caso donde el estado no tiene categorías seleccionadas
+      SnackBarHelper.mostrarAdvertencia(
+        context, 
+        mensaje: 'Estado de preferencias inválido',
+      );
+    }
   }
 }

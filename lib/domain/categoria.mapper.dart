@@ -38,8 +38,6 @@ class CategoriaMapper extends ClassMapperBase<Categoria> {
     #descripcion: _f$descripcion,
     #imagenUrl: _f$imagenUrl,
   };
-  @override
-  final bool ignoreNull = true;
 
   static Categoria _instantiate(DecodingData data) {
     return Categoria(

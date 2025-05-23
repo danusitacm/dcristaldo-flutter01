@@ -1,247 +1,204 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/data/categoria_repository.dart';
+import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-import 'package:dcristaldo/domain/categoria.dart';
 import 'package:intl/intl.dart';
-import 'package:dcristaldo/constants/constants.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:dcristaldo/views/comentarios/comentarios_screen.dart';
+import 'package:dcristaldo/components/reporte_dialog.dart';
 
-class NoticiaCard extends StatefulWidget {
+class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-  final VoidCallback? onReport;
-  final VoidCallback? onComment;
-  final List<Categoria>? categorias;
+  final VoidCallback onEdit; // Callback para editar la noticia
+  final String
+  categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
+  final VoidCallback? onReport; // Callback para reportar la noticia
 
   const NoticiaCard({
     super.key,
     required this.noticia,
-    this.onEdit,
-    this.onDelete,
-    this.categorias,
+    required this.onEdit,
+    required this.categoriaNombre,
     this.onReport,
-    this.onComment,
   });
 
   @override
-  State<NoticiaCard> createState() => _NoticiaCardState();
-}
-
-class _NoticiaCardState extends State<NoticiaCard> {
-  final Color iconColor = Colors.black;
-  Categoria? _categoria;
-
-  @override
-  void initState() {
-    super.initState();
-    _cargarCategoria();
-  }
-
-  Future<void> _cargarCategoria() async {
-    if (widget.noticia.categoriaId == null) return;
-
-    // Si ya tenemos categorías pasadas como prop, usarlas primero
-    if (widget.categorias != null) {
-      final categoriaEncontrada = widget.categorias!.where((c) => c.id == widget.noticia.categoriaId).firstOrNull;
-      if (categoriaEncontrada != null) {
-        setState(() {
-          _categoria = categoriaEncontrada;
-        });
-        return;
-      }
-    }
-
-    setState(() {
-    });
-
-    try {
-      // Obtener de la caché
-      final categoriaRepository = di<CategoriaRepository>();
-      final categoria = await categoriaRepository.obtenerCategoriaPorId(widget.noticia.categoriaId!);
-
-      if (mounted) {
-        setState(() {
-          _categoria = categoria;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-        });
-      }
-    }
-  }
-
-  String get categoriaNombre {
-    if (_categoria != null) {
-      return _categoria!.nombre;
-    }
-    return 'Categoría desconocida';
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final DateFormat dateFormat = DateFormat(Constants.defaultDateFormat);
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        Card(
+          margin: const EdgeInsets.only(
+            top: 16.0,
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+          ), // Margen de la tarjeta
+          color: Colors.white,
+          shape: null,
+          elevation: 0.0,
+          child: Column(
             children: [
-              // Columna 1: Títulos, fuente, descripción y fecha
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 10.0,
-                    top: 10.0,
-                    bottom: 10.0,
+              Row(
+                children: [
+                  Icon(Icons.category, size: 14, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    categoriaNombre,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Título
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          widget.noticia.titulo,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      // Fuente
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(
-                          widget.noticia.fuente,
-                          style: const TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      // Descripción
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          widget.noticia.descripcion,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      // Fecha
-                      Text(
-                        dateFormat.format(widget.noticia.publicadaEl),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      // Categoría
-                      Text(
-                        categoriaNombre,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-              // Columna 2: Imagen
+              // Primera fila: Texto y la imagen
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  right: 10.0,
-                  top: 10.0,
-                  bottom: 10.0,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Columna para el texto (2/3 del ancho)
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            noticia.titulo,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            noticia.descripcion,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6.0),
+                          Text(
+                            noticia.fuente,
+                            style: const TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text(
+                            _formatDate(noticia.publicadaEl),
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 30),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Image.network(
+                        noticia.urlImagen.isNotEmpty
+                            ? noticia.urlImagen
+                            : 'https://via.placeholder.com/100', // Imagen por defecto si no hay URL
+                        height: 80, // Altura de la imagen
+                        width: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          // Widget alternativo cuando la imagen no carga
+                          return Container(
+                            height: 80,
+                            width: 100,
+                            color: Colors.grey[300], // Fondo gris claro
+                            child: const Icon(
+                              Icons.broken_image, // Ícono de imagen rota
+                              color: Colors.grey,
+                              size: 40,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Image.network(
-                    widget.noticia.urlImagen.isNotEmpty
-                        ? widget.noticia.urlImagen
-                        : 'https://via.placeholder.com/150',
-                    width: 120,
-                    height: 80,
-                    fit: BoxFit.cover,
+              ),
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.end, // Alinea los botones al final
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.star_border),
+                    onPressed: () {
+                      // Acción para marcar como favorito
+                    },
                   ),
-                ),
-              ),
-            ],
-          ),
-          // Segundo Row: Íconos
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.comment_outlined),
-                onPressed: widget.onComment,
-                color: iconColor,
-                tooltip: 'Comentarios',
-              ),
-              IconButton(
-                icon: const Icon(Icons.star_border_rounded),
-                onPressed: () {
-                  // Acción para marcar como favorito
-                },
-                color: iconColor,
-                tooltip: 'Favorito',
-              ),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  // Acción para compartir
-                },
-                color: iconColor,
-                tooltip: 'Compartir',
-              ),
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert, color: Colors.black),
-                onSelected: (value) {
-                  if (value == 'edit' && widget.onEdit != null) {
-                    widget.onEdit!();
-                  } else if (value == 'delete' && widget.onDelete != null) {
-                    widget.onDelete!();
-                  }
-                  if (value == 'report' && widget.onReport != null) {
-                    widget.onReport!();
-                  }
-                },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Text('Editar'),
+                  IconButton(
+                    icon: const Icon(Icons.comment),
+                    onPressed: () {
+                      // Navegar a la vista de comentarios
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ComentariosScreen(
+                                noticiaId: noticia.id!,
+                                noticiaTitulo: noticia.titulo,
+                              ),
+                        ),
+                      );
+                    },
+                    tooltip: 'Ver comentarios',
+                  ),                  IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () {
+                      // Acción para compartir
+                    },
                   ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Eliminar'),
+                  IconButton(
+                    icon: const Icon(Icons.flag),
+                    onPressed: () {
+                      // Acción para reportar noticia
+                      if (onReport != null) {
+                        onReport!();
+                      } else {
+                        // Si no se proporcionó un callback, usar el diálogo de reportes directamente
+                        ReporteDialog.mostrarDialogoReporte(
+                          context: context,
+                          noticiaId: noticia.id!,
+                        );
+                      }
+                    },
+                    tooltip: 'Reportar noticia',
                   ),
-                  const PopupMenuItem(
-                    value: 'report',
-                    child: Text('Reportar'),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      // Acción para mostrar más opciones
+                      onEdit();
+                    },
                   ),
                 ],
               ),
             ],
           ),
-          // Tercer Row: Divider
-          const Divider(
-            color: Colors.grey,
-            thickness: 1.0,
-            height: 1.0,
-          ),
-        ],
-      ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 17.0,
+            vertical: 0.0,
+          ), // Padding horizontal de 16
+          child: Divider(color: Colors.grey),
+        ),
+      ],
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat(AppConstantes.formatoFecha).format(date);
   }
 }

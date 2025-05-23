@@ -89,8 +89,6 @@ class ReporteMapper extends ClassMapperBase<Reporte> {
     #fecha: _f$fecha,
     #motivo: _f$motivo,
   };
-  @override
-  final bool ignoreNull = true;
 
   static Reporte _instantiate(DecodingData data) {
     return Reporte(
