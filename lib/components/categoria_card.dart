@@ -18,11 +18,11 @@ class CategoriaCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
-        leading: categoria.imagenUrl?.isNotEmpty == true
+        leading: categoria.imagenUrl.isNotEmpty == true
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Image.network(
-                  categoria.imagenUrl ?? '',
+                  categoria.imagenUrl,
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,

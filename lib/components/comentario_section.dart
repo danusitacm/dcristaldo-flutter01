@@ -327,7 +327,7 @@ class _ComentarioSectionState extends State<ComentarioSection> {
                     ),
                   ],
                 ),
-              )).toList(),
+              )),
             if (_comentarioSeleccionadoId == comentario.id)
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),

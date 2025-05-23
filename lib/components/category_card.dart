@@ -22,9 +22,9 @@ class CategoryCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(8),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: categoria.imagenUrl?.isNotEmpty == true
+          child: categoria.imagenUrl.isNotEmpty == true
             ? Image.network(
-                categoria.imagenUrl ?? '',
+                categoria.imagenUrl,
                 width: 60,
                 height: 60,
                 fit: BoxFit.cover,

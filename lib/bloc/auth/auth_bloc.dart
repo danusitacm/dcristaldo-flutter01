@@ -3,7 +3,7 @@ import 'package:dcristaldo/bloc/auth/auth_event.dart';
 import 'package:dcristaldo/bloc/auth/auth_state.dart';
 import 'package:dcristaldo/data/auth_repository.dart';
 import 'package:dcristaldo/data/preferencia_repository.dart';
-import 'package:watch_it/watch_it.dart';
+
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository = AuthRepository();
@@ -30,8 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         try {
           await _preferenciaRepository.setUsername(event.email);
         } catch (prefError) {
-          // Log error but don't fail login
-          print('Error al asociar preferencias con usuario: $prefError');
+          emit(AuthError('Error de preferencias: ${prefError.toString()}'));
         }
         
         emit(AuthAuthenticated(
@@ -76,7 +75,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             await _preferenciaRepository.setUsername(email);
           } catch (prefError) {
             // Log error but don't fail auth check
-            print('Error al asociar preferencias con usuario: $prefError');
+            emit(AuthError('Error de preferencias: ${prefError.toString()}'));
           }
           
           emit(AuthAuthenticated(

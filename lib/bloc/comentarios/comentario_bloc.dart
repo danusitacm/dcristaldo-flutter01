@@ -57,28 +57,37 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     Emitter<ComentarioState> emit
   ) async {
     try {
+      // Buscar la noticiaId del comentario padre para recargar los comentarios
+      String? noticiaId;
+      final currentState = state;
+      if (currentState is ComentarioLoadSuccess) {
+        try {
+          // Buscamos el comentario padre para obtener noticiaId
+          final comentarioPadre = currentState.comentarios.firstWhere(
+            (c) => c.id == event.comentarioId,
+          );
+          noticiaId = comentarioPadre.noticiaId;
+        } catch (e) {
+          debugPrint('No se pudo encontrar el comentario padre: $e');
+        }
+      }
+      
+      if (noticiaId == null) {
+        emit(const ComentarioActionFailure('No se pudo determinar la noticia del comentario'));
+        return;
+      }
+      
       final resultado = await _repository.agregarSubcomentario(
         comentarioId: event.comentarioId,
         texto: event.texto,
         autor: event.autor,
+        noticiaId: noticiaId, // Pasamos noticiaId para manejo de caché
       );
       
       if (resultado['success'] == true) {
-        // Buscar la noticiaId del comentario padre para recargar los comentarios
-        final currentState = state;
-        if (currentState is ComentarioLoadSuccess) {
-          // Buscamos el comentario padre para obtener noticiaId
-          final comentarioPadre = currentState.comentarios.firstWhere(
-            (c) => c.id == event.comentarioId,
-            orElse: () => throw Exception('Comentario no encontrado'),
-          );
-          
-          // Recargar comentarios de esta noticia
-          final comentarios = await _repository.obtenerComentariosPorNoticia(comentarioPadre.noticiaId);
-          emit(ComentarioLoadSuccess(comentarios));
-        } else {
-          emit(ComentarioActionSuccess('Subcomentario añadido correctamente'));
-        }
+        // Recargar comentarios de esta noticia
+        final comentarios = await _repository.obtenerComentariosPorNoticia(noticiaId);
+        emit(ComentarioLoadSuccess(comentarios));
       } else {
         emit(ComentarioActionFailure(resultado['message'] ?? 'Error desconocido'));
       }
@@ -93,25 +102,37 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     Emitter<ComentarioState> emit
   ) async {
     try {
+      // Verificamos si estamos en el estado correcto para obtener la noticiaId
+      String? noticiaId;
+      if (state is ComentarioLoadSuccess) {
+        final currentState = state as ComentarioLoadSuccess;
+        try {
+          // Buscar la noticiaId del comentario para recargar
+          final comentario = currentState.comentarios.firstWhere(
+            (c) => c.id == event.comentarioId,
+          );
+          noticiaId = comentario.noticiaId;
+        } catch (e) {
+          debugPrint('No se pudo encontrar el comentario: $e');
+          // Continuamos con el flujo para manejar el caso donde no se encuentra
+        }
+      }
+
+      if (noticiaId == null) {
+        emit(const ComentarioActionFailure('No se pudo determinar la noticia del comentario'));
+        return;
+      }
+      
+      // Llamar al repositorio con el noticiaId para manejo de caché
       await _repository.reaccionarComentario(
         comentarioId: event.comentarioId,
         tipoReaccion: event.tipoReaccion,
+        noticiaId: noticiaId,
       );
       
-      // Si estaba en el estado ComentarioLoadSuccess, intentamos recargar los comentarios
-      if (state is ComentarioLoadSuccess) {
-        final currentState = state as ComentarioLoadSuccess;
-        // Buscar la noticiaId del comentario para recargar
-        final comentario = currentState.comentarios.firstWhere(
-          (c) => c.id == event.comentarioId,
-          orElse: () => throw Exception('Comentario no encontrado'),
-        );
-        
-        final comentarios = await _repository.obtenerComentariosPorNoticia(comentario.noticiaId);
-        emit(ComentarioLoadSuccess(comentarios));
-      } else {
-        emit(ComentarioActionSuccess('Reacción registrada correctamente'));
-      }
+      // Recargar los comentarios
+      final comentarios = await _repository.obtenerComentariosPorNoticia(noticiaId);
+      emit(ComentarioLoadSuccess(comentarios));
     } on ApiException catch (e) {
       emit(ComentarioActionFailure(e.message));
     } catch (e) {
