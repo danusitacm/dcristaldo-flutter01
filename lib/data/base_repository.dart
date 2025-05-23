@@ -1,134 +1,95 @@
-import 'dart:async';
+import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 
-/// Repositorio base que proporciona funcionalidad común para todos los repositorios
-/// incluyendo manejo de caché y errores
+/// La clase BaseRepository sirve como base para todos los repositorios de la aplicación.
+/// Proporciona funcionalidad común y manejo de errores estandarizado.
 abstract class BaseRepository<T> {
-  List<T>? _elementosCache;
-  DateTime? _ultimaActualizacion;
+  /// Un método para validar entidades genéricas.
+  /// Cada repositorio concreto debe implementar su propia lógica de validación.
+  void validarEntidad(T entidad);
 
-  final Duration cacheDuration;
-  
-  BaseRepository({this.cacheDuration = const Duration(minutes: 5)});
-  
-  Future<List<T>> obtenerTodos() async {
+  /// Método utilitario para manejar excepciones de manera consistente.
+  /// Diferencia entre ApiException y otras excepciones, permitiendo un manejo adecuado.
+  Future<R> manejarExcepcion<R>(
+    Future<R> Function() accion, {
+    String mensajeError = 'Error desconocido',
+  }) async {
     try {
-      final elementos = await obtenerElementosDelServicio();
-      _elementosCache = elementos;
-      _ultimaActualizacion = DateTime.now();
-      return elementos;
+      return await accion();
     } catch (e) {
-      return manejarError<List<T>>(e);
-    }
-  }
-
-  /// Método que debe ser implementado por las subclases para 
-  /// obtener elementos del servicio correspondiente
-  Future<List<T>> obtenerElementosDelServicio();
-  
-  /// Método para forzar actualización desde la API (ignorando la caché)
-  Future<List<T>> forzarActualizacion() async {
-    try {
-      final elementos = await obtenerElementosDelServicio();
-      _elementosCache = elementos;
-      _ultimaActualizacion = DateTime.now();
-      return elementos;
-    } catch (e) {
-      return manejarError<List<T>>(e, 
-        mensajePersonalizado: 'Error al actualizar elementos');
-    }
-  }
-  
-  /// Obtener elementos de la caché o cargarlos si es necesario
-  Future<List<T>> obtenerDeCache() async {
-    if (_elementosCache != null && 
-        _ultimaActualizacion != null && 
-        DateTime.now().difference(_ultimaActualizacion!) < cacheDuration) {
-      return _elementosCache!;
-    }
-    
-    return await obtenerTodos();
-  }
-
-  void invalidarCache() {
-    _elementosCache = null;
-    _ultimaActualizacion = null;
-  }
-  
-  /// Crear un nuevo elemento
-  Future<void> crear(T elemento) async {
-    try {
-      await crearElementoEnServicio(elemento);
-      invalidarCache();
-    } catch (e) {
-      manejarError(e, mensajePersonalizado: 'Error al crear elemento');
-    }
-  }
-  
-  /// Método que debe ser implementado por las subclases para crear elementos
-  Future<void> crearElementoEnServicio(T elemento);
-  
-  /// Actualizar un elemento existente
-  Future<void> actualizar(String id, T elemento) async {
-    try {
-      await actualizarElementoEnServicio(id, elemento);
-      // Invalidar caché después de actualizar
-      invalidarCache();
-    } catch (e) {
-      manejarError(e, mensajePersonalizado: 'Error al actualizar elemento');
-    }
-  }
-  
-  /// Método que debe ser implementado por las subclases para actualizar elementos
-  Future<void> actualizarElementoEnServicio(String id, T elemento);
-  
-  /// Eliminar un elemento
-  Future<void> eliminar(String id) async {
-    try {
-      await eliminarElementoEnServicio(id);
-      // Invalidar caché después de eliminar
-      invalidarCache();
-    } catch (e) {
-      manejarError(e);
-    }
-  }
-  
-  /// Método que debe ser implementado por las subclases para eliminar elementos
-  Future<void> eliminarElementoEnServicio(String id);
-  
-  /// Obtener un elemento por ID (con soporte de caché)
-  Future<T> obtenerPorId(String id) async {
-    try {
-      // Intentar obtener el elemento de la caché primero
-      if (_elementosCache != null) {
-        final elementoEnCache = _elementosCache!.firstWhere(
-          (elemento) => obtenerIdDelElemento(elemento) == id,
-          orElse: () => throw Exception('No encontrado en caché'),
-        );
-        
-        return elementoEnCache;
+      if (e is ApiException) {
+        // Propagar ApiException directamente
+        rethrow;
+      } else {
+        // Envolver otras excepciones en ApiException con mensaje contextual
+        throw ApiException('$mensajeError: $e');
       }
-      
-      // Si no está en caché, obtenerlo del servicio
-      return await obtenerElementoPorIdDelServicio(id);
-    } catch (e) {
-      return manejarError<T>(e);
     }
   }
-  
-  /// Método que debe ser implementado por las subclases para obtener elementos por ID
-  Future<T> obtenerElementoPorIdDelServicio(String id);
-  
-  /// Método que deben implementar las subclases para obtener el ID de un elemento
-  String obtenerIdDelElemento(T elemento);
-  
-  /// Manejo uniforme de errores para todos los repositorios
-  R manejarError<R>(dynamic e, {String? mensajePersonalizado}) {
-    if (e is ApiException) {
-      // Propaga el mensaje contextual de ApiException
-      throw Exception('${mensajePersonalizado ?? 'Error en el servicio'}: ${e.message}');
-    } else {
-      throw Exception(mensajePersonalizado ?? 'Error desconocido: $e');
+
+  /// Valida que un valor no esté vacío y lanza una excepción si lo está.
+  void validarNoVacio(String? valor, String nombreCampo) {
+    if (valor == null || valor.isEmpty) {
+      throw ApiException(
+        '$nombreCampo${ValidacionConstantes.campoVacio}',
+        statusCode: 400,
+      );
     }
+  }
+
+  /// Valida que un ID no esté vacío.
+  void validarId(String? id) {
+    validarNoVacio(id, 'ID');
+  }
+
+  /// Valida que una fecha no esté en el futuro
+  /// @param fecha La fecha a validar
+  /// @param nombreCampo Nombre del campo para el mensaje de error
+  /// @param mensajeError Mensaje de error personalizado (opcional)
+  void validarFechaNoFutura(DateTime fecha, String nombreCampo) {
+    if (fecha.isAfter(DateTime.now())) {
+      throw ApiException(
+        '$nombreCampo${ValidacionConstantes.noFuturo}',
+        statusCode: 400,
+      );
+    }
+  }
+}
+
+/// Extensión del BaseRepository que incluye capacidades de caché.
+abstract class CacheableRepository<T> extends BaseRepository<T> {
+  /// Almacenamiento en caché de datos
+  List<T>? _cache;
+
+  /// Flag para indicar si hay cambios pendientes
+  bool _cambiosPendientes = false;
+
+  /// Obtiene datos, preferentemente desde la caché
+  Future<List<T>> obtenerDatos({bool forzarRecarga = false}) async {
+    // Si forzarRecarga es true o no hay caché, cargar desde la fuente de datos
+    if (forzarRecarga || _cache == null) {
+      _cache = await cargarDatos();
+    }
+
+    return _cache ?? [];
+  }
+
+  /// Carga datos desde la fuente de datos
+  Future<List<T>> cargarDatos();
+
+  /// Marca que hay cambios pendientes
+  void marcarCambiosPendientes() {
+    _cambiosPendientes = true;
+  }
+
+  /// Verifica si hay cambios pendientes
+  bool hayCambiosPendientes() {
+    return _cambiosPendientes;
+  }
+
+  /// Limpia la caché para forzar una recarga
+  void invalidarCache() {
+    _cache = null;
+    _cambiosPendientes = false;
   }
 }

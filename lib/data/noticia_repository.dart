@@ -1,63 +1,57 @@
-import 'package:dcristaldo/api/services/noticia_service.dart';
+import 'package:dcristaldo/api/service/noticia_service.dart';
+import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/data/base_repository.dart';
-import 'package:dcristaldo/data/categoria_repository.dart';
-import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/domain/noticia.dart';
-import 'package:watch_it/watch_it.dart';
 
+/// Repositorio para gestionar operaciones relacionadas con las noticias.
+/// Extiende BaseRepository para aprovechar la gestión de errores estandarizada.
 class NoticiaRepository extends BaseRepository<Noticia> {
-  final NoticiaService _service = NoticiaService();
-  final CategoriaRepository _categoriaRepository = di<CategoriaRepository>();
+  final NoticiaService _noticiaService = NoticiaService();
 
-  NoticiaRepository({super.cacheDuration});
-  
   @override
-  Future<List<Noticia>> obtenerElementosDelServicio() async {
-    return await _service.obtenerNoticias();
-  }
-  
-  @override
-  Future<void> crearElementoEnServicio(Noticia elemento) async {
-    await _service.crearNoticia(elemento);
-  }
-  
-  @override
-  Future<void> actualizarElementoEnServicio(String id, Noticia elemento) async {
-    await _service.actualizarNoticia(id, elemento);
-  }
-  
-  @override
-  Future<void> eliminarElementoEnServicio(String id) async {
-    await _service.eliminarNoticia(id);
-  }
-  
-  @override
-  Future<Noticia> obtenerElementoPorIdDelServicio(String id) async {
-    return await _service.obtenerNoticiaPorId(id);
-  }
-  
-  @override
-  String obtenerIdDelElemento(Noticia elemento) {
-    return elemento.id ?? '';
-  }
-  
-  Future<List<Noticia>> obtenerNoticias() => obtenerTodos();
-  
-  Future<void> crearNoticia(Noticia noticia) => crear(noticia);
-  
-  Future<void> actualizarNoticia(String id, Noticia noticia) => actualizar(id, noticia);
-  
-  Future<void> eliminarNoticia(String id) => eliminar(id);
-  
-  Future<Noticia> obtenerNoticiaPorId(String id) => obtenerPorId(id);
-  
-  Future<Categoria?> obtenerCategoriaDeNoticia(String? categoriaId) async {
-    if (categoriaId == null) return null;
-    try {
-      return await _categoriaRepository.obtenerCategoriaPorId(categoriaId);
-    } catch (e) {
-      return null;
-    }
+  void validarEntidad(Noticia noticia) {
+    validarNoVacio(noticia.titulo, ValidacionConstantes.tituloNoticia);
+    validarNoVacio(
+      noticia.descripcion,
+      ValidacionConstantes.descripcionNoticia,
+    );
+    validarNoVacio(noticia.fuente, ValidacionConstantes.fuenteNoticia);
+
+    // Validación adicional para la fecha usando el método genérico
+    validarFechaNoFutura(
+      noticia.publicadaEl,
+      ValidacionConstantes.fechaNoticia,
+    );
   }
 
+  /// Obtiene todas las noticias desde el repositorio
+  Future<List<Noticia>> obtenerNoticias() async {
+    return manejarExcepcion(
+      () => _noticiaService.obtenerNoticias(),
+      mensajeError: NoticiasConstantes.mensajeError,
+    );
+  }
+  /// Crea una nueva noticia
+  Future<Noticia> crearNoticia(Noticia noticia) async {
+    return manejarExcepcion(() {
+      validarEntidad(noticia);
+      return _noticiaService.crearNoticia(noticia);
+    }, mensajeError: NoticiasConstantes.errorCreated);
+  }
+
+  /// Edita una noticia existente
+  Future<Noticia> editarNoticia(Noticia noticia) async {
+    return manejarExcepcion(() {
+      validarEntidad(noticia);
+      return _noticiaService.editarNoticia(noticia);
+    }, mensajeError: NoticiasConstantes.errorUpdated);
+  }
+
+  /// Elimina una noticia
+  Future<void> eliminarNoticia(String id) async {
+    return manejarExcepcion(() {
+      validarId(id);
+      return _noticiaService.eliminarNoticia(id);
+    }, mensajeError: NoticiasConstantes.errorDelete);
+  }
 }

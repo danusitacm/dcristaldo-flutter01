@@ -3,20 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/auth/auth_bloc.dart';
 import 'package:dcristaldo/bloc/auth/auth_event.dart';
 import 'package:dcristaldo/bloc/auth/auth_state.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
+import 'package:dcristaldo/components/snackbar_component.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     
-    return Scaffold(
-      appBar: AppBar(title: const Text('Inicio de Sesión')),
-      body: BlocListener<AuthBloc, AuthState>(
+    return BlocProvider(
+      create: (context) => AuthBloc(),
+      child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthLoading) {
             // Mostrar indicador de carga
@@ -29,39 +33,43 @@ class LoginScreen extends StatelessWidget {
             );
           } else if (state is AuthAuthenticated) {
             // Cerrar diálogo de carga si está abierto
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-            // Navegar a Welcome Screen
+            Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+            
+            // Cargar noticias para el nuevo usuario
+            context.read<NoticiaBloc>().add(FetchNoticiasEvent());
+            
+            // Navegar a la pantalla principal
             Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(builder: (context) => const WelcomeScreen())
+              context,
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
             );
-          } else if (state is AuthError) {
+          } else if (state is AuthFailure) {
             // Cerrar diálogo de carga si está abierto
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-            // Mostrar mensaje de error
+            Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+            
+            // Mostrar error
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBarComponent.crear(
+                mensaje: state.error,
+                color: Colors.red,
+                duracion: const Duration(seconds: 4),
+              ),
             );
-          } else if (state is AuthUnauthenticated) {
-            // Cerrar diálogo de carga si está abierto
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
           }
         },
-        child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_outline, size: 100, color: Colors.blue),
-              const SizedBox(height: 16),
+        builder: (context, state) {
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+              const Text(
+                  'Inicio de Sesión',
+                  style: TextStyle(color: Colors.black, fontSize: 22),
+                ),
               TextFormField(
                 controller: usernameController,
                 decoration: const InputDecoration(
@@ -70,7 +78,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'El usuario es obligatorio';
+                    return 'El correo es obligatorio';
                   }
                   return null;
                 },
@@ -90,19 +98,18 @@ class LoginScreen extends StatelessWidget {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
+              const SizedBox(height: 16),              ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     final username = usernameController.text.trim();
                     final password = passwordController.text.trim();
-                    
-                    // Dispara el evento de login a través del BLoC
+
+                    // Usar el BLoC para manejar la autenticación
                     context.read<AuthBloc>().add(
-                      AuthLogin(
+                      AuthLoginRequested(
                         email: username,
                         password: password,
-                      )
+                      ),
                     );
                   }
                 },
@@ -112,7 +119,9 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      )
     );
-  }
+          },
+        ),
+      );
+    }
 }

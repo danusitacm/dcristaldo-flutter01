@@ -60,8 +60,6 @@ class ComentarioMapper extends ClassMapperBase<Comentario> {
     #isSubComentario: _f$isSubComentario,
     #idSubComentario: _f$idSubComentario,
   };
-  @override
-  final bool ignoreNull = true;
 
   static Comentario _instantiate(DecodingData data) {
     return Comentario(

@@ -1,19 +1,17 @@
 class Task {
-  String title; // Título de la tarea
-  String type; // Tipo de tarea (Normal o Urgente)
-  String detail; // Detalle de la tarea
-  DateTime deadline; // Campo para la fecha límite
-  List<String> steps; // Lista de pasos a seguir para completar la tarea
+  final String title;
+  final String type;
+  final String? description;
+  final DateTime? date;
+  final DateTime? fechaLimite; // Nueva fecha límite
+  final List<String>? pasos; // Nuevos pasos
 
   Task({
     required this.title,
-    this.type = 'Normal',
-    required this.detail,
-    DateTime? deadline,
-    this.steps = const [],
-  }) : deadline = deadline ?? DateTime.now();
-
-  bool isUrgent() {
-    return type == 'Urgente';
-  } // Método para verificar si la tarea es urgente
+    this.type = 'normal', // Valor por defecto
+    this.description,
+    this.date,
+    this.fechaLimite,
+    this.pasos,
+  });
 }

@@ -49,8 +49,6 @@ class NoticiaMapper extends ClassMapperBase<Noticia> {
     #urlImagen: _f$urlImagen,
     #categoriaId: _f$categoriaId,
   };
-  @override
-  final bool ignoreNull = true;
 
   static Noticia _instantiate(DecodingData data) {
     return Noticia(

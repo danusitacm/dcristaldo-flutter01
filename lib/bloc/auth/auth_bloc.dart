@@ -1,94 +1,80 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
+import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
+import 'package:dcristaldo/data/auth_repository.dart';
 import 'package:dcristaldo/bloc/auth/auth_event.dart';
 import 'package:dcristaldo/bloc/auth/auth_state.dart';
-import 'package:dcristaldo/data/auth_repository.dart';
 import 'package:dcristaldo/data/preferencia_repository.dart';
-
+import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository _authRepository = AuthRepository();
-  final PreferenciaRepository _preferenciaRepository = PreferenciaRepository();
+  final AuthRepository _authRepository= di<AuthRepository>(); // Obtenemos el repositorio del locator
 
-  AuthBloc() : super(AuthInitial()) {
-    on<AuthLogin>(_onLogin);
-    on<AuthLogout>(_onLogout);
-    on<AuthCheckStatus>(_onCheckStatus);
+  AuthBloc(): super(AuthInitial()) {
+    on<AuthLoginRequested>(_onAuthLoginRequested);
+    on<AuthLogoutRequested>(_onAuthLogoutRequested);
+    on<AuthCheckRequested>(_onAuthCheckRequested);
   }
 
-  Future<void> _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthLoginRequested(
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
     try {
+      if (event.email.isEmpty || event.password.isEmpty) {
+        emit(const AuthFailure('El usuario y la contraseña son obligatorios'));
+        return;
+      }
+      
       final success = await _authRepository.login(
         event.email,
         event.password,
       );
-      
       if (success) {
-        final token = await _authRepository.getAuthToken();
-        
-        // Asociar el username con las preferencias
-        try {
-          await _preferenciaRepository.setUsername(event.email);
-        } catch (prefError) {
-          emit(AuthError('Error de preferencias: ${prefError.toString()}'));
-        }
-        
-        emit(AuthAuthenticated(
-          email: event.email,
-          token: token ?? '',
-        ));
+        emit(AuthAuthenticated());
       } else {
-        emit(const AuthError('Error de autenticación: credenciales inválidas'));
+        emit(const AuthFailure('Credenciales inválidas'));
       }
     } catch (e) {
-      emit(AuthError('Error de autenticación: ${e.toString()}'));
+      emit( AuthFailure( e.toString()));
     }
   }
 
-  Future<void> _onLogout(AuthLogout event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthLogoutRequested(
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
     try {
       await _authRepository.logout();
+      // Limpiar la caché de preferencias
+      di<PreferenciaRepository>().invalidarCache();
       
-      // Limpiar la asociación de preferencias con el usuario
-      _preferenciaRepository.invalidarCache();
+      // Reiniciar el NoticiaBloc para que no mantenga noticias del usuario anterior
+      final noticiaBloc = di<NoticiaBloc>();
+      noticiaBloc.add(ResetNoticiaEvent());
       
-      emit(AuthUnauthenticated());
+      emit(AuthInitial());
     } catch (e) {
-      emit(AuthError('Error al cerrar sesión: ${e.toString()}'));
+      emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));
     }
   }
 
-  Future<void> _onCheckStatus(AuthCheckStatus event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthCheckRequested(
+    AuthCheckRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
     try {
       final isAuthenticated = await _authRepository.isAuthenticated();
-      
       if (isAuthenticated) {
-        final token = await _authRepository.getAuthToken();
-        // Obtener el email desde una implementación que esté disponible en el repositorio
-        final email = await _authRepository.getUserEmail();
-        
-        if (token != null && email != null) {
-          // Asociar el username con las preferencias
-          try {
-            await _preferenciaRepository.setUsername(email);
-          } catch (prefError) {
-            // Log error but don't fail auth check
-            emit(AuthError('Error de preferencias: ${prefError.toString()}'));
-          }
-          
-          emit(AuthAuthenticated(
-            email: email,
-            token: token,
-          ));
-          return;
-        }
+        emit(AuthAuthenticated());
+      } else {
+        emit(AuthUnauthenticated());
       }
-      
-      emit(AuthUnauthenticated());
     } catch (e) {
-      emit(AuthError('Error al verificar autenticación: ${e.toString()}'));
+      emit(AuthFailure(e.toString()));
     }
   }
 }

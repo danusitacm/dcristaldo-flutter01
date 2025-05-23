@@ -4,79 +4,71 @@ class TaskRepository {
   final List<Task> _tasks = [
     Task(
       title: 'Tarea 1',
-      type: 'Urgente',
-      detail: 'Sin detalles',
-      deadline: DateTime.now().add(const Duration(days: 1)),
+      type: 'normal',
+      description: 'Descripción de la tarea 1',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 1)),
+      pasos: [],
     ),
     Task(
       title: 'Tarea 2',
-      type: 'Normal',
-      detail: 'Sin detalles',
-      deadline: DateTime.now().add(const Duration(days: 2)),
+      type: 'urgente',
+      description: 'Descripción de la tarea 2',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 2)),
+      pasos: [],
     ),
     Task(
       title: 'Tarea 3',
-      type: 'Normal',
-      detail: 'Sin detalles',
-      deadline: DateTime.now().add(const Duration(days: 3)),
+      type: 'normal',
+      description: 'Descripción de la tarea 3',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 3)),
+      pasos: [],
     ),
     Task(
       title: 'Tarea 4',
-      type: 'Normal',
-      detail: 'Sin detalles',
-      deadline: DateTime.now().add(const Duration(days: 4)),
+      type: 'uregente',
+      description: 'Descripción de la tarea 4',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 4)),
+      pasos: [],
     ),
     Task(
       title: 'Tarea 5',
-      type: 'Normal',
-      detail: 'Sin detalles',
-      deadline: DateTime.now().add(const Duration(days: 5)),
+      type: 'normal',
+      description: 'Descripción de la tarea 5',
+      date: DateTime(2025, 4, 9),
+      fechaLimite: DateTime.now().add(const Duration(days: 5)),
+      pasos: [],
     ),
   ];
 
-  // Obtiene todas las tareas
   List<Task> getTasks() {
+    while (_tasks.length < 100) {
+      final tipo = _tasks.length % 2 == 0 ? 'normal' : 'urgente';
+      _tasks.add(Task(
+        title: 'Tarea ${_tasks.length + 1}',
+        type: tipo,
+        description: 'Descripción de la tarea ${_tasks.length + 1}',
+        date: DateTime.now(),
+        fechaLimite: DateTime.now().add(Duration(days: _tasks.length % 5 + 1)),
+      ));
+    }
     return _tasks;
   }
 
-  // Agrega una nueva tarea
   void addTask(Task task) {
-    // Crea una nueva tarea con los pasos generados
-    final newTask = Task(
-      title: task.title,
-      type: task.type,
-      detail: task.detail,
-      deadline: task.deadline,
-      steps: task.steps,
-    );
-
-    _tasks.add(newTask);
+    _tasks.add(task);
   }
 
-  // Actualiza una tarea existente
+  void removeTask(int index) {
+    _tasks.removeAt(index);
+  }
+
   void updateTask(int index, Task updatedTask) {
     if (index >= 0 && index < _tasks.length) {
       _tasks[index] = updatedTask;
     }
-  }
-
-  // Elimina una tarea
-  void deleteTask(int index) {
-    if (index >= 0 && index < _tasks.length) {
-      _tasks.removeAt(index);
-    }
-  }
-
-  // Obtiene más tareas con pasos
-  List<Task> loadMoreTasks() {
-    List<Task> newTasks = List.generate(5, (indice) {
-      return Task(
-        title: 'Tarea ${_tasks.length + indice + 1}',
-        type: (indice % 2 == 0) ? 'Normal' : 'Urgente',
-        detail: 'Sin detalles',
-        deadline: DateTime.now().add(Duration(days: indice + 1)),
-      );
-    });
-    return newTasks;
   }
 }
