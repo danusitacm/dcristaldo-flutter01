@@ -40,13 +40,8 @@ class AddTaskModalState extends State<AddTaskModal> {
           ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
           : '',
     );
-
-    // Inicializa la lista de pasos
-    pasos = widget.taskToEdit?.pasos ?? [];
-
     // Inicializa el tipo de tarea
-    tipoSeleccionado = widget.taskToEdit?.titulo ?? 'normal';
-
+    tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
   }
 
   @override
@@ -161,7 +156,6 @@ class AddTaskModalState extends State<AddTaskModal> {
               return;
             }
 
-            // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
               id: widget.taskToEdit?.id, 
               usuario: 'usuario',
@@ -169,9 +163,7 @@ class AddTaskModalState extends State<AddTaskModal> {
               descripcion: descripcion,
               fecha: fechaSeleccionada,
               fechaLimite: fechaLimiteSeleccionada,
-              // Mantiene el type si está editando
               tipo: tipoSeleccionado,
-              pasos: pasos, 
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea

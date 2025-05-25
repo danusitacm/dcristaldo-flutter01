@@ -4,7 +4,7 @@ import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/core/api_config.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:dcristaldo/helpers/connectivity_service.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart' show di;
 
 /// Clase base para servicios API que proporciona funcionalidad común

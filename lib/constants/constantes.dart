@@ -69,6 +69,7 @@ class ApiConstantes {
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
+  static const String tareasEndpoint = '/tareasdanu';
 }
 
 // Constantes para la pantalla de Tareas
@@ -84,6 +85,15 @@ class TareasConstantes {
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
   static const int limiteTareas = 10;
+  // Constantes para cache y persistencia
+  static const String cacheTareasKey = 'tarea_cache_prefs';
+  // Mensajes de error
+  static const String errorObtenerTareasPorUsuario = 'Error al obtener tareas del usuario';
+  static const String errorObtenerTareas = 'Error al obtener tareas';
+  static const String errorAgregarTarea = 'Error al agregar tarea';
+  static const String errorEliminarTarea = 'Error al eliminar tarea';
+  static const String errorActualizarTarea = 'Error al actualizar tarea';
+  static const String tituloVacio = 'El título no puede estar vacío';
 }
 
 // Constantes para el Juego de Preguntas

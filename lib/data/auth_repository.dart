@@ -2,7 +2,7 @@ import 'package:dcristaldo/api/service/auth_service.dart';
 import 'package:dcristaldo/data/preferencia_repository.dart';
 import 'package:dcristaldo/domain/login_request.dart';
 import 'package:dcristaldo/domain/login_response.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {

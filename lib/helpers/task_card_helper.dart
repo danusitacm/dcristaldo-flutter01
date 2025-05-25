@@ -89,12 +89,6 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
         children: [
           Text('${TareasConstantes.tipoTarea} ${tarea.tipo}'), // Muestra el tipo de tarea
           CommonWidgetsHelper.buildSpacing(),
-          if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-              CommonWidgetsHelper.buildInfoLines(
-                '${TareasConstantes.pasosTitulo} ${tarea.pasos![0]}',
-              ) // Muestra el primer paso
-          else
-            CommonWidgetsHelper.buildNoStepsText(), // Mensaje si no hay pasos
         ],
       ),
       trailing: IconButton(

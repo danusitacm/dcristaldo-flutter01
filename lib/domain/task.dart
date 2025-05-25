@@ -10,16 +10,14 @@ class Task with TaskMappable{
   final String? descripcion;
   final DateTime? fecha;
   final DateTime? fechaLimite; // Nueva fecha límite
-  final List<String>? pasos; // Nuevos pasos
 
   Task({
-    required this.id,
+    this.id,
     required this.usuario,
     required this.titulo,
     this.tipo = 'normal', // Valor por defecto
     this.descripcion,
     this.fecha,
     this.fechaLimite,
-    this.pasos,
   });
 }
