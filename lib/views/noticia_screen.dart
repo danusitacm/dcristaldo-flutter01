@@ -6,7 +6,6 @@ import 'package:dcristaldo/bloc/categoria/categoria_state.dart';
 import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
 import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
 import 'package:dcristaldo/bloc/noticia/noticia_state.dart';
-import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/floating_add_button.dart';
 import 'package:dcristaldo/components/formulario_noticia.dart';
 import 'package:dcristaldo/components/last_updated_header.dart';
@@ -170,10 +169,6 @@ class _NoticiaScreenContent extends StatelessWidget {
               );              
             },            
           ),
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
-
         );        
       }
     );
