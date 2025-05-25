@@ -17,15 +17,6 @@ class TareasLoadEvent extends TareasEvent {
   List<Object?> get props => [limite];
 }
 
-class TareasLoadMoreEvent extends TareasEvent {
-  final int limite;
-
-  const TareasLoadMoreEvent({this.limite = 5});
-
-  @override
-  List<Object?> get props => [limite];
-}
-
 class TareasAddEvent extends TareasEvent {
   final Task tarea;
 

@@ -12,7 +12,8 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
   
   TareasBloc() : super(const TareasState()) {
     on<TareasLoadEvent>(_onLoadTareas);
-    on<TareasLoadMoreEvent>(_onLoadMoreTareas);
+    // We're removing infinite scroll functionality
+    // on<TareasLoadMoreEvent>(_onLoadMoreTareas);
     on<TareasAddEvent>(_onAddTarea);
     on<TareasUpdateEvent>(_onUpdateTarea);
     on<TareasDeleteEvent>(_onDeleteTarea);
@@ -47,6 +48,8 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
     }
   }
 
+  // Method removed as part of removing infinite scroll functionality
+  /*
   Future<void> _onLoadMoreTareas(
     TareasLoadMoreEvent event,
     Emitter<TareasState> emit,
@@ -87,6 +90,7 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
       ));
     }
   }
+  */
 
   Future<void> _onAddTarea(
     TareasAddEvent event,
