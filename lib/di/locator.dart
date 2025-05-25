@@ -6,7 +6,7 @@ import 'package:dcristaldo/data/noticia_repository.dart';
 import 'package:dcristaldo/data/preferencia_repository.dart';
 import 'package:dcristaldo/data/reporte_repository.dart';
 import 'package:dcristaldo/data/task_repository.dart';
-import 'package:dcristaldo/helpers/connectivity_service.dart';
+import 'package:dcristaldo/core/service/connectivity_service.dart';
 import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dcristaldo/core/service/shared_preferences_service.dart';
