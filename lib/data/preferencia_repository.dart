@@ -2,7 +2,7 @@ import 'package:dcristaldo/api/service/preferencia_service.dart';
 import 'package:dcristaldo/data/base_repository.dart';
 import 'package:dcristaldo/domain/preferencia.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 /// Repositorio para gestionar las preferencias del usuario.

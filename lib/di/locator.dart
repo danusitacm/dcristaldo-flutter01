@@ -5,9 +5,11 @@ import 'package:dcristaldo/data/comentario_repository.dart';
 import 'package:dcristaldo/data/noticia_repository.dart';
 import 'package:dcristaldo/data/preferencia_repository.dart';
 import 'package:dcristaldo/data/reporte_repository.dart';
-import 'package:dcristaldo/helpers/connectivity_service.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/data/task_repository.dart';
+import 'package:dcristaldo/core/service/connectivity_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dcristaldo/core/service/shared_preferences_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 Future<void> initLocator() async {
@@ -21,5 +23,7 @@ Future<void> initLocator() async {
   di.registerLazySingleton<AuthRepository>(() => AuthRepository());
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
+  di.registerLazySingleton<TaskRepository>(() => TaskRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
+  di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
 }

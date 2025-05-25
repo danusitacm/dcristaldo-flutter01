@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/side_menu.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:dcristaldo/views/login_screen.dart'; // Añadimos la importación de LoginScreen
 import 'package:watch_it/watch_it.dart';
 
@@ -13,7 +12,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> {
-  final int _selectedIndex = 0;
   String _userEmail = '';
   @override
   void initState() {
@@ -68,7 +66,6 @@ class WelcomeScreenState extends State<WelcomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

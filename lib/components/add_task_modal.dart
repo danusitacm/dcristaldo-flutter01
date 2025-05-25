@@ -25,9 +25,9 @@ class AddTaskModalState extends State<AddTaskModal> {
   void initState() {
     super.initState();
     // Inicializa los controladores con los datos de la tarea a editar (si existe)
-    tituloController = TextEditingController(text: widget.taskToEdit?.title ?? '');
-    descripcionController = TextEditingController(text: widget.taskToEdit?.description ?? '');
-    fechaSeleccionada = widget.taskToEdit?.date;
+    tituloController = TextEditingController(text: widget.taskToEdit?.titulo ?? '');
+    descripcionController = TextEditingController(text: widget.taskToEdit?.descripcion ?? '');
+    fechaSeleccionada = widget.taskToEdit?.fecha;
     fechaController = TextEditingController(
       text: fechaSeleccionada != null
           ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
@@ -40,13 +40,8 @@ class AddTaskModalState extends State<AddTaskModal> {
           ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
           : '',
     );
-
-    // Inicializa la lista de pasos
-    pasos = widget.taskToEdit?.pasos ?? [];
-
     // Inicializa el tipo de tarea
-    tipoSeleccionado = widget.taskToEdit?.type ?? 'normal';
-
+    tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
   }
 
   @override
@@ -161,15 +156,14 @@ class AddTaskModalState extends State<AddTaskModal> {
               return;
             }
 
-            // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
-              title: titulo,
-              description: descripcion,
-              date: fechaSeleccionada,
+              id: widget.taskToEdit?.id, 
+              usuario: 'usuario',
+              titulo: titulo,
+              descripcion: descripcion,
+              fecha: fechaSeleccionada,
               fechaLimite: fechaLimiteSeleccionada,
-              // Mantiene el type si está editando
-              type: tipoSeleccionado,
-              pasos: pasos, 
+              tipo: tipoSeleccionado,
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea

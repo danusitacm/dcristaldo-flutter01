@@ -20,7 +20,9 @@ class SideMenu extends StatelessWidget {
           const SizedBox(
             height: 80, // To change the height of DrawerHeader
             child: DrawerHeader(
-              decoration:  BoxDecoration(color: Color.fromARGB(255, 217, 162, 180)),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 53, 199, 175),
+              ),
               margin: EdgeInsets.zero, // Elimina el margen predeterminado
               padding: EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
               child: Align(

@@ -8,7 +8,7 @@ import 'package:dcristaldo/di/locator.dart';
 import 'package:dcristaldo/bloc/contador/contador_bloc.dart';
 import 'package:dcristaldo/bloc/connectivity/connectivity_bloc.dart';
 import 'package:dcristaldo/components/connectivity_wrapper.dart';
-import 'package:dcristaldo/helpers/secure_storage_service.dart';
+import 'package:dcristaldo/core/service/secure_storage_service.dart';
 import 'package:dcristaldo/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 // Importaciones adicionales para el NoticiaBloc
@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
       ],child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 53, 199, 175)),
         ),
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
