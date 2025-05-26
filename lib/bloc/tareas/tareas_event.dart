@@ -44,3 +44,16 @@ class TareasDeleteEvent extends TareasEvent {
   @override
   List<Object?> get props => [index];
 }
+
+class CompletarTareaEvent extends TareasEvent {
+  final Task tarea;
+  final bool completada;
+
+  const CompletarTareaEvent({
+    required this.tarea,
+    required this.completada,
+  });
+
+  @override
+  List<Object?> get props => [tarea, completada];
+}
