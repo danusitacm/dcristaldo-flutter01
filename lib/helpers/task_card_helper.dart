@@ -124,10 +124,15 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
             ],
           ),
           trailing: IconButton(
-            onPressed: onEdit,
-            icon: const Icon(Icons.edit, size: 16),
+            onPressed: tarea.completada ? null : onEdit,
+            icon: Icon(
+              Icons.edit,
+              size: 16,
+              color: tarea.completada ? Colors.grey.withAlpha((0.3 * 255).toInt()) : Colors.grey,
+            ),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.grey,
+              disabledForegroundColor: Colors.grey.withAlpha((0.3 * 255).toInt()),
             ),
           ),
         ),
