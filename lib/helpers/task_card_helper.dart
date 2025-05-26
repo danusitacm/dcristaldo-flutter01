@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/domain/task.dart';
+import 'package:dcristaldo/bloc/tareas/tareas_bloc.dart';
+import 'package:dcristaldo/bloc/tareas/tareas_event.dart';
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
-  static Widget buildBoldTitle(String title) {
+  /// Si isCompleted es true, aplica un estilo de texto tachado
+  static Widget buildBoldTitle(String title, {bool isCompleted = false}) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
+        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
       ),
     );
   }
@@ -76,28 +81,57 @@ class CommonWidgetsHelper {
 }
 
 Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
-    child:ListTile(
-    contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
-    tileColor: Colors.white, // Fondo blanco para el ListTile
-    shape: CommonWidgetsHelper.buildRoundedBorder(),
-    leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
-    title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('${TareasConstantes.tipoTarea} ${tarea.tipo}'), // Muestra el tipo de tarea
-          CommonWidgetsHelper.buildSpacing(),
-        ],
-      ),
-      trailing: IconButton(
-        onPressed: onEdit, // Llama a la función de edición
-        icon: const Icon(Icons.edit, size: 16),
-        style: ElevatedButton.styleFrom(                     
-          foregroundColor: Colors.grey, // Color del texto
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(16.0),
+          tileColor: Colors.white,
+          shape: CommonWidgetsHelper.buildRoundedBorder(),
+          leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo),
+          title: Row(
+            children: [
+              // Checkbox para marcar la tarea como completada
+              Checkbox(
+                value: tarea.completada,
+                onChanged: (value) {
+                  // Usar BLoC para actualizar el estado de la tarea
+                  final bloc = context.read<TareasBloc>();
+                  bloc.add(CompletarTareaEvent(
+                    tarea: tarea,
+                    completada: value ?? false,
+                  ));
+                },
+              ),
+              Expanded(
+                child: Text(
+                  tarea.titulo,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    decoration: tarea.completada ? TextDecoration.lineThrough : TextDecoration.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${TareasConstantes.tipoTarea} ${tarea.tipo}'),
+              CommonWidgetsHelper.buildSpacing(),
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit, size: 16),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.grey,
+            ),
+          ),
         ),
-      ),
-    ),        
+      );
+    }
   );
 }

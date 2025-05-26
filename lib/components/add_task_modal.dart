@@ -164,6 +164,7 @@ class AddTaskModalState extends State<AddTaskModal> {
               fecha: fechaSeleccionada,
               fechaLimite: fechaLimiteSeleccionada,
               tipo: tipoSeleccionado,
+              completada: false,
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea
