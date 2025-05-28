@@ -1,3 +1,4 @@
+import 'package:dcristaldo/api/service/task_service.dart';
 import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
 import 'package:dcristaldo/data/auth_repository.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
@@ -26,4 +27,5 @@ Future<void> initLocator() async {
   di.registerLazySingleton<TaskRepository>(() => TaskRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
   di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
+  di.registerSingleton<TaskService>(TaskService());
 }
