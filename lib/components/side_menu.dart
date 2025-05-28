@@ -7,6 +7,7 @@ import 'package:dcristaldo/views/quote_screen.dart';
 import 'package:dcristaldo/views/start_screen.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/views/tareas_screen.dart';
+import 'package:dcristaldo/views/acerca_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -17,19 +18,19 @@ class SideMenu extends StatelessWidget {
       child: ListView(
         // padding: EdgeInsets.zero,
         children: [
-          const SizedBox(
+          SizedBox(
             height: 80, // To change the height of DrawerHeader
             child: DrawerHeader(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 53, 199, 175),
+                color: Theme.of(context).colorScheme.primary,
               ),
               margin: EdgeInsets.zero, // Elimina el margen predeterminado
-              padding: EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
+              padding: const EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Menú ',
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 22),
                 ),
               ),
             ),
@@ -65,27 +66,27 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.newspaper), // Ícono para la nueva opción
+            leading: const Icon(Icons.newspaper), 
             title: const Text('Noticias'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const NoticiaScreen()), // Navega a MiAppScreen
+                MaterialPageRoute(builder: (context) => const NoticiaScreen()),
               );
             },
           ),      
           ListTile(
-            leading: const Icon(Icons.apps), // Ícono para la nueva opción
+            leading: const Icon(Icons.apps), 
             title: const Text('Mi App'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MiAppScreen()), // Navega a MiAppScreen
+                MaterialPageRoute(builder: (context) => const MiAppScreen()), 
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.numbers), // Ícono para el contador
+            leading: const Icon(Icons.numbers), 
             title: const Text('Contador'),
             onTap: () {
               Navigator.pushReplacement(
@@ -97,7 +98,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.stars), // Ícono para el contador
+            leading: const Icon(Icons.stars),
             title: const Text('Juego'),
             onTap: () {
               Navigator.pushReplacement(
@@ -107,7 +108,17 @@ class SideMenu extends StatelessWidget {
                 ),
               );
             },
-          ),          
+          ), 
+          ListTile(
+            leading: const Icon(Icons.stars),
+            title: const Text('Acerca de'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AcercaScreen()),
+              );
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Cerrar Sesión'),

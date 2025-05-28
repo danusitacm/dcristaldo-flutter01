@@ -14,6 +14,7 @@ import 'package:watch_it/watch_it.dart';
 // Importaciones adicionales para el NoticiaBloc
 import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
 import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
+import 'package:dcristaldo/theme/theme.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -51,11 +52,10 @@ class MyApp extends StatelessWidget {
             return noticiaBloc;
           },
         ),
-      ],child: MaterialApp(
+      ],
+      child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 53, 199, 175)),
-        ),
+        theme: AppTheme.bootcampTheme,
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
           // Envolvemos con nuestro ConnectivityWrapper 
