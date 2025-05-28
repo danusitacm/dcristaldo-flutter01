@@ -8,7 +8,6 @@ import 'package:dcristaldo/components/last_updated_header.dart';
 import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/components/categoria_card.dart';
 import 'package:dcristaldo/components/side_menu.dart';
-import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/formulario_categoria.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/helpers/dialog_helper.dart';
@@ -131,9 +130,6 @@ class _CategoriaScreenContent extends StatelessWidget {
             tooltip: 'Agregar Categoría',
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
         );
       },
     );
