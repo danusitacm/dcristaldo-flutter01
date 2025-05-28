@@ -63,19 +63,15 @@ class DialogHelper {
                 // Limpiar caché de preferencias ANTES del logout y redirección
                 preferenciasRepo.invalidarCache();
                 
-                // Obtener referencia al NoticiaBloc para reiniciar sus filtros
-                if (context.mounted) {
-                  try {
-                    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
-                    // Reiniciar los filtros del NoticiaBloc
-                    noticiaBloc.add(FetchNoticiasEvent());
-                  } catch (e) {
-                    // Ignorar si NoticiaBloc no está disponible
-                  }
-                }
                 
                 // Usar el BLoC para manejar el cierre de sesión
                 if (context.mounted) {
+                  try{
+                    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+                    noticiaBloc.add(ResetNoticiaEvent());
+                  }catch(e){
+                    // ignorar 
+                  }
                   BlocProvider.of<AuthBloc>(context).add(AuthLogoutRequested());
                 }
                 
