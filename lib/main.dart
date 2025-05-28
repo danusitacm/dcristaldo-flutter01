@@ -25,8 +25,6 @@ void main() async {
   await secureStorage.clearJwt();
   await secureStorage.clearUserEmail();
   
-  final sharedPreferenceService = di<SharedPreferencesService>();
-  sharedPreferenceService.clearAll();
   runApp(const MyApp());
 }
 
