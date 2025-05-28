@@ -17,6 +17,7 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
     on<TareasAddEvent>(_onAddTarea);
     on<TareasUpdateEvent>(_onUpdateTarea);
     on<TareasDeleteEvent>(_onDeleteTarea);
+    on<CompletarTareaEvent>(_onCompletarTarea);
   }
 
   Future<void> _onLoadTareas(
@@ -160,6 +161,37 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
       }
     } catch (e) {
       String mensaje = 'Error al eliminar la tarea';
+      if (e is ApiException) {
+        mensaje = e.message;
+      }
+      emit(state.copyWith(
+        status: TareasStatus.error,
+        errorMessage: mensaje,
+      ));
+    }
+  }
+
+  Future<void> _onCompletarTarea(
+    CompletarTareaEvent event,
+    Emitter<TareasState> emit,
+  ) async {
+    try {
+      final Task tareaActualizada = event.tarea..completada = event.completada;
+      
+      final int index = state.tareas.indexWhere((t) => t.id == event.tarea.id);
+      
+      if (index != -1) {
+        final List<Task> nuevasTareas = List<Task>.from(state.tareas);
+        nuevasTareas[index] = tareaActualizada;        
+        emit(state.copyWith(
+          tareas: nuevasTareas,
+          tareaCompletada: tareaActualizada,
+          completada: event.completada,
+        ));
+        
+      }
+    } catch (e) {
+      String mensaje = 'Error al completar la tarea';
       if (e is ApiException) {
         mensaje = e.message;
       }

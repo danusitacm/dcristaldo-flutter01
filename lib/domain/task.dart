@@ -9,8 +9,8 @@ class Task with TaskMappable{
   final String tipo;
   final String? descripcion;
   final DateTime? fecha;
-  final DateTime? fechaLimite; // Nueva fecha límite
-
+  final DateTime? fechaLimite; 
+  bool completada;  
   Task({
     this.id,
     required this.usuario,
@@ -19,5 +19,6 @@ class Task with TaskMappable{
     this.descripcion,
     this.fecha,
     this.fechaLimite,
+    this.completada = false, // Por defecto, la tarea no está completada
   });
 }
