@@ -1,3 +1,4 @@
+import 'package:dcristaldo/core/service/shared_preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,6 +25,8 @@ void main() async {
   await secureStorage.clearJwt();
   await secureStorage.clearUserEmail();
   
+  final sharedPreferenceService = di<SharedPreferencesService>();
+  sharedPreferenceService.clearAll();
   runApp(const MyApp());
 }
 
