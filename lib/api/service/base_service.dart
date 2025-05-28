@@ -144,7 +144,7 @@ class BaseService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorGetDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<T>(
@@ -156,13 +156,32 @@ class BaseService {
       errorMessage,
     );
   }
+  /// Metodo generico para realizar solicitudes POST sin token de autorizacion
+  Future<dynamic> postUnauthorized(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorCreateDefault,
+  }) async {
+    final options = await _getRequestOptions(requireAuthToken: false);
+    return _executeRequest<dynamic>(
+      () => _dio.post(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
+      errorMessage,
+    );
+  }
+  
   /// Método genérico para realizar solicitudes POST
   Future<dynamic> post(
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorCreateDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
@@ -181,11 +200,30 @@ class BaseService {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorUpdateDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
       () => _dio.put(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
+      errorMessage,
+    );
+  }
+
+  Future<dynamic> patch(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorUpdateDefault,
+    bool requireAuthToken = true,
+  }) async {
+    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+    return _executeRequest<dynamic>(
+      () => _dio.patch(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -200,7 +238,7 @@ class BaseService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorDeleteDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
     final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
     return _executeRequest<dynamic>(
@@ -214,7 +252,7 @@ class BaseService {
   }
 
   /// Obtiene opciones de solicitud con token de autenticación si es requerido
-  Future<Options> _getRequestOptions({bool requireAuthToken = false}) async {
+  Future<Options> _getRequestOptions({bool requireAuthToken = true}) async {
     final options = Options();
     
     if (requireAuthToken) {
@@ -231,7 +269,6 @@ class BaseService {
         );
       }
     }
-    
     return options;
   }
 }
