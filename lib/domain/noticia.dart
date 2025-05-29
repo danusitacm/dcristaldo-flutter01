@@ -10,7 +10,8 @@ class Noticia with NoticiaMappable{
   final DateTime publicadaEl;
   final String urlImagen; 
   final String? categoriaId; 
-
+  final int? contadorReportes;
+  final int? contadorComentarios;
   Noticia({
     this.id, 
     required this.titulo,
@@ -19,5 +20,7 @@ class Noticia with NoticiaMappable{
     required this.publicadaEl,
     required this.urlImagen,
     this.categoriaId, 
+    this.contadorReportes,
+    this.contadorComentarios,
   });
 }

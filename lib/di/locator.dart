@@ -1,3 +1,5 @@
+import 'package:dcristaldo/api/service/noticia_service.dart';
+import 'package:dcristaldo/api/service/reporte_service.dart';
 import 'package:dcristaldo/api/service/task_service.dart';
 import 'package:dcristaldo/bloc/reporte/reporte_bloc.dart';
 import 'package:dcristaldo/data/auth_repository.dart';
@@ -17,15 +19,17 @@ Future<void> initLocator() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   di.registerSingleton<SharedPreferences>(sharedPreferences);
   di.registerSingleton<CategoriaRepository>(CategoriaRepository());
-  di.registerLazySingleton<PreferenciaRepository>(() => PreferenciaRepository());  
-  di.registerLazySingleton<NoticiaRepository>(() => NoticiaRepository());
-  di.registerLazySingleton<ComentarioRepository>(() => ComentarioRepository());
+  di.registerLazySingleton<PreferenciaRepository>(() => PreferenciaRepository());
   di.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
   di.registerLazySingleton<AuthRepository>(() => AuthRepository());
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
+  di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
+  di.registerSingleton<TaskService>(TaskService());
+  di.registerLazySingleton<ReporteService>(() => ReporteService());
+  di.registerLazySingleton<NoticiaService>(() => NoticiaService());
+  di.registerLazySingleton<NoticiaRepository>(() => NoticiaRepository());
+  di.registerLazySingleton<ComentarioRepository>(() => ComentarioRepository());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerLazySingleton<TaskRepository>(() => TaskRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
-  di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
-  di.registerSingleton<TaskService>(TaskService());
-}
+} 

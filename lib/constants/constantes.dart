@@ -34,6 +34,7 @@ class ReporteConstantes {
   static const String errorObtenerReportes = 'Error al obtener reportes';
   static const String listaVacia = 'No hay reportes disponibles';
   static const String mensajeCargando = 'Cargando reportes...';
+  static const String errorEliminarReporte = 'Error al eliminar el reporte';
 }
 
 
@@ -134,6 +135,8 @@ class NoticiasConstantes {
   static const String errorUpdated = 'Error al editar la noticia';
   static const String errorDelete = 'Error al eliminar la noticia';
   static const String errorFilter = "Error al filtrar noticias";
+  static const String errorVerificarNoticiaExiste = 'Error al verificar la existencia de la noticia';
+  static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
 }
 
 class ConectividadConstantes {
