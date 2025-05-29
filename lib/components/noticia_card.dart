@@ -22,7 +22,6 @@ class NoticiaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
@@ -37,7 +36,6 @@ class NoticiaCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Imagen de la noticia en la parte superior
                 Stack(
                   children: [
                     SizedBox(
@@ -62,13 +60,12 @@ class NoticiaCard extends StatelessWidget {
                         },
                       ),
                     ),
-                    // Chip de categoría superpuesto en la imagen
                     Positioned(
                       top: 12.0,
                       left: 12.0,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: theme.primaryColor.withOpacity(0.8),
+                          color: theme.primaryColor.withAlpha((0.8 * 255).toInt()),
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                         padding: const EdgeInsets.symmetric(
@@ -97,15 +94,12 @@ class NoticiaCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-                
-                // Contenido de la noticia
+                ),                
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Título de la noticia
                       Text(
                         noticia.titulo,
                         maxLines: 2,
@@ -118,7 +112,6 @@ class NoticiaCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 12.0),
                       
-                      // Descripción
                       Text(
                         noticia.descripcion,
                         style: TextStyle(
@@ -130,13 +123,10 @@ class NoticiaCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 16.0),
-                      
-                      // Información adicional (fuente y fecha)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Fuente
                           Flexible(
                             flex: 3,
                             child: Row(
@@ -160,9 +150,7 @@ class NoticiaCard extends StatelessWidget {
                             ),
                           ),
                           
-                          const SizedBox(width: 8),
-                          
-                          // Fecha de publicación
+                          const SizedBox(width: 8),                          
                           Flexible(
                             flex: 2,
                             child: Row(
@@ -188,9 +176,7 @@ class NoticiaCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-                
-                // Barra de acciones
+                ),                
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Padding(
@@ -199,7 +185,6 @@ class NoticiaCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         const SizedBox(width: 4),
-                        // Botón de comentarios
                         _buildActionButton(
                           icon: Icons.comment_outlined,
                           label: noticia.contadorComentarios != null && noticia.contadorComentarios! > 0
@@ -217,11 +202,8 @@ class NoticiaCard extends StatelessWidget {
                           },
                         ),
                         const SizedBox(width: 4),
-                        // Botón de reporte
                         _buildReportButton(context),
                         const SizedBox(width: 4),
-                        
-                        // Botón de editar
                         _buildActionButton(
                           icon: Icons.edit_outlined,
                           label: 'Editar',
@@ -258,7 +240,7 @@ class NoticiaCard extends StatelessWidget {
             Icon(icon, size: 22),
             const SizedBox(height: 2),
             SizedBox(
-              width: 48, // Ancho fijo para el texto
+              width: 48,  
               child: Text(
                 label,
                 style: const TextStyle(fontSize: 10),
@@ -324,7 +306,7 @@ class NoticiaCard extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             const SizedBox(
-              width: 48, // Ancho fijo para el texto
+              width: 48, 
               child: Text(
                 'Reportar',
                 style: TextStyle(fontSize: 10),
