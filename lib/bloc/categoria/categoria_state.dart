@@ -41,7 +41,6 @@ class CategoriaUpdated extends CategoriaLoaded {
   CategoriaUpdated(super.categorias, super.lastUpdated);
 }
 
-/// Estado especial para cuando se recarga la caché forzadamente
 class CategoriaReloaded extends CategoriaLoaded {
   CategoriaReloaded(super.categorias, super.lastUpdated);
 }

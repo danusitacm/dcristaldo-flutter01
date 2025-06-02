@@ -102,7 +102,6 @@ class CommentInputForm extends StatelessWidget {
     final bloc = context.read<ComentarioBloc>();
 
     if (respondingToId == null) {
-      // Crear un comentario principal
       final nuevoComentario = Comentario(
         id: '',
         noticiaId: noticiaId,
@@ -117,45 +116,38 @@ class CommentInputForm extends StatelessWidget {
 
       bloc.add(AddComentario(noticiaId, nuevoComentario));
     } else {
-      // Crear un subcomentario
       final nuevoSubComentario = Comentario(
-        id: '', // El ID real se generará en el backend
+        id: '',
         noticiaId: noticiaId,
         texto: comentarioController.text,
         fecha: fecha,
         autor: 'Usuario anónimo',
         likes: 0,
         dislikes: 0,
-        subcomentarios:
-            [], // Un subcomentario no puede tener sus propios subcomentarios
+        subcomentarios: [],
         isSubComentario: true,
-        idSubComentario:
-            respondingToId, // Este es el ID del comentario padre al que estamos respondiendo
+        idSubComentario: respondingToId,
       );
 
       bloc.add(AddSubcomentario(nuevoSubComentario));
     }
 
-    // Actualizar el contador de comentarios
     int totalComentariosActuales = 0;
     if (bloc.state is ComentarioLoaded) {
       final comentariosActuales = (bloc.state as ComentarioLoaded).comentarios;
-      
-      // Contar comentarios principales
+
       totalComentariosActuales = comentariosActuales.length;
-      
-      // Contar subcomentarios
+
       for (var comentario in comentariosActuales) {
         if (comentario.subcomentarios != null) {
           totalComentariosActuales += comentario.subcomentarios!.length;
         }
       }
     }
-    
-    // Sumamos 1 por el nuevo comentario
+
     final nuevoTotal = totalComentariosActuales + 1;
     bloc.add(ActualizarContadorComentarios(noticiaId, nuevoTotal));
-    
+
     comentarioController.clear();
     onCancelarRespuesta();
 

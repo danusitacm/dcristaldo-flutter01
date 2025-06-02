@@ -3,7 +3,7 @@ import 'package:dcristaldo/domain/task.dart';
 
 class AddTaskModal extends StatefulWidget {
   final Function(Task) onTaskAdded;
-  final Task? taskToEdit; // Tarea opcional para editar
+  final Task? taskToEdit;
 
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
@@ -18,29 +18,35 @@ class AddTaskModalState extends State<AddTaskModal> {
   late TextEditingController fechaLimiteController;
   DateTime? fechaSeleccionada;
   DateTime? fechaLimiteSeleccionada;
-  late List<String> pasos; //Lista para los pasos
-  late String tipoSeleccionado; 
-  
+  late List<String> pasos;
+  late String tipoSeleccionado;
+
   @override
   void initState() {
     super.initState();
-    // Inicializa los controladores con los datos de la tarea a editar (si existe)
-    tituloController = TextEditingController(text: widget.taskToEdit?.titulo ?? '');
-    descripcionController = TextEditingController(text: widget.taskToEdit?.descripcion ?? '');
+
+    tituloController = TextEditingController(
+      text: widget.taskToEdit?.titulo ?? '',
+    );
+    descripcionController = TextEditingController(
+      text: widget.taskToEdit?.descripcion ?? '',
+    );
     fechaSeleccionada = widget.taskToEdit?.fecha;
     fechaController = TextEditingController(
-      text: fechaSeleccionada != null
-          ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
-          : '',
+      text:
+          fechaSeleccionada != null
+              ? '${fechaSeleccionada!.day}/${fechaSeleccionada!.month}/${fechaSeleccionada!.year}'
+              : '',
     );
 
     fechaLimiteSeleccionada = widget.taskToEdit?.fechaLimite;
     fechaLimiteController = TextEditingController(
-      text: fechaLimiteSeleccionada != null
-          ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
-          : '',
+      text:
+          fechaLimiteSeleccionada != null
+              ? '${fechaLimiteSeleccionada!.day}/${fechaLimiteSeleccionada!.month}/${fechaLimiteSeleccionada!.year}'
+              : '',
     );
-    // Inicializa el tipo de tarea
+
     tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
   }
 
@@ -148,16 +154,20 @@ class AddTaskModalState extends State<AddTaskModal> {
           onPressed: () async {
             final titulo = tituloController.text.trim();
             final descripcion = descripcionController.text.trim();
-                         
-            if (titulo.isEmpty || descripcion.isEmpty || fechaSeleccionada == null) {
+
+            if (titulo.isEmpty ||
+                descripcion.isEmpty ||
+                fechaSeleccionada == null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Por favor, completa todos los campos')),
+                const SnackBar(
+                  content: Text('Por favor, completa todos los campos'),
+                ),
               );
               return;
             }
 
             final nuevaTarea = Task(
-              id: widget.taskToEdit?.id, 
+              id: widget.taskToEdit?.id,
               usuario: 'usuario',
               titulo: titulo,
               descripcion: descripcion,
@@ -167,7 +177,7 @@ class AddTaskModalState extends State<AddTaskModal> {
               completada: false,
             );
 
-            widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea
+            widget.onTaskAdded(nuevaTarea);
             Navigator.pop(context);
           },
           child: const Text('Guardar'),

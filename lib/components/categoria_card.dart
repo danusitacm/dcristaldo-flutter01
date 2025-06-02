@@ -9,6 +9,7 @@ class CategoriaCard extends StatelessWidget {
     super.key,
     required this.categoria,
     required this.onEdit,
+
   });
 
   @override
@@ -65,11 +66,22 @@ class CategoriaCard extends StatelessWidget {
             icon: const Icon(Icons.edit, color: Colors.blue),
             onPressed: onEdit,
           ),
-          onTap: () {
-            // Aquí podríamos navegar a un detalle de la categoría
-            // o mostrar las noticias filtradas por esta categoría
-          },
         ),
+        title: Text(
+          categoria.nombre,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Text(
+          categoria.descripcion,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.edit, color: Colors.blue),
+          onPressed: onEdit,
+        ),
+        onTap: () {},
+      ),
     );
   }
 }

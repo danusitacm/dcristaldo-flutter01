@@ -16,21 +16,23 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        // padding: EdgeInsets.zero,
         children: [
           SizedBox(
-            height: 80, // To change the height of DrawerHeader
+            height: 80,
             child: DrawerHeader(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
               ),
-              margin: EdgeInsets.zero, // Elimina el margen predeterminado
-              padding: const EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
+              margin: EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Menú ',
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 22),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 22,
+                  ),
                 ),
               ),
             ),
@@ -66,7 +68,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.newspaper), 
+            leading: const Icon(Icons.newspaper),
             title: const Text('Noticias'),
             onTap: () {
               Navigator.pushReplacement(
@@ -74,19 +76,19 @@ class SideMenu extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const NoticiaScreen()),
               );
             },
-          ),      
+          ),
           ListTile(
-            leading: const Icon(Icons.apps), 
+            leading: const Icon(Icons.apps),
             title: const Text('Mi App'),
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MiAppScreen()), 
+                MaterialPageRoute(builder: (context) => const MiAppScreen()),
               );
             },
           ),
           ListTile(
-            leading: const Icon(Icons.numbers), 
+            leading: const Icon(Icons.numbers),
             title: const Text('Contador'),
             onTap: () {
               Navigator.pushReplacement(
@@ -103,12 +105,10 @@ class SideMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const StartScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const StartScreen()),
               );
             },
-          ), 
+          ),
           ListTile(
             leading: const Icon(Icons.stars),
             title: const Text('Acerca de'),

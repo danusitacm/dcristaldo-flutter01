@@ -53,7 +53,7 @@ class ReporteBloc extends Bloc<ReporteEvent, ReporteState> {
     }
   }
 
-  // Método para cargar estadísticas al iniciar
+  /// Método para cargar estadísticas al iniciar
   Future<void> _onCargarEstadisticasReporte(
     CargarEstadisticasReporte event,
     Emitter<ReporteState> emit,
@@ -68,7 +68,7 @@ class ReporteBloc extends Bloc<ReporteEvent, ReporteState> {
     }
   }
 
-  // Método auxiliar para cargar estadísticas
+  /// Método auxiliar para cargar estadísticas
   Future<void> _cargarEstadisticas(
     Noticia noticia,
     Emitter<ReporteState> emit,

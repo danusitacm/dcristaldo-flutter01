@@ -15,7 +15,6 @@ class SubcommentCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    // La fecha ya viene formateada desde el backend
     final fecha = subcomentario.fecha;
 
     return Padding(
@@ -46,7 +45,7 @@ class SubcommentCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          // Botones de reacción (like/dislike)
+
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -80,36 +79,26 @@ class SubcommentCard extends StatelessWidget {
         ],
       ),
     );
-  }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    // Capturamos una referencia al bloc fuera del Future.delayed
+  }
+
+  void _handleReaction(BuildContext context, String tipoReaccion) {
     final comentarioBloc = context.read<ComentarioBloc>();
-    
-    // Determinamos correctamente los IDs para la reacción
+
     String comentarioId = '';
     String? padreId;
-    
-    // Si tiene ID propio, lo usamos directamente
+
     if (subcomentario.id != null && subcomentario.id!.isNotEmpty) {
       comentarioId = subcomentario.id!;
-      
-      // Si además tiene idSubComentario, ese es el padre
-      if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
+
+      if (subcomentario.idSubComentario != null &&
+          subcomentario.idSubComentario!.isNotEmpty) {
         padreId = subcomentario.idSubComentario;
       }
-    } 
-    // Si no tiene ID propio pero tiene idSubComentario, usamos ese como su ID
-    else if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
+    } else if (subcomentario.idSubComentario != null &&
+        subcomentario.idSubComentario!.isNotEmpty) {
       comentarioId = subcomentario.idSubComentario!;
     }
-    
-    // Agregamos la reacción con los IDs correctos
-    comentarioBloc.add(
-      AddReaccion(
-        comentarioId,
-        tipoReaccion,
-        true,
-        padreId,
-      ),
-    );
+
+    comentarioBloc.add(AddReaccion(comentarioId, tipoReaccion, true, padreId));
   }
 }

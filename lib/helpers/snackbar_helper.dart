@@ -10,7 +10,6 @@ class SnackBarHelper {
     BuildContext context, {
     required String mensaje,
   }) async {
-    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
     if (!SnackBarManager().canShowSnackBar()) return;
 
     _mostrarSnackBar(
@@ -24,7 +23,6 @@ class SnackBarHelper {
 
   /// Muestra un mensaje informativo
   static void mostrarInfo(BuildContext context, {required String mensaje}) {
-    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
     if (!SnackBarManager().canShowSnackBar()) return;
 
     _mostrarSnackBar(
@@ -40,7 +38,6 @@ class SnackBarHelper {
     BuildContext context, {
     required String mensaje,
   }) {
-    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
     if (!SnackBarManager().canShowSnackBar()) return;
 
     _mostrarSnackBar(
@@ -53,7 +50,6 @@ class SnackBarHelper {
 
   /// Muestra un mensaje de error
   static void mostrarError(BuildContext context, {required String mensaje}) {
-    // Verificar si se puede mostrar el SnackBar (no hay mensajes de conectividad)
     if (!SnackBarManager().canShowSnackBar()) return;
 
     _mostrarSnackBar(
@@ -69,16 +65,12 @@ class SnackBarHelper {
     BuildContext context,
     ApiException e, {
     Duration? duration,
-    bool isConnectivityMessage =
-        false, // Indica si es un mensaje de conectividad
+    bool isConnectivityMessage = false,
   }) {
     if (!context.mounted) return;
 
-    // Si no es un mensaje de conectividad y ya hay uno mostrándose, no mostrar nada
     if (!isConnectivityMessage && !SnackBarManager().canShowSnackBar()) return;
 
-    // Usar ErrorHelper para procesar el error si es ApiException, 
-    //si no recibe un codigo le pasa 0
     final color = ErrorHelper.getErrorColor(e.statusCode ?? 0);
     final mensaje = e.message;
 
@@ -97,20 +89,16 @@ class SnackBarHelper {
     required String mensaje,
     required Color color,
     required Duration duracion,
-    bool isConnectivityMessage =
-        false, // Indica si es un mensaje de conectividad
+    bool isConnectivityMessage = false,
   }) {
     if (!context.mounted) return;
 
-    // Si es un mensaje de conectividad, actualizar el estado del manager
     if (isConnectivityMessage) {
       SnackBarManager().setConnectivitySnackBarShowing(true);
     }
 
-    // Limpia cualquier SnackBar que esté mostrándose actualmente
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-    // Muestra el nuevo SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBarComponent.crear(
         mensaje: mensaje,

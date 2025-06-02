@@ -18,7 +18,7 @@ class CommentCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {    // La fecha ya viene formateada del backend, la usamos directamente
+  Widget build(BuildContext context) {
     final fecha = comentario.fecha;
 
     return Card(
@@ -83,7 +83,11 @@ class CommentCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      onPressed: () => onResponder(comentario.id ?? '', comentario.autor),
+                      onPressed:
+                          () => onResponder(
+                            comentario.id ?? '',
+                            comentario.autor,
+                          ),
                     ),
                   ],
                 ),
@@ -103,28 +107,23 @@ class CommentCard extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: comentario.subcomentarios!.length,
-                itemBuilder: (context, index) => SubcommentCard(
-                  subcomentario: comentario.subcomentarios![index],
-                  noticiaId: noticiaId,
-                ),
+                itemBuilder:
+                    (context, index) => SubcommentCard(
+                      subcomentario: comentario.subcomentarios![index],
+                      noticiaId: noticiaId,
+                    ),
               ),
             ),
         ],
       ),
     );
-  }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    final comentarioBloc = context.read<ComentarioBloc>();
-    
-    // Primero enviamos el evento de reacción
-    comentarioBloc.add(
-      AddReaccion(
-        comentario.id ?? '', 
-        tipoReaccion, 
-        true, // incrementar = true
-        null // comentarioPadreId null para comentarios principales
-      ),
-    );
-    
+  }
 
+  void _handleReaction(BuildContext context, String tipoReaccion) {
+    final comentarioBloc = context.read<ComentarioBloc>();
+
+    comentarioBloc.add(
+      AddReaccion(comentario.id ?? '', tipoReaccion, true, null),
+    );
   }
 }

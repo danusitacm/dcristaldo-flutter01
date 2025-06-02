@@ -17,7 +17,7 @@ class SecureStorageService {
     await _storage.delete(key: _jwtKey);
   }
   
-  // Métodos para manejar el correo del usuario
+  
   Future<void> saveUserEmail(String email) async {
     await _storage.write(key: _userEmailKey, value: email);
   }
@@ -30,7 +30,6 @@ class SecureStorageService {
     await _storage.delete(key: _userEmailKey);
   }
   
-  // Método para limpiar todos los datos de sesión
   Future<void> clearAllSessionData() async {
     await clearJwt();
     await clearUserEmail();

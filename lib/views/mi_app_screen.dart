@@ -1,11 +1,3 @@
-/*
-¿Cómo controla el estado los cambios de color? ¿Qué hace Column en este layout?
-Con una lista de colores y el setState() dentro de la funcion cambiarColor()> Se le suma 1 al indice actual y 
-se obtiene el resto de la division con el tamaño de la lista de colores,el rersultado 
-es el nuevo indice del color a mostrar. 
-Column alinea a los widgets hijos uno detras de otro.
-*/
-
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/side_menu.dart';
@@ -18,18 +10,18 @@ class MiAppScreen extends StatefulWidget {
 }
 
 class MiAppScreenState extends State<MiAppScreen> {
-  Color _colorActual = Colors.blue; // Color inicial del Container
+  Color _colorActual = Colors.blue;
   final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
   int _indiceColor = 0;
   final int _selectedIndex = 0;
 
   void _cambiarColor() {
     setState(() {
-      _indiceColor = (_indiceColor + 1) % _colores.length; // Cambia al siguiente color
+      _indiceColor = (_indiceColor + 1) % _colores.length;
       _colorActual = _colores[_indiceColor];
     });
   }
-  
+
   void _resetColor() {
     setState(() {
       _colorActual = Colors.white;
@@ -39,18 +31,16 @@ class MiAppScreenState extends State<MiAppScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi App'),
-      ),
+      appBar: AppBar(title: const Text('Mi App')),
       drawer: const SideMenu(),
       body: Center(
-        child: Column(          
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               width: 300,
               height: 300,
-              color: _colorActual, // Aplica el color actual
+              color: _colorActual,
               alignment: Alignment.center,
               child: const Text(
                 '¡Cambio de color!',
@@ -61,16 +51,16 @@ class MiAppScreenState extends State<MiAppScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: 300,
-              child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espacio entre los botones
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                    onPressed: _cambiarColor, // Cambia el color al presionar
+                    onPressed: _cambiarColor,
                     child: const Text('Cambiar Color'),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _resetColor, // Cambia el color al presionar
+                    onPressed: _resetColor,
                     child: const Text('Resetea Color'),
                   ),
                 ],
@@ -79,7 +69,9 @@ class MiAppScreenState extends State<MiAppScreen> {
           ],
         ),
       ),
-       bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+      ),
     );
   }
 }

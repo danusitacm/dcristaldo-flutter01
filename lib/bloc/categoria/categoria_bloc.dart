@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/categoria/categoria_event.dart';
 import 'package:dcristaldo/bloc/categoria/categoria_state.dart';
 import 'package:dcristaldo/data/categoria_repository.dart';
-import 'package:dcristaldo/domain/categoria.dart'; // Añadir importación para Categoria
+import 'package:dcristaldo/domain/categoria.dart'; 
 import 'package:dcristaldo/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -20,15 +20,11 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaInitEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    // Siempre emitimos un estado de carga
     emit(CategoriaLoading());
-
     try {
-      // Pasamos el parámetro forzarRecarga al repositorio
       final categorias = await _categoriaRepository.obtenerCategorias(
         forzarRecarga: event.forzarRecarga,
       );
-      // Emitir simplemente el estado cargado sin mostrar SnackBar
       if (event.forzarRecarga == true) {
         emit(CategoriaReloaded(categorias, DateTime.now()));
       } else {
@@ -45,7 +41,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaCreateEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    // Guardar el estado actual para no perder las categorías ya cargadas
     List<Categoria> categoriasActuales = [];
     if (state is CategoriaLoaded) {
       categoriasActuales = [...(state as CategoriaLoaded).categorias];
@@ -55,7 +50,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
       final categoriaCreada = await _categoriaRepository.crearCategoria(
         event.categoria,
       );
-      //Agrega al final la categoría creada
       final categoriasActualizadas = [...categoriasActuales, categoriaCreada];
       emit(CategoriaCreated(categoriasActualizadas, DateTime.now()));
     } catch (e) {
@@ -78,18 +72,13 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     try {
       final categoriaActualizada = await _categoriaRepository
           .actualizarCategoria(event.categoria);
-
-      // Reemplazar la categoría con el mismo ID por la versión actualizada
       final categoriasActualizadas =
           categoriasActuales.map((categoria) {
-            // Si encuentra la categoría con el mismo ID, devuelve la versión actualizada
             if (categoria.id == categoriaActualizada.id) {
               return categoriaActualizada;
             }
-            // De lo contrario, mantiene la categoría original
             return categoria;
           }).toList();
-
       emit(CategoriaUpdated(categoriasActualizadas, DateTime.now()));
     } catch (e) {
       if (e is ApiException) {
@@ -102,8 +91,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaDeleteEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    // La funcionalidad de eliminación ha sido desactivada
-    // Simplemente emitimos el estado actual nuevamente
     if (state is CategoriaLoaded) {
       final categoriasActuales = (state as CategoriaLoaded).categorias;
       emit(CategoriaLoaded(categoriasActuales, DateTime.now()));

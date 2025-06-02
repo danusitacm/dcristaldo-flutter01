@@ -15,10 +15,10 @@ class Task with TaskMappable{
     this.id,
     required this.usuario,
     required this.titulo,
-    this.tipo = 'normal', // Valor por defecto
+    this.tipo = 'normal',
     this.descripcion,
     this.fecha,
     this.fechaLimite,
-    this.completada = false, // Por defecto, la tarea no está completada
+    this.completada = false, 
   });
 }

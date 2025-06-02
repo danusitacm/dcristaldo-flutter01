@@ -3,13 +3,13 @@ import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 
 class CategoriaService extends BaseService {
+  
   /// Obtiene todas las categorías desde la API
   Future<List<Categoria>> obtenerCategorias() async {
     final List<dynamic> categoriasJson = await get<List<dynamic>>(
       ApiConstantes.categoriaEndpoint,
       errorMessage: CategoriaConstantes.mensajeError,
     );
-
     return categoriasJson
         .map<Categoria>(
           (json) => CategoriaMapper.fromMap(json as Map<String, dynamic>),

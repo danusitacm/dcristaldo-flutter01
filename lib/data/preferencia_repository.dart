@@ -11,7 +11,6 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   final PreferenciaService _preferenciaService = PreferenciaService();
   final SecureStorageService _secureStorage = di<SecureStorageService>();
 
-  // Caché de preferencias del usuario actual
   Preferencia? _cachedPreferencias;
 
   @override
@@ -21,11 +20,9 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
 
   @override
   Future<List<Preferencia>> cargarDatos() async {
-    // Inicializar preferencias del usuario si es necesario
     if (_cachedPreferencias == null) {
       await inicializarPreferenciasUsuario();
     }
-    // Devolver lista con un solo elemento (preferencias del usuario actual)
     return _cachedPreferencias != null ? [_cachedPreferencias!] : [];
   }
 
@@ -34,21 +31,17 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   /// Si no existen, crea unas preferencias vacías para ese email.
   Future<void> inicializarPreferenciasUsuario() async {
     return manejarExcepcion(() async {
-      // Obtener el email del usuario autenticado
       final email = await _secureStorage.getUserEmail();
       if (email == null || email.isEmpty) {
         throw ApiException('No hay usuario autenticado', statusCode: 401);
       }
       
       try {
-        // Buscar directamente por email (más eficiente)
         _cachedPreferencias = await _preferenciaService.obtenerPreferenciaPorEmail(email);
       } catch (e) {
-        // Si no encuentra la preferencia (error 404), crear una nueva
         if (e is ApiException && e.statusCode == 404) {
           _cachedPreferencias = await _preferenciaService.crearPreferencias(email);
         } else {
-          // Si es otro tipo de error, propagarlo
           rethrow;
         }
       }
@@ -58,7 +51,6 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   /// Obtiene las categorías seleccionadas para filtrar las noticias
   Future<List<String>> obtenerCategoriasSeleccionadas() async {
     return manejarExcepcion(() async {
-      // Si no hay caché o es la primera vez, inicializar preferencias
       if (_cachedPreferencias == null) {
         await inicializarPreferenciasUsuario();
       }
@@ -70,22 +62,18 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   /// Actualiza la caché local con las nuevas categorías (sin hacer PUT a la API)
   Future<void> _actualizarCacheLocal(List<String> categoriaIds) async {
     return manejarExcepcion(() async {
-      // Si no hay caché, inicializar preferencias
       if (_cachedPreferencias == null) {
         await inicializarPreferenciasUsuario();
       }
       
-      // Obtener el email actual desde la caché o buscar uno nuevo
       final email = _cachedPreferencias?.email ?? 
                    (await _secureStorage.getUserEmail() ?? 'usuario@anonymous.com');
       
-      // Actualizar el objeto en caché
       _cachedPreferencias = Preferencia(
         email: email,
         categoriasSeleccionadas: categoriaIds
       );
       
-      // Marcar que hay cambios pendientes
       marcarCambiosPendientes();
     }, mensajeError: 'Error al actualizar caché local');
   }
@@ -93,25 +81,17 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   /// Guarda las categorías seleccionadas en la API (solo cuando se presiona Aplicar Filtros)
   Future<void> guardarCambiosEnAPI() async {
     return manejarExcepcion(() async {
-      // Verificar si hay cambios pendientes
       if (!hayCambiosPendientes()) {
         return;
       }
-      
-      // Verificar que la caché esté inicializada
       if (_cachedPreferencias == null) {
         await inicializarPreferenciasUsuario();
-        // Si no hay cambios después de inicializar, no hay nada que guardar
         if (!hayCambiosPendientes()) {
           return;
         }
       }
-      
-      // Guardar en la API
       await _preferenciaService.guardarPreferencias(_cachedPreferencias!);
-      
-      // Una vez guardado, ya no hay cambios pendientes
-      super.invalidarCache(); // Esto también establece _cambiosPendientes = false
+      super.invalidarCache(); 
     }, mensajeError: 'Error al guardar preferencias');
   }
 
@@ -150,18 +130,5 @@ class PreferenciaRepository extends CacheableRepository<Preferencia> {
   void invalidarCache() {
     super.invalidarCache();
     _cachedPreferencias = null;
-    
-    // // Asegurarnos de que se eliminen todos los rastros de preferencias anteriores
-    // try {
-    //   // No esperamos a que termine porque esto es solo una limpieza
-    //   _secureStorage.getUserEmail().then((email) {
-    //     if (email != null && email.isNotEmpty) {
-    //       // Crear preferencias vacías para el usuario actual
-    //       _preferenciaService.crearPreferencias(email, categorias: []);
-    //     }
-    //   });
-    // } catch (e) {
-    //   // Ignoramos cualquier error de limpieza, ya que esto es solo precaución adicional
-    // }
   }
 }

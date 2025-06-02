@@ -69,21 +69,28 @@ class _ContadorView extends StatelessWidget {
           children: [
             FloatingActionButton(
               heroTag: 'decrement',
-              onPressed: () => context.read<ContadorBloc>().add(ContadorDecrementEvent()),
+              onPressed:
+                  () => context.read<ContadorBloc>().add(
+                    ContadorDecrementEvent(),
+                  ),
               tooltip: 'Decrement',
               child: const Icon(Icons.remove),
             ),
             const SizedBox(width: 16),
             FloatingActionButton(
               heroTag: 'increment',
-              onPressed: () => context.read<ContadorBloc>().add(ContadorIncrementEvent()),
+              onPressed:
+                  () => context.read<ContadorBloc>().add(
+                    ContadorIncrementEvent(),
+                  ),
               tooltip: 'Increment',
               child: const Icon(Icons.add),
             ),
             const SizedBox(width: 16),
             FloatingActionButton(
               heroTag: 'reset',
-              onPressed: () => context.read<ContadorBloc>().add(ContadorResetEvent()),
+              onPressed:
+                  () => context.read<ContadorBloc>().add(ContadorResetEvent()),
               tooltip: 'Reset',
               child: const Icon(Icons.refresh),
             ),

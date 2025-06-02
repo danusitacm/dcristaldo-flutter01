@@ -6,27 +6,24 @@ import 'package:dcristaldo/views/tareas_screen.dart';
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
 
-  const CustomBottomNavigationBar({
-    super.key,
-    required this.selectedIndex,
-  });
+  const CustomBottomNavigationBar({super.key, required this.selectedIndex});
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
-      case 0: // Inicio
+      case 0:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomeScreen()),
         );
         break;
-      case 1: // Añadir Tarea
+      case 1:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const TareaScreen()),
         );
         break;
-      case 2: // Salir
-        DialogHelper.mostrarDialogoCerrarSesion(context); // Llama al diálogo reutilizable
+      case 2:
+        DialogHelper.mostrarDialogoCerrarSesion(context);
         break;
     }
   }

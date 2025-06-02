@@ -14,15 +14,11 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
   ConnectivityBloc() : super(ConnectivityInitial()) {
     on<CheckConnectivity>(_onCheckConnectivity);
     on<ConnectivityStatusChanged>(_onConnectivityStatusChanged);
-
-    // Suscripción a cambios de conectividad
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
       result,
     ) {
       add(ConnectivityStatusChanged(result));
     });
-
-    // Verificación inicial
     add(CheckConnectivity());
   }
 

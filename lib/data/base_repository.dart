@@ -18,10 +18,8 @@ abstract class BaseRepository<T> {
       return await accion();
     } catch (e) {
       if (e is ApiException) {
-        // Propagar ApiException directamente
         rethrow;
       } else {
-        // Envolver otras excepciones en ApiException con mensaje contextual
         throw ApiException('$mensajeError: $e');
       }
     }
@@ -66,7 +64,6 @@ abstract class CacheableRepository<T> extends BaseRepository<T> {
 
   /// Obtiene datos, preferentemente desde la caché
   Future<List<T>> obtenerDatos({bool forzarRecarga = false}) async {
-    // Si forzarRecarga es true o no hay caché, cargar desde la fuente de datos
     if (forzarRecarga || _cache == null) {
       _cache = await cargarDatos();
     }

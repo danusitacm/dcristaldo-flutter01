@@ -25,7 +25,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(const AuthFailure('El usuario y la contraseña son obligatorios'));
         return;
       }
-      
       final success = await _authRepository.login(
         event.email,
         event.password,
@@ -47,13 +46,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.logout();
-      // Limpiar la caché de preferencias
-      di<PreferenciaRepository>().invalidarCache();
-      
-      // Reiniciar el NoticiaBloc para que no mantenga noticias del usuario anterior
+      di<PreferenciaRepository>().invalidarCache();      
       final noticiaBloc = di<NoticiaBloc>();
       noticiaBloc.add(ResetNoticiaEvent());
-      
       emit(AuthInitial());
     } catch (e) {
       emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));

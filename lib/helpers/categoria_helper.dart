@@ -6,7 +6,6 @@ class CategoriaHelper {
     if (categoriaId.isEmpty || categoriaId == CategoriaConstantes.defaultcategoriaId) {
       return CategoriaConstantes.defaultcategoriaId;
     }
-    
     final categoria = categorias.firstWhere(
       (c) => c.id == categoriaId,
       orElse: () => const Categoria(id: '', nombre: 'Desconocida', descripcion: '', imagenUrl: '')

@@ -58,7 +58,6 @@ class AppTextStyles {
     );
   }
 
-  // Body styles (Body/lg)
   static TextStyle get bodyLg {
     return GoogleFonts.inter(
       fontSize: 14,
@@ -79,7 +78,7 @@ class AppTextStyles {
   static TextStyle get bodyLgMedium {
     return GoogleFonts.inter(
       fontSize: 14,
-      fontWeight: FontWeight.w500, // Medium weight
+      fontWeight: FontWeight.w500,
       color: Colors.black,
     );
   }
@@ -92,7 +91,6 @@ class AppTextStyles {
     );
   }
 
-  // Body styles (Body/md)
   static TextStyle get bodyMd {
     return GoogleFonts.inter(
       fontSize: 13,
@@ -134,7 +132,6 @@ class AppTextStyles {
     );
   }
 
-  // Body styles (Body/sm)
   static TextStyle get bodySm {
     return GoogleFonts.inter(
       fontSize: 12,
@@ -177,7 +174,6 @@ class AppTextStyles {
     );
   }
 
-  // Body styles (Body/xs)
   static TextStyle get bodyXs {
     return GoogleFonts.inter(
       fontSize: 11,

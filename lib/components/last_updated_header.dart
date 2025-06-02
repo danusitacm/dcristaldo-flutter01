@@ -4,18 +4,17 @@ import 'package:dcristaldo/constants/constantes.dart';
 
 class LastUpdatedHeader extends StatelessWidget {
   final DateTime? lastUpdated;
-  
-  const LastUpdatedHeader({
-    super.key,
-    this.lastUpdated,
-  });
-  
+
+  const LastUpdatedHeader({super.key, this.lastUpdated});
+
   @override
   Widget build(BuildContext context) {
     if (lastUpdated == null) return const SizedBox.shrink();
-    
-    final String formattedDate = DateFormat(AppConstantes.formatoFecha).format(lastUpdated!);
-    
+
+    final String formattedDate = DateFormat(
+      AppConstantes.formatoFecha,
+    ).format(lastUpdated!);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Text(

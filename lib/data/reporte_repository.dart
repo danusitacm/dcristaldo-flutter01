@@ -28,7 +28,7 @@ class ReporteRepository extends BaseRepository<Reporte> {
     }, mensajeError: ReporteConstantes.errorCrearReporte);
   }
 
-  /// Merodo para eliminar todos los reportes de una noticia
+  /// Metodo para eliminar todos los reportes de una noticia
   Future<Map<MotivoReporte, int>> obtenerEstadisticasReportesPorNoticia(String noticiaId) async {
     return manejarExcepcion(() async {
       final reportes = await _reporteService.obtenerReportesPorNoticia(noticiaId);

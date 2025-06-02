@@ -6,38 +6,37 @@ class ResultScreen extends StatelessWidget {
   final int finalScoreGame;
   final int totalQuestions;
 
-  const ResultScreen({super.key, required this.finalScoreGame, required this.totalQuestions});
+  const ResultScreen({
+    super.key,
+    required this.finalScoreGame,
+    required this.totalQuestions,
+  });
 
   @override
   Widget build(BuildContext context) {
-
     const double spacingHeight = 16;
 
-    // Variable para mostrar el puntaje final
-    final String scoreText = '$PreguntasConstantes.finalScore: $finalScoreGame/$totalQuestions';
+    final String scoreText =
+        '$PreguntasConstantes.finalScore: $finalScoreGame/$totalQuestions';
 
-    // Mensaje de retroalimentación
-    final String feedbackMessage = finalScoreGame > (totalQuestions / 2)
-        ? '¡Buen trabajo!'
-        : '¡Sigue practicando!';
+    final String feedbackMessage =
+        finalScoreGame > (totalQuestions / 2)
+            ? '¡Buen trabajo!'
+            : '¡Sigue practicando!';
 
-    // Estilo del texto del puntaje
     const TextStyle scoreTextStyle = TextStyle(
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: Colors.black,
     );
 
-    // Estilo del mensaje de retroalimentación
     const TextStyle feedbackTextStyle = TextStyle(
       fontSize: 18,
       color: Colors.grey,
     );
 
-    // Determina el color del botón
-    final Color buttonColor = finalScoreGame > (totalQuestions / 2)
-        ? Colors.blue // Azul si el puntaje es mayor a la mitad
-        : Colors.green; // Verde en caso contrario
+    final Color buttonColor =
+        finalScoreGame > (totalQuestions / 2) ? Colors.blue : Colors.green;
 
     return Scaffold(
       appBar: AppBar(
@@ -78,14 +77,19 @@ class ResultScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const StartScreen()),
-                    (route) => false, // Elimina todas las rutas anteriores
+                    MaterialPageRoute(
+                      builder: (context) => const StartScreen(),
+                    ),
+                    (route) => false,
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,// Usa la variable buttonColor
+                  backgroundColor: buttonColor,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                 ),
                 child: const Text(
                   PreguntasConstantes.playAgain,

@@ -10,7 +10,7 @@ import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/views/task_details_screen.dart';
 import 'package:dcristaldo/domain/task.dart';
 import 'package:dcristaldo/helpers/task_card_helper.dart';
-import 'package:dcristaldo/components/add_task_modal.dart'; // Importa el modal reutilizable
+import 'package:dcristaldo/components/add_task_modal.dart';
 import 'package:dcristaldo/components/task_progress_indicator.dart';
 
 class TareaScreen extends StatelessWidget {
@@ -23,9 +23,7 @@ class TareaScreen extends StatelessWidget {
         BlocProvider(
           create: (context) => TareasBloc()..add(const TareasLoadEvent()),
         ),
-        BlocProvider(
-          create: (context) => TareaContadorBloc(),
-        ),
+        BlocProvider(create: (context) => TareaContadorBloc()),
       ],
       child: const TareaScreenContent(),
     );
@@ -43,48 +41,52 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
   @override
   void initState() {
     super.initState();
-    // Actualizar el contador cuando se carguen las tareas iniciales
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _actualizarContador();
     });
   }
-  
+
   void _actualizarContador() {
     final tareasState = context.read<TareasBloc>().state;
     final contadorBloc = context.read<TareaContadorBloc>();
-    
+
     if (tareasState.tareas.isNotEmpty) {
       contadorBloc.add(TareaContadorCargarEvent(tareasState.tareas));
     }
   }
-  
+
   void _mostrarModalAgregarTarea(BuildContext context) {
-    // Obtenemos el TareasBloc actual antes de mostrar el modal
     final tareasBloc = context.read<TareasBloc>();
-    
+
     showDialog(
       context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: tareasBloc,
-        child: AddTaskModal(
-          onTaskAdded: (Task nuevaTarea) {
-            tareasBloc.add(TareasAddEvent(tarea: nuevaTarea));
-            // Actualizar el contador después de agregar una tarea
-            Future.delayed(const Duration(milliseconds: 300), _actualizarContador);
-          },
-        ),
-      ),
+      builder:
+          (dialogContext) => BlocProvider.value(
+            value: tareasBloc,
+            child: AddTaskModal(
+              onTaskAdded: (Task nuevaTarea) {
+                tareasBloc.add(TareasAddEvent(tarea: nuevaTarea));
+
+                Future.delayed(
+                  const Duration(milliseconds: 300),
+                  _actualizarContador,
+                );
+              },
+            ),
+          ),
     );
   }
 
-  void _mostrarDetallesTarea(BuildContext context, List<Task> tareas, int indice) {
+  void _mostrarDetallesTarea(
+    BuildContext context,
+    List<Task> tareas,
+    int indice,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskDetailsScreen(
-          tareas: tareas, 
-          indice: indice
-        ),
+        builder: (context) => TaskDetailsScreen(tareas: tareas, indice: indice),
       ),
     );
   }
@@ -94,29 +96,32 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(TareasConstantes.tareaEliminada)),
     );
-    
-    // Actualizar el contador después de eliminar una tarea
+
     Future.delayed(const Duration(milliseconds: 300), _actualizarContador);
   }
 
   void _mostrarModalEditarTarea(BuildContext context, Task tarea, int index) {
-    // Obtenemos el TareasBloc actual antes de mostrar el modal
     final tareasBloc = context.read<TareasBloc>();
-    
+
     showDialog(
       context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: tareasBloc,
-        child: AddTaskModal(
-          taskToEdit: tarea,
-          onTaskAdded: (Task tareaEditada) {
-            tareasBloc.add(TareasUpdateEvent(index: index, tarea: tareaEditada));
-            
-            // Actualizar el contador después de editar una tarea
-            Future.delayed(const Duration(milliseconds: 300), _actualizarContador);
-          },
-        ),
-      ),
+      builder:
+          (dialogContext) => BlocProvider.value(
+            value: tareasBloc,
+            child: AddTaskModal(
+              taskToEdit: tarea,
+              onTaskAdded: (Task tareaEditada) {
+                tareasBloc.add(
+                  TareasUpdateEvent(index: index, tarea: tareaEditada),
+                );
+
+                Future.delayed(
+                  const Duration(milliseconds: 300),
+                  _actualizarContador,
+                );
+              },
+            ),
+          ),
     );
   }
 
@@ -128,26 +133,30 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
           listenWhen: (previous, current) => current.tareaCompletada != null,
           listener: (context, state) {
             if (state.tareaCompletada != null && state.completada != null) {
-              final mensaje = state.completada! 
-                ? '¡Tarea "${state.tareaCompletada!.titulo}" completada!' 
-                : 'Tarea "${state.tareaCompletada!.titulo}" marcada como pendiente';
-              
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(mensaje)),
-              );
-              
+              final mensaje =
+                  state.completada!
+                      ? '¡Tarea "${state.tareaCompletada!.titulo}" completada!'
+                      : 'Tarea "${state.tareaCompletada!.titulo}" marcada como pendiente';
+
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(mensaje)));
+
               final contadorBloc = context.read<TareaContadorBloc>();
-              contadorBloc.add(TareaContadorActualizarEvent(
-                tarea: state.tareaCompletada!,
-                completada: state.completada!,
-              ));
+              contadorBloc.add(
+                TareaContadorActualizarEvent(
+                  tarea: state.tareaCompletada!,
+                  completada: state.completada!,
+                ),
+              );
             }
           },
         ),
         BlocListener<TareasBloc, TareasState>(
-          listenWhen: (previous, current) => 
-            previous.tareas.length != current.tareas.length || 
-            current.status == TareasStatus.loaded,
+          listenWhen:
+              (previous, current) =>
+                  previous.tareas.length != current.tareas.length ||
+                  current.status == TareasStatus.loaded,
           listener: (context, state) {
             if (state.tareas.isNotEmpty) {
               final contadorBloc = context.read<TareaContadorBloc>();
@@ -160,16 +169,16 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('${TareasConstantes.tituloAppBar} - Total: ${state.tareas.length}')
+              title: Text(
+                '${TareasConstantes.tituloAppBar} - Total: ${state.tareas.length}',
+              ),
             ),
             drawer: const SideMenu(),
             backgroundColor: Colors.grey[200],
             body: Column(
               children: [
                 const TaskProgressIndicator(),
-                Expanded(
-                  child: _buildBody(state),
-                ),
+                Expanded(child: _buildBody(state)),
               ],
             ),
             floatingActionButton: FloatingActionButton(
@@ -188,7 +197,7 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
       case TareasStatus.initial:
       case TareasStatus.loading:
         return const Center(child: CircularProgressIndicator());
-      
+
       case TareasStatus.loadingMore:
       case TareasStatus.loaded:
         if (state.tareas.isEmpty) {
@@ -200,7 +209,7 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
           );
         }
         return _buildTareasList(state);
-        
+
       case TareasStatus.error:
         return Center(
           child: Text(
@@ -215,7 +224,6 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
     return ListView.builder(
       itemCount: state.tareas.length,
       itemBuilder: (context, index) {
-
         final tarea = state.tareas[index];
         return GestureDetector(
           onTap: () => _mostrarDetallesTarea(context, state.tareas, index),
@@ -232,7 +240,7 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
               _eliminarTarea(context, index);
             },
             child: construirTarjetaDeportiva(
-              tarea, 
+              tarea,
               index,
               () => _mostrarModalEditarTarea(context, tarea, index),
             ),
