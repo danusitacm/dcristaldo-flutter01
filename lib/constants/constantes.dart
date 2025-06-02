@@ -137,7 +137,9 @@ class NoticiasConstantes {
   static const String errorFilter = "Error al filtrar noticias";
   static const String errorVerificarNoticiaExiste = 'Error al verificar la existencia de la noticia';
   static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
+  static const String errorActualizarContadorComentarios = 'Error al actualizar el contador de comentarios';
 }
+
 
 class ConectividadConstantes {
   static const String mensajeSinConexion = 'Por favor, verifica tu conexión a internet.';

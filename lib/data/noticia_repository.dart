@@ -65,4 +65,15 @@ class NoticiaRepository extends BaseRepository<Noticia> {
       return _noticiaService.incrementarContadorReportes(noticiaId, valor);
     }, mensajeError: NoticiasConstantes.errorActualizarContadorReportes);
   }
+
+  /// Incrementa el contador de comentarios de una noticia y devuelve solo los campos actualizados
+  Future<Map<String, dynamic>> incrementarContadorComentarios(
+    String noticiaId,
+    int valor,
+  ) async {
+    return manejarExcepcion(() {
+      validarId(noticiaId);
+      return _noticiaService.incrementarContadorComentarios(noticiaId, valor);
+    }, mensajeError: NoticiasConstantes.errorActualizarContadorComentarios);
+  }
 }

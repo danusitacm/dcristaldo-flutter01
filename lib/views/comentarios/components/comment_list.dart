@@ -7,7 +7,7 @@ import 'package:dcristaldo/domain/comentario.dart';
 import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/views/comentarios/components/comment_card.dart';
 
-class CommentList extends StatefulWidget {
+class CommentList extends StatefulWidget{
   final String noticiaId;
   final Function(String, String) onResponderComentario;
 
@@ -16,8 +16,7 @@ class CommentList extends StatefulWidget {
     required this.noticiaId,
     required this.onResponderComentario,
   });
-
-  @override
+   @override
   State<CommentList> createState() => _CommentListState();
 }
 
@@ -25,17 +24,21 @@ class _CommentListState extends State<CommentList> {
   // Track which comments have their subcomments expanded
   final Map<String, bool> _expandedComments = {};
 
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ComentarioBloc, ComentarioState>(
+    return BlocConsumer<ComentarioBloc, ComentarioState>(      
       listener: (context, state) {
         if (state is ComentarioError) {
-          SnackBarHelper.manejarError(context, state.error);
+          SnackBarHelper.manejarError(
+            context,
+            state.error,
+          );
         }
       },
       builder: (context, state) {
         if (state is ComentarioLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());  
         } else if (state is ReaccionLoading) {
           return Stack(
             children: [
@@ -48,7 +51,7 @@ class _CommentListState extends State<CommentList> {
                 ),
               ),
             ],
-          );
+          );      
         } else if (state is ComentarioLoaded) {
           return _buildList(context, state.comentarios);
         } else if (state is ComentarioError) {
@@ -59,7 +62,7 @@ class _CommentListState extends State<CommentList> {
     );
   }
 
-  Widget _buildList(BuildContext context, List<Comentario> comentarios) {
+  Widget _buildList(BuildContext context, List<Comentario> comentarios) { // Recibir context
     if (comentarios.isEmpty) {
       return const Center(
         child: Text(
@@ -69,13 +72,12 @@ class _CommentListState extends State<CommentList> {
       );
     }
 
-    // Separate top-level comments and subcomments
+       // Separate top-level comments and subcomments
     final topLevelComments = comentarios.where((c) => c.idSubComentario == null).toList();
     final subComments = <String, List<Comentario>>{};
     for (var comment in comentarios.where((c) => c.idSubComentario != null)) {
       subComments.putIfAbsent(comment.idSubComentario!, () => []).add(comment);
     }
-
     return ListView.separated(
       itemCount: topLevelComments.length,
       itemBuilder: (context, index) {

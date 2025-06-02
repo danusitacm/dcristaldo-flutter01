@@ -1,6 +1,7 @@
-import 'package:equatable/equatable.dart';
 import 'package:dcristaldo/domain/comentario.dart';
 import 'package:dcristaldo/exceptions/api_exception.dart';
+import 'package:equatable/equatable.dart';
+
 
 abstract class ComentarioState extends Equatable {
   @override
@@ -21,8 +22,7 @@ class ComentarioLoaded extends ComentarioState {
   List<Object?> get props => [comentarios, noticiaId];
 }
 
-class ReaccionLoading extends ComentarioState {
-}
+class ReaccionLoading extends ComentarioState {}
 
 class NumeroComentariosLoaded extends ComentarioState {
   final int numeroComentarios;
@@ -45,14 +45,12 @@ enum TipoOperacionComentario {
 }
 
 class ComentarioError extends ComentarioState {
-  final String message;
   final ApiException error;
-  final TipoOperacionComentario tipoOperacion;
 
-  ComentarioError(this.message, this.error, this.tipoOperacion);
+  ComentarioError(this.error);
 
   @override
-  List<Object> get props => [message, error, tipoOperacion];
+  List<Object> get props => [error];
 }
 
 class ComentariosFiltrados extends ComentarioLoaded {
@@ -79,4 +77,17 @@ class ComentariosOrdenados extends ComentarioLoaded {
 
   @override
   List<Object?> get props => [...super.props, criterioOrden];
+}
+
+class ContadorComentariosActualizado extends ComentarioState {
+  final String noticiaId;
+  final int contadorComentarios;
+
+  ContadorComentariosActualizado({
+    required this.noticiaId,
+    required this.contadorComentarios,
+  });
+
+  @override
+  List<Object?> get props => [noticiaId, contadorComentarios];
 }

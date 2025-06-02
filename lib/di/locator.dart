@@ -1,3 +1,4 @@
+import 'package:dcristaldo/api/service/comentario_service.dart';
 import 'package:dcristaldo/api/service/noticia_service.dart';
 import 'package:dcristaldo/api/service/reporte_service.dart';
 import 'package:dcristaldo/api/service/task_service.dart';
@@ -16,20 +17,26 @@ import 'package:dcristaldo/core/service/shared_preferences_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 Future<void> initLocator() async {
+   // Registrar primero los servicios básicos
   final sharedPreferences = await SharedPreferences.getInstance();
   di.registerSingleton<SharedPreferences>(sharedPreferences);
+  di.registerLazySingleton<SharedPreferencesService>(() => SharedPreferencesService());
+  di.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
+  di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
+  
+  // Servicios de API
+  di.registerLazySingleton<TaskService>(() => TaskService());
+  di.registerLazySingleton<ComentarioService>(() => ComentarioService());
+  di.registerLazySingleton<NoticiaService>(() => NoticiaService());
+  di.registerLazySingleton<ReporteService>(() => ReporteService());
+  // Repositorios
   di.registerSingleton<CategoriaRepository>(CategoriaRepository());
   di.registerLazySingleton<PreferenciaRepository>(() => PreferenciaRepository());
-  di.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
-  di.registerLazySingleton<AuthRepository>(() => AuthRepository());
-  di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
-  di.registerSingleton<SharedPreferencesService>(SharedPreferencesService());
-  di.registerSingleton<TaskService>(TaskService());
-  di.registerLazySingleton<ReporteService>(() => ReporteService());
-  di.registerLazySingleton<NoticiaService>(() => NoticiaService());
   di.registerLazySingleton<NoticiaRepository>(() => NoticiaRepository());
   di.registerLazySingleton<ComentarioRepository>(() => ComentarioRepository());
+  di.registerLazySingleton<AuthRepository>(() => AuthRepository());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerLazySingleton<TaskRepository>(() => TaskRepository());
+  // BLoCs
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
 } 

@@ -102,7 +102,8 @@ class CommentCard extends StatelessWidget {
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: comentario.subcomentarios!.length,                itemBuilder: (context, index) => SubcommentCard(
+                itemCount: comentario.subcomentarios!.length,
+                itemBuilder: (context, index) => SubcommentCard(
                   subcomentario: comentario.subcomentarios![index],
                   noticiaId: noticiaId,
                 ),
@@ -112,7 +113,6 @@ class CommentCard extends StatelessWidget {
       ),
     );
   }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    // Capturamos una referencia al bloc fuera del Future.delayed
     final comentarioBloc = context.read<ComentarioBloc>();
     
     // Primero enviamos el evento de reacción
@@ -121,8 +121,10 @@ class CommentCard extends StatelessWidget {
         comentario.id ?? '', 
         tipoReaccion, 
         true, // incrementar = true
-        null
+        null // comentarioPadreId null para comentarios principales
       ),
     );
+    
+
   }
 }

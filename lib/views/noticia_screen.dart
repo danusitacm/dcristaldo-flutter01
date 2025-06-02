@@ -24,13 +24,17 @@ import 'package:dcristaldo/views/categoria_screen.dart';
 import 'package:dcristaldo/views/preferencia_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
-  const NoticiaScreen({super.key});  @override
+  const NoticiaScreen({super.key});
+
+  @override
   Widget build(BuildContext context) {
+    // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!SnackBarManager().isConnectivitySnackBarShowing) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-    });    
+    });    // Usamos el NoticiaBloc global que viene del MultiBlocProvider en main.dart
     return BlocProvider<CategoriaBloc>(
       create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
       child: _NoticiaScreenContent(),
@@ -96,15 +100,20 @@ class _NoticiaScreenContent extends StatelessWidget {
                 icon: const Icon(Icons.filter_list),
                 tooltip: 'Filtrar por categorías',
                 onPressed: () async {
+                  // Obtener el NoticiaBloc antes de navegar
                   final noticiaBloc = context.read<NoticiaBloc>();
+                  // Navegar a la pantalla de preferencias proporcionando el NoticiaBloc actual
                   await Navigator.push(
-                    context,                    MaterialPageRoute(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) => BlocProvider.value(
                         value: noticiaBloc,
                         child: const PreferenciaScreen(),
                       ),
                     ),
                   );
+                  // No necesitamos hacer nada más aquí porque la pantalla de preferencias
+                  // ya se encarga de emitir el evento de filtrado al NoticiaBloc
                 },
               ),
               IconButton(
@@ -133,6 +142,8 @@ class _NoticiaScreenContent extends StatelessWidget {
             builder: (context, categoriaState) {
               return FloatingAddButton(
                 onPressed: () async {
+
+                  // Si las categorías aún se están cargando, inicia la carga
                   if (categoriaState is! CategoriaLoaded) {
                     context.read<CategoriaBloc>().add(CategoriaInitEvent());
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -140,13 +151,18 @@ class _NoticiaScreenContent extends StatelessWidget {
                     );
                     return;
                   }
+
                   final List<Categoria> categorias = categoriaState.categorias;
+
                   final noticia = await ModalHelper.mostrarDialogo<Noticia>(
                     context: context,
                     title: 'Agregar Noticia',
                     child: FormularioNoticia(categorias: categorias),
                   );
+
+                  // Si se obtuvo una categoría del formulario y el contexto sigue montado
                   if (noticia != null && context.mounted) {
+                    // Usar el BLoC para crear la categoría
                     context.read<NoticiaBloc>().add(
                       AddNoticiaEvent(noticia),
                     );
@@ -186,6 +202,7 @@ class _NoticiaScreenContent extends StatelessWidget {
         ),
       );
     } else if (state is NoticiaLoaded) {
+      // Obtener las categorías del BlocProvider
       final categoriaState = context.watch<CategoriaBloc>().state;
       List<Categoria> categorias = [];
       
@@ -202,7 +219,7 @@ class _NoticiaScreenContent extends StatelessWidget {
           },
           child: ListView.builder(
             physics:
-                const AlwaysScrollableScrollPhysics(),  
+                const AlwaysScrollableScrollPhysics(), // Necesario para pull-to-refresh
             itemCount: state.noticias.length,
             itemBuilder: (context, index) {
               final noticia= state.noticias[index];
@@ -226,15 +243,17 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 onDismissed: (direction) {
                   context.read<NoticiaBloc>().add(DeleteNoticiaEvent(noticia.id!));
-                },                child: NoticiaCard(
+                },
+                child: NoticiaCard(
                   noticia: noticia,
-                  onReport: () {                   
+                  onReport: () {                    // Mostrar el diálogo de reportes
                     ReporteDialog.mostrarDialogoReporte(
                       context: context, 
                       noticia: noticia,
                     );
                   },
                   onEdit: () async {
+                  // Solo muestra el formulario si las categorías están cargadas
                   if (categorias.isEmpty) {
                     SnackBarHelper.mostrarInfo(
                       context, 
@@ -254,6 +273,7 @@ class _NoticiaScreenContent extends StatelessWidget {
                   );
                   
                   if (noticiaEditada != null && context.mounted) {
+                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
                     final noticiaActualizada = noticiaEditada.copyWith(id: noticia.id);
                     context.read<NoticiaBloc>().add(
                       UpdateNoticiaEvent(noticiaActualizada),
@@ -270,6 +290,7 @@ class _NoticiaScreenContent extends StatelessWidget {
           ),       
         );
       } else {
+          // Añadir esta parte para manejar el caso de lista vacía
           return RefreshIndicator(
             onRefresh: () async {
               await Future.delayed(const Duration(milliseconds: 1200));
