@@ -24,25 +24,32 @@ class CommentSearchBar extends StatelessWidget {
             controller: busquedaController,
             decoration: InputDecoration(
               hintText: 'Buscar en comentarios...',
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              prefixIcon: const Icon(Icons.search),              suffixIcon: ValueListenableBuilder<TextEditingValue>(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: ValueListenableBuilder<TextEditingValue>(
                 valueListenable: busquedaController,
                 builder: (context, value, child) {
                   return value.text.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          color: Colors.grey, // Añadir color para visibilidad
-                          tooltip: 'Limpiar búsqueda', // Añadir tooltip
-                          onPressed: () {
-                            busquedaController.clear();
-                            context.read<ComentarioBloc>()
-                              .add(LoadComentarios(noticiaId));
-                          },
-                        )
+                        icon: const Icon(Icons.clear),
+                        color: Colors.grey,
+                        tooltip: 'Limpiar búsqueda',
+                        onPressed: () {
+                          busquedaController.clear();
+                          context.read<ComentarioBloc>().add(
+                            LoadComentarios(noticiaId),
+                          );
+                        },
+                      )
                       : const SizedBox.shrink();
                 },
               ),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
           ),
         ),
@@ -50,7 +57,9 @@ class CommentSearchBar extends StatelessWidget {
         ElevatedButton(
           onPressed: onSearch,
           style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
           child: const Text('Buscar'),
         ),

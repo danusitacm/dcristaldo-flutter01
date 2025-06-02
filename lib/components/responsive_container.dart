@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dcristaldo/constants/responsive_breakpoints.dart';
 import 'package:dcristaldo/helpers/responsive_helper.dart';
 
-
 class ResponsiveContainer extends StatelessWidget {
   final Widget child;
   final double? maxWidth;
@@ -21,7 +20,9 @@ class ResponsiveContainer extends StatelessWidget {
       context: context,
       maxWidth: maxWidth ?? ResponsiveBreakpoints.maxContentWidth,
       child: Padding(
-        padding: padding ?? EdgeInsets.all(ResponsiveHelper.getContentPadding(context)),
+        padding:
+            padding ??
+            EdgeInsets.all(ResponsiveHelper.getContentPadding(context)),
         child: child,
       ),
     );

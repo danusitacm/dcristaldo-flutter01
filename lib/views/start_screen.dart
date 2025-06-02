@@ -13,7 +13,7 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(PreguntasConstantes.titleApp), 
+        title: const Text(PreguntasConstantes.titleApp),
         centerTitle: true,
       ),
       drawer: const SideMenu(),
@@ -22,7 +22,7 @@ class StartScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              PreguntasConstantes.welcomeMessage, 
+              PreguntasConstantes.welcomeMessage,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -34,15 +34,15 @@ class StartScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
-               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, 
-              ),
-              child: const Text(PreguntasConstantes.startGame), // Texto del botón definido en constants.dart
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              child: const Text(PreguntasConstantes.startGame),
             ),
           ],
         ),
       ),
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _selectedIndex,
+      ),
     );
   }
 }

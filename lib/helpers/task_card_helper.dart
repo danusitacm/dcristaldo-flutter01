@@ -14,22 +14,30 @@ class CommonWidgetsHelper {
       style: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
-        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+        decoration:
+            isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
       ),
     );
   }
 
   /// Construye líneas de información (máximo 3 líneas)
   static Widget buildInfoLines(String line1, [String? line2, String? line3]) {
-    final List<String> lines = [line1, if (line2 != null) line2, if (line3 != null) line3];
+    final List<String> lines = [
+      line1,
+      if (line2 != null) line2,
+      if (line3 != null) line3,
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines
-          .map((line) => Text(
-                line,
-                style: const TextStyle(fontSize: 14, color: Colors.black54),
-              ))
-          .toList(),
+      children:
+          lines
+              .map(
+                (line) => Text(
+                  line,
+                  style: const TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              )
+              .toList(),
     );
   }
 
@@ -52,9 +60,7 @@ class CommonWidgetsHelper {
 
   /// Construye un borde redondeado con BorderRadius.circular(10)
   static RoundedRectangleBorder buildRoundedBorder() {
-    return RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    );
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
   }
 
   /// Construye un ícono dinámico basado en el tipo de tarea
@@ -66,7 +72,6 @@ class CommonWidgetsHelper {
     );
   }
 
-  // Construye un texto predeterminado para "No hay pasos disponibles"
   static Widget buildNoStepsText() {
     return const Text(
       'No hay pasos disponibles',
@@ -74,7 +79,7 @@ class CommonWidgetsHelper {
     );
   }
 
-   /// Construye un BorderRadius con bordes redondeados solo en la parte superior
+  /// Construye un BorderRadius con bordes redondeados solo en la parte superior
   static BorderRadius buildTopRoundedBorder({double radius = 8.0}) {
     return BorderRadius.vertical(top: Radius.circular(radius));
   }
@@ -92,16 +97,16 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
           leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo),
           title: Row(
             children: [
-              // Checkbox para marcar la tarea como completada
               Checkbox(
                 value: tarea.completada,
                 onChanged: (value) {
-                  // Usar BLoC para actualizar el estado de la tarea
                   final bloc = context.read<TareasBloc>();
-                  bloc.add(CompletarTareaEvent(
-                    tarea: tarea,
-                    completada: value ?? false,
-                  ));
+                  bloc.add(
+                    CompletarTareaEvent(
+                      tarea: tarea,
+                      completada: value ?? false,
+                    ),
+                  );
                 },
               ),
               Expanded(
@@ -110,7 +115,10 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    decoration: tarea.completada ? TextDecoration.lineThrough : TextDecoration.none,
+                    decoration:
+                        tarea.completada
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
                   ),
                 ),
               ),
@@ -128,15 +136,20 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
             icon: Icon(
               Icons.edit,
               size: 16,
-              color: tarea.completada ? Colors.grey.withAlpha((0.3 * 255).toInt()) : Colors.grey,
+              color:
+                  tarea.completada
+                      ? Colors.grey.withAlpha((0.3 * 255).toInt())
+                      : Colors.grey,
             ),
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.grey,
-              disabledForegroundColor: Colors.grey.withAlpha((0.3 * 255).toInt()),
+              disabledForegroundColor: Colors.grey.withAlpha(
+                (0.3 * 255).toInt(),
+              ),
             ),
           ),
         ),
       );
-    }
+    },
   );
 }

@@ -5,8 +5,8 @@ import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/domain/noticia.dart';
 
 class FormularioNoticia extends StatefulWidget {
-  final Noticia? noticia; // Noticia existente para edición (null para creación)
-  final List<Categoria> categorias; // Lista de categorías disponibles
+  final Noticia? noticia;
+  final List<Categoria> categorias;
 
   const FormularioNoticia({super.key, this.noticia, required this.categorias});
 
@@ -26,21 +26,31 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
   @override
   void initState() {
     super.initState();
-    _tituloController = TextEditingController(text: widget.noticia?.titulo ?? '');
-    _descripcionController = TextEditingController(text: widget.noticia?.descripcion ?? '');
-    _fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
-    _imagenUrlController = TextEditingController(text: widget.noticia?.urlImagen ?? '');
+    _tituloController = TextEditingController(
+      text: widget.noticia?.titulo ?? '',
+    );
+    _descripcionController = TextEditingController(
+      text: widget.noticia?.descripcion ?? '',
+    );
+    _fuenteController = TextEditingController(
+      text: widget.noticia?.fuente ?? '',
+    );
+    _imagenUrlController = TextEditingController(
+      text: widget.noticia?.urlImagen ?? '',
+    );
     _fechaSeleccionada = widget.noticia?.publicadaEl ?? DateTime.now();
     _fechaController = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
+      text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada),
     );
-    
-    // Verificar si el ID de categoría existe en la lista antes de asignarlo
+
     if (widget.noticia?.categoriaId != null) {
-      final existeCategoria = widget.categorias.any((c) => c.id == widget.noticia!.categoriaId);
-      _selectedCategoriaId = existeCategoria 
-          ? widget.noticia!.categoriaId! 
-          :CategoriaConstantes.defaultcategoriaId;
+      final existeCategoria = widget.categorias.any(
+        (c) => c.id == widget.noticia!.categoriaId,
+      );
+      _selectedCategoriaId =
+          existeCategoria
+              ? widget.noticia!.categoriaId!
+              : CategoriaConstantes.defaultcategoriaId;
     } else {
       _selectedCategoriaId = CategoriaConstantes.defaultcategoriaId;
     }
@@ -58,7 +68,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
 
   Future<void> _seleccionarFecha() async {
     if (!context.mounted) return;
-    
+
     try {
       final DateTime? fechaSeleccionada = await showDatePicker(
         context: context,
@@ -82,7 +92,9 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
       if (fechaSeleccionada != null) {
         setState(() {
           _fechaSeleccionada = fechaSeleccionada;
-          _fechaController.text = DateFormat('dd/MM/yyyy').format(fechaSeleccionada);
+          _fechaController.text = DateFormat(
+            'dd/MM/yyyy',
+          ).format(fechaSeleccionada);
         });
       }
     } catch (e) {
@@ -102,9 +114,10 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
         descripcion: _descripcionController.text,
         fuente: _fuenteController.text,
         publicadaEl: _fechaSeleccionada,
-        urlImagen: _imagenUrlController.text.isEmpty 
-            ? "https://picsum.photos/200/300" 
-            : _imagenUrlController.text,
+        urlImagen:
+            _imagenUrlController.text.isEmpty
+                ? "https://picsum.photos/200/300"
+                : _imagenUrlController.text,
         categoriaId: _selectedCategoriaId,
       );
       Navigator.of(context).pop(noticia);
@@ -126,15 +139,6 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Text(
-            //   widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
-            //   style: const TextStyle(
-            //     fontSize: 20,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            //   textAlign: TextAlign.center,
-            // ),
-            //const SizedBox(height: 16),
             TextFormField(
               controller: _tituloController,
               decoration: const InputDecoration(
@@ -188,12 +192,12 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingrese la URL de una imagen';
                 }
-                // Podríamos validar que es una URL válida
+
                 return null;
               },
             ),
             const SizedBox(height: 16),
-            // Campo de fecha
+
             TextFormField(
               controller: _fechaController,
               decoration: const InputDecoration(
@@ -211,7 +215,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
               },
             ),
             const SizedBox(height: 16),
-            // Selector de categoría
+
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(
                 labelText: 'Categoría',
@@ -219,19 +223,21 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
               ),
               value: _selectedCategoriaId,
               items: [
-                // Opción por defecto
                 const DropdownMenuItem<String>(
                   value: CategoriaConstantes.defaultcategoriaId,
                   child: Text('Sin categoría'),
-                ),                // Opciones de categorías cargadas
+                ),
                 ...widget.categorias
-                    .where((categoria) => categoria.id != null && categoria.id!.isNotEmpty)
+                    .where(
+                      (categoria) =>
+                          categoria.id != null && categoria.id!.isNotEmpty,
+                    )
                     .map((categoria) {
-                  return DropdownMenuItem<String>(
-                    value: categoria.id!,
-                    child: Text(categoria.nombre),
-                  );
-                }),
+                      return DropdownMenuItem<String>(
+                        value: categoria.id!,
+                        child: Text(categoria.nombre),
+                      );
+                    }),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -251,9 +257,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 ),
                 ElevatedButton(
                   onPressed: _guardarNoticia,
-                  child: Text(
-                    widget.noticia == null ? 'Agregar' : 'Guardar',
-                  ),
+                  child: Text(widget.noticia == null ? 'Agregar' : 'Guardar'),
                 ),
               ],
             ),

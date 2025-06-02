@@ -11,7 +11,7 @@ class TaskProgressIndicator extends StatelessWidget {
     return BlocBuilder<TareaContadorBloc, TareaContadorState>(
       builder: (context, state) {
         final int porcentaje = (state.progreso * 100).round();
-        
+
         return Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
           child: Column(
@@ -56,11 +56,7 @@ class TaskProgressIndicator extends StatelessWidget {
       },
     );
   }
-  
-  /// Devuelve un color basado en el progreso:
-  /// - Verde si está completo (100%)
-  /// - Naranja si está a mitad (≥50%)
-  /// - Azul en otros casos
+
   Color _getColorForProgress(double progress) {
     if (progress >= 1.0) {
       return Colors.green;

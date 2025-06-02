@@ -10,25 +10,19 @@ class AcercaScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Acerca de'),
-      ),
+      appBar: AppBar(title: const Text('Acerca de')),
       drawer: const SideMenu(),
-      
+
       body: SingleChildScrollView(
         child: ResponsiveContainer(
           child: Column(
             children: [
-              // Company Logo and Name Section
               Container(
                 padding: const EdgeInsets.all(20),
                 alignment: Alignment.center,
                 child: Column(
                   children: [
-                    Image.asset(
-                      'assets/images/logo_sodep.png',
-                      height: 80,
-                    ),
+                    Image.asset('assets/images/logo_sodep.png', height: 80),
                     const SizedBox(height: 10),
                     Text(
                       'SODEP S.A.',
@@ -46,80 +40,85 @@ class AcercaScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const Divider(),
-              
-              // Sobre la Empresa
+
               _buildInfoSection(
                 title: 'Sobre la Empresa',
                 icon: Icons.info_outline,
-                content: 'Somos un equipo dedicado a la excelencia y al desarrollo profesional, brindando soluciones innovadoras y servicios de calidad a nuestros clientes y socios comerciales.',
+                content:
+                    'Somos un equipo dedicado a la excelencia y al desarrollo profesional, brindando soluciones innovadoras y servicios de calidad a nuestros clientes y socios comerciales.',
                 theme: theme,
               ),
-              
-              // Valores Sodepianos
+
               _buildTitleSection('Valores Sodepianos', theme),
-              
+
               _buildValueItem(
                 icon: Icons.handshake_outlined,
                 title: 'Honestidad',
-                description: 'Promovemos la transparencia y acuerdos en todas nuestras actividades.',
+                description:
+                    'Promovemos la transparencia y acuerdos en todas nuestras actividades.',
                 theme: theme,
               ),
-              
+
               _buildValueItem(
                 icon: Icons.settings_outlined,
                 title: 'Flexibilidad',
-                description: 'Nos adaptamos a los cambios y necesidades del cliente para brindar soluciones óptimas.',
+                description:
+                    'Nos adaptamos a los cambios y necesidades del cliente para brindar soluciones óptimas.',
                 theme: theme,
               ),
-              
+
               _buildValueItem(
                 icon: Icons.forum_outlined,
                 title: 'Comunicación',
-                description: 'Establecemos canales claros y mantenemos líneas abiertas con nuestros clientes.',
+                description:
+                    'Establecemos canales claros y mantenemos líneas abiertas con nuestros clientes.',
                 theme: theme,
               ),
-              
+
               _buildValueItem(
                 icon: Icons.cyclone_outlined,
                 title: 'Autogestión',
-                description: 'Fomentamos la autogestión personal y la toma de decisiones en cada proyecto.',
+                description:
+                    'Fomentamos la autogestión personal y la toma de decisiones en cada proyecto.',
                 theme: theme,
               ),
-              
-              // Información de Contacto
+
               _buildTitleSection('Información de Contacto', theme),
-              
+
               _buildContactItem(
                 icon: Icons.location_on_outlined,
-                text: 'Dirección:\nBélgica 839 c/ Eusebio Lillo, Asunción, Paraguay',
+                text:
+                    'Dirección:\nBélgica 839 c/ Eusebio Lillo, Asunción, Paraguay',
                 theme: theme,
               ),
-              
+
               _buildContactItem(
                 icon: Icons.phone_outlined,
                 text: 'Teléfono:\n(+595)981-131-694',
                 theme: theme,
               ),
-              
+
               _buildContactItem(
                 icon: Icons.email_outlined,
                 text: 'Email:\ninfo@sodep.com.py',
                 theme: theme,
               ),
-              
+
               _buildContactItem(
                 icon: Icons.language_outlined,
                 text: 'Sitio Web:\nwww.sodep.com.py',
                 theme: theme,
               ),
-              
+
               const SizedBox(height: 32),
-              
-              // Footer
+
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -127,14 +126,20 @@ class AcercaScreen extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.copyright_rounded,
-                          color: Theme.of(context).colorScheme.onSurface.withAlpha(51),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withAlpha(51),
                           size: 16,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           '2025 SODEP S.A.',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withAlpha(51),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withAlpha(51),
                           ),
                         ),
                       ],
@@ -144,7 +149,9 @@ class AcercaScreen extends StatelessWidget {
                       child: Text(
                         'Software Development & Products',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withAlpha(51),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withAlpha(51),
                         ),
                       ),
                     ),
@@ -163,11 +170,7 @@ class AcercaScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
         children: [
-          Icon(
-            Icons.star,
-            color: theme.colorScheme.primary,
-            size: 20,
-          ),
+          Icon(Icons.star, color: theme.colorScheme.primary, size: 20),
           const SizedBox(width: 8),
           Text(
             title,
@@ -180,7 +183,7 @@ class AcercaScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildInfoSection({
     required String title,
     required IconData icon,
@@ -194,11 +197,7 @@ class AcercaScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: theme.colorScheme.primary,
-                size: 20,
-              ),
+              Icon(icon, color: theme.colorScheme.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -237,11 +236,7 @@ class AcercaScreen extends StatelessWidget {
               color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: 22,
-            ),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -268,7 +263,7 @@ class AcercaScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildContactItem({
     required IconData icon,
     required String text,
@@ -279,18 +274,9 @@ class AcercaScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: theme.colorScheme.primary,
-            size: 22,
-          ),
+          Icon(icon, color: theme.colorScheme.primary, size: 22),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
+          Expanded(child: Text(text, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );

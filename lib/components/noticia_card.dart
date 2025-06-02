@@ -7,9 +7,9 @@ import 'package:dcristaldo/components/reporte_dialog.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;
-  final VoidCallback onEdit; // Callback para editar la noticia
-  final String categoriaNombre; // Nuevo parámetro para mostrar el nombre de la categoría
-  final VoidCallback? onReport; // Callback para reportar la noticia
+  final VoidCallback onEdit;
+  final String categoriaNombre;
+  final VoidCallback? onReport;
 
   const NoticiaCard({
     super.key,
@@ -23,7 +23,7 @@ class NoticiaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       decoration: BoxDecoration(
@@ -40,11 +40,12 @@ class NoticiaCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagen destacada con categoría superpuesta
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16.0),
+                ),
                 child: Image.network(
                   noticia.urlImagen.isNotEmpty
                       ? noticia.urlImagen
@@ -66,7 +67,7 @@ class NoticiaCard extends StatelessWidget {
                   },
                 ),
               ),
-              // Categoría con fondo gradiente
+
               Positioned(
                 top: 16,
                 left: 16,
@@ -79,7 +80,10 @@ class NoticiaCard extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -98,7 +102,7 @@ class NoticiaCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Fecha con fondo semitransparente
+
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -110,10 +114,17 @@ class NoticiaCard extends StatelessWidget {
                       bottomRight: Radius.circular(16),
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 12, color: Colors.white),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 12,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _formatDate(noticia.publicadaEl),
@@ -129,7 +140,7 @@ class NoticiaCard extends StatelessWidget {
               ),
             ],
           ),
-          // Contenido de la noticia
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -159,13 +170,13 @@ class NoticiaCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12.0),
-                // Fuente con icono
+
                 Row(
                   children: [
                     Icon(
-                      Icons.source_outlined, 
-                      size: 16, 
-                      color: colorScheme.primary.withOpacity(0.8)
+                      Icons.source_outlined,
+                      size: 16,
+                      color: colorScheme.primary.withOpacity(0.8),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -185,7 +196,7 @@ class NoticiaCard extends StatelessWidget {
               ],
             ),
           ),
-          // Línea separadora con gradiente sutil
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Container(
@@ -202,8 +213,7 @@ class NoticiaCard extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Barra de acciones mejorada
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Row(
@@ -216,13 +226,13 @@ class NoticiaCard extends StatelessWidget {
                   count: noticia.contadorComentarios ?? 0,
                   countColor: colorScheme.primary,
                   onPressed: () async {
-                    // Navegar a la vista de comentarios
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ComentariosScreen(
-                          noticiaId: noticia.id!,
-                          noticiaTitulo: noticia.titulo,
-                        ),
+                        builder:
+                            (context) => ComentariosScreen(
+                              noticiaId: noticia.id!,
+                              noticiaTitulo: noticia.titulo,
+                            ),
                       ),
                     );
                   },
@@ -257,8 +267,7 @@ class NoticiaCard extends StatelessWidget {
       ),
     );
   }
-  
-  // Botón de acción personalizado
+
   Widget _buildActionButton({
     required IconData icon,
     required Color color,
@@ -288,8 +297,7 @@ class NoticiaCard extends StatelessWidget {
       ),
     );
   }
-  
-  // Botón de acción con contador
+
   Widget _buildCounterActionButton({
     required IconData icon,
     required Color color,

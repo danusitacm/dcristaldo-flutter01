@@ -11,12 +11,15 @@ class ComentariosScreen extends StatelessWidget {
   final String noticiaId;
   final String noticiaTitulo;
 
-  const ComentariosScreen({super.key, required this.noticiaId, required this.noticiaTitulo});
+  const ComentariosScreen({
+    super.key,
+    required this.noticiaId,
+    required this.noticiaTitulo,
+  });
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: context.read<ComentarioBloc>()
-        ..add(LoadComentarios(noticiaId)),
+      value: context.read<ComentarioBloc>()..add(LoadComentarios(noticiaId)),
       child: _ComentariosScreenContent(
         noticiaId: noticiaId,
         noticiaTitulo: noticiaTitulo,
@@ -29,7 +32,10 @@ class _ComentariosScreenContent extends StatefulWidget {
   final String noticiaId;
   final String noticiaTitulo;
 
-  const _ComentariosScreenContent({required this.noticiaId, required this.noticiaTitulo});
+  const _ComentariosScreenContent({
+    required this.noticiaId,
+    required this.noticiaTitulo,
+  });
 
   @override
   State<_ComentariosScreenContent> createState() =>
@@ -61,7 +67,7 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
   @override
   void initState() {
     super.initState();
-    // Cargar los comentarios iniciales
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _recargarComentarios();
     });
@@ -116,15 +122,13 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
       ),
     );
   }
+
   void _handleSearch() {
     if (_busquedaController.text.isEmpty) {
       context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId));
     } else {
       context.read<ComentarioBloc>().add(
-        BuscarComentarios(
-          _busquedaController.text,
-          widget.noticiaId,
-        ),
+        BuscarComentarios(_busquedaController.text, widget.noticiaId),
       );
     }
   }

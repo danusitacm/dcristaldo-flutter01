@@ -3,7 +3,6 @@ import 'package:dcristaldo/api/service/base_service.dart';
 import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/domain/reporte.dart';
 
-/// Servicio para gestionar los reportes
 class ReporteService extends BaseService {
   ReporteService();
   

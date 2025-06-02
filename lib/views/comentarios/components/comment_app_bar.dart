@@ -25,12 +25,15 @@ class CommentAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Tooltip(
-          message: ordenAscendente 
-              ? 'Ordenar por más recientes' 
-              : 'Ordenar por más antiguos',
+          message:
+              ordenAscendente
+                  ? 'Ordenar por más recientes'
+                  : 'Ordenar por más antiguos',
           child: IconButton(
             onPressed: () => onOrdenChanged(!ordenAscendente),
-            icon: Icon(ordenAscendente ? Icons.arrow_upward : Icons.arrow_downward),
+            icon: Icon(
+              ordenAscendente ? Icons.arrow_upward : Icons.arrow_downward,
+            ),
           ),
         ),
       ],

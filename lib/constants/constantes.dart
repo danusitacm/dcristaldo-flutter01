@@ -7,6 +7,11 @@ class ComentarioConstantes {
   static const String successSubcomentario = 'Subcomentario agregado exitosamente';
   static const String errorServer = 'Error del servidor en comentario';
   static const String mensajeError = 'Error al obtener comentarios';
+  static const String errorDelete = 'Error al eliminar el comentario';
+  static const String errorUpdate = 'Error al actualizar el comentario';
+  static const String errorCreate = 'Error al agregar el comentario';
+  static const String errorReaction = 'Error al reaccionar al comentario';
+  static const String errorSubcomentario = 'Error al agregar el subcomentario';
 }
 
 class CategoriaConstantes{

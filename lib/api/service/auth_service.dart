@@ -5,7 +5,6 @@ import 'package:dcristaldo/exceptions/api_exception.dart';
 
 class AuthService extends BaseService {
   AuthService() : super();
-  
   Future<LoginResponse> login(LoginRequest request) async {
     try {
       final data = await postUnauthorized(

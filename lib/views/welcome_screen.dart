@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dcristaldo/components/side_menu.dart';
 import 'package:dcristaldo/core/service/secure_storage_service.dart';
-import 'package:dcristaldo/views/login_screen.dart'; // Añadimos la importación de LoginScreen
+import 'package:dcristaldo/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -21,22 +21,19 @@ class WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<void> _verificarAutenticacionYCargarEmail() async {
     final SecureStorageService secureStorage = di<SecureStorageService>();
-    
-    // Verificar si hay un token válido
+
     final token = await secureStorage.getJwt();
-    
-    // Si no hay token, redireccionar a la pantalla de login
+
     if (token == null || token.isEmpty) {
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginScreen()),
-          (route) => false, // Elimina todas las rutas previas
+          (route) => false,
         );
       }
       return;
     }
-    
-    // Si hay token, cargar el email del usuario
+
     final email = await secureStorage.getUserEmail() ?? 'Usuario';
     if (mounted) {
       setState(() {

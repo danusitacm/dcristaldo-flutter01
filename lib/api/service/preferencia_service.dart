@@ -17,8 +17,7 @@ class PreferenciaService extends BaseService {
   /// Actualiza las preferencias del usuario en la API
   Future<void> guardarPreferencias(Preferencia preferencia) async {
     final endpoint = '${ApiConstantes.preferenciasEndpoint}/${preferencia.email}';
-    final dataToSend = PreferenciaMapper.ensureInitialized().encodeMap(preferencia);
-    
+    final dataToSend = PreferenciaMapper.ensureInitialized().encodeMap(preferencia); 
     await put(
       endpoint,
       data: dataToSend,
@@ -31,13 +30,11 @@ class PreferenciaService extends BaseService {
       'email': email,
       'categoriasSeleccionadas': categorias ?? []
     };
-
     await post(
       ApiConstantes.preferenciasEndpoint,
       data: preferenciasData,
       errorMessage: 'Error al crear preferencias',
     );
-    
     return Preferencia(
       email: email,
       categoriasSeleccionadas: categorias ?? []

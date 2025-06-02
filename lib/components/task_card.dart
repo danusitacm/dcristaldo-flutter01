@@ -20,16 +20,15 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 8, // Borde sombreado
-      color: Colors.white, // Color de fondo blanco
+      elevation: 8,
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: CommonWidgetsHelper.buildRoundedBorder(),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Agrega un padding de 10 alrededor del Card
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Imagen aleatoria
             ClipRRect(
               borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(),
               child: Image.network(
@@ -43,15 +42,16 @@ class TaskCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título
                 CommonWidgetsHelper.buildBoldTitle(tarea.titulo),
-                CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
-                // Pasos (máximo 3 líneas)
+                CommonWidgetsHelper.buildSpacing(),
+
                 CommonWidgetsHelper.buildSpacing(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CommonWidgetsHelper.buildBoldFooter('${TareasConstantes.fechaLimite} $fechaLimiteDato'),
+                    CommonWidgetsHelper.buildBoldFooter(
+                      '${TareasConstantes.fechaLimite} $fechaLimiteDato',
+                    ),
                     ElevatedButton.icon(
                       onPressed: onBackPressed,
                       icon: const Icon(Icons.arrow_back, size: 16),
@@ -59,7 +59,10 @@ class TaskCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

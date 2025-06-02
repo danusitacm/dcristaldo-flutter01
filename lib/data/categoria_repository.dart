@@ -7,7 +7,6 @@ import 'package:dcristaldo/domain/categoria.dart';
 class CategoriaRepository extends CacheableRepository<Categoria> {
   final CategoriaService _categoriaService = CategoriaService();
 
-  // Timestamp de la última actualización
   DateTime? _lastRefreshed;
 
   @override
