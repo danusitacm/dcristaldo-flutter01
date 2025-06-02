@@ -4,13 +4,11 @@ import 'package:dcristaldo/domain/categoria.dart';
 class CategoriaCard extends StatelessWidget {
   final Categoria categoria;
   final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   const CategoriaCard({
     super.key,
     required this.categoria,
     required this.onEdit,
-    required this.onDelete,
   });
 
   @override
@@ -63,18 +61,9 @@ class CategoriaCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.blue),
-                onPressed: onEdit,
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
-              ),
-            ],
+          trailing: IconButton(
+            icon: const Icon(Icons.edit, color: Colors.blue),
+            onPressed: onEdit,
           ),
           onTap: () {
             // Aquí podríamos navegar a un detalle de la categoría

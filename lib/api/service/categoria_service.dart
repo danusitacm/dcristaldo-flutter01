@@ -38,10 +38,4 @@ class CategoriaService extends BaseService {
     );
     return CategoriaMapper.fromMap(response);
   }
-
-  /// Elimina una categoría de la API
-  Future<void> eliminarCategoria(String id) async {
-    final url = '${ApiConstantes.categoriaEndpoint}/$id';
-    await delete(url, errorMessage: CategoriaConstantes.errorDelete);
-  }
 }

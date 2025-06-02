@@ -10,7 +10,6 @@ import 'package:dcristaldo/components/categoria_card.dart';
 import 'package:dcristaldo/components/side_menu.dart';
 import 'package:dcristaldo/components/formulario_categoria.dart';
 import 'package:dcristaldo/domain/categoria.dart';
-import 'package:dcristaldo/helpers/dialog_helper.dart';
 import 'package:dcristaldo/helpers/modal_helper.dart';
 import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/helpers/snackbar_manager.dart';
@@ -47,7 +46,6 @@ class _CategoriaScreenContent extends StatelessWidget {
         return current is CategoriaError || // Cuando hay errores
                current is CategoriaCreated || // Cuando se crea una categoría
                current is CategoriaUpdated || // Cuando se actualiza una categoría
-               current is CategoriaDeleted || // Cuando se elimina una categoría
                current is CategoriaReloaded || // Cuando se recarga la caché forzadamente
                (current is CategoriaLoaded && current.categorias.isEmpty); // Cuando la lista está vacía
       },
@@ -66,11 +64,6 @@ class _CategoriaScreenContent extends StatelessWidget {
           SnackBarHelper.mostrarExito(
             context,
             mensaje: CategoriaConstantes.successUpdated,
-          );
-        } else if (state is CategoriaDeleted) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: CategoriaConstantes.successDeleted,
           );
         } else if (state is CategoriaReloaded) {
           // Mensaje específico para cuando se recarga la caché forzadamente
@@ -192,7 +185,6 @@ class _CategoriaScreenContent extends StatelessWidget {
               return CategoriaCard(
                 categoria: categoria,
                 onEdit: () => _editarCategoria(context, categoria),
-                onDelete: () => _eliminarCategoria(context, categoria),
               );
             },
           ),
@@ -229,19 +221,5 @@ class _CategoriaScreenContent extends StatelessWidget {
     }
   }
   
-  // Extraer la lógica de eliminación a un método separado para mejorar la legibilidad
-  Future<void> _eliminarCategoria(BuildContext context, Categoria categoria) async {
-    // Mostrar diálogo de confirmación
-    final confirmar = await DialogHelper.mostrarConfirmacion(
-      context: context,
-      titulo: 'Confirmar eliminación',
-      mensaje: '¿Estás seguro de eliminar la categoría "${categoria.nombre}"?',
-      textoCancelar: 'Cancelar',
-      textoConfirmar: 'Eliminar',
-    );
-    
-    if (confirmar == true && context.mounted) {
-      context.read<CategoriaBloc>().add(CategoriaDeleteEvent(categoria.id!));
-    }
-  }
+  // La funcionalidad de eliminar categorías ha sido eliminada
 }

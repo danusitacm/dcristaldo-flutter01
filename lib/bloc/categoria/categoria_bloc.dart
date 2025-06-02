@@ -102,26 +102,11 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaDeleteEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    List<Categoria> categoriasActuales = [];
+    // La funcionalidad de eliminación ha sido desactivada
+    // Simplemente emitimos el estado actual nuevamente
     if (state is CategoriaLoaded) {
-      categoriasActuales = [...(state as CategoriaLoaded).categorias];
-    }
-    emit(CategoriaLoading());
-
-    try {
-      await _categoriaRepository.eliminarCategoria(event.id);
-
-      // Filtrar la lista de categorías para quitar la categoría eliminada
-      final categoriasActualizadas =
-          categoriasActuales
-              .where((categoria) => categoria.id != event.id)
-              .toList();
-
-      emit(CategoriaDeleted(categoriasActualizadas, DateTime.now()));
-    } catch (e) {
-      if (e is ApiException) {
-        emit(CategoriaError(e, TipoOperacion.eliminar));
-      }
+      final categoriasActuales = (state as CategoriaLoaded).categorias;
+      emit(CategoriaLoaded(categoriasActuales, DateTime.now()));
     }
   }
 }

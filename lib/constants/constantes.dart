@@ -18,8 +18,6 @@ class CategoriaConstantes{
   static const String defaultcategoriaId = 'Sin Categoria';
   static const String successUpdated = 'Categoria actualizada exitosamente';
   static const String errorUpdated = 'Error al editar la categoría';
-  static const String successDeleted = 'Categoria eliminada exitosamente';
-  static const String errorDelete = 'Error al eliminar la categoría';
   static const String successCreated = 'Categoria creada exitosamente';
   static const String errorCreated = 'Error al crear la categoría';
   static const String errorUnauthorized = 'No autorizado para acceder a categoría';
