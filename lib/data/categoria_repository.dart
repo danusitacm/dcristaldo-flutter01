@@ -62,15 +62,6 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     }, mensajeError: CategoriaConstantes.errorUpdated);
   }
 
-  /// Elimina una categoría
-  Future<void> eliminarCategoria(String id) async {
-    return manejarExcepcion(() async {
-      validarId(id);
-      await _categoriaService.eliminarCategoria(id);
-      invalidarCache();
-    }, mensajeError: CategoriaConstantes.errorDelete);
-  }
-
   /// Limpia la caché de categorías (método público)
   void limpiarCache() {
     invalidarCache();

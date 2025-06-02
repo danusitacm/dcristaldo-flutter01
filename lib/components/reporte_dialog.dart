@@ -23,11 +23,6 @@ class ReporteDialog {
           child: _ReporteDialogContent(
             noticiaId: noticia.id!,
             noticia: noticia,
-            estadisticas: {
-              'NoticiaInapropiada': 0,
-              'InformacionFalsa': 0,
-              'Otro': 0,
-            },
           ),
         );
       },
@@ -38,16 +33,13 @@ class ReporteDialog {
 class _ReporteDialogContent extends StatefulWidget {
   final String noticiaId;
   final Noticia noticia;
-  Map<String, int> estadisticas;
-
-  _ReporteDialogContent({required this.noticiaId, required this.noticia, required this.estadisticas});
+  const _ReporteDialogContent({required this.noticiaId,required this.noticia});
 
   @override
   State<_ReporteDialogContent> createState() => _ReporteDialogContentState();
 }
 
 class _ReporteDialogContentState extends State<_ReporteDialogContent> {
-
   @override
   void initState() {
     super.initState();
@@ -61,6 +53,11 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, int> estadisticas = {
+      'NoticiaInapropiada': 0,
+      'InformacionFalsa': 0,
+      'Otro': 0,
+    };
     return BlocConsumer<ReporteBloc, ReporteState>(
       listener: (context, state) {
         if (state is ReporteLoading && state.motivoActual == null) {
@@ -99,7 +96,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
 
         
         if (state is ReporteEstadisticasLoaded && state.noticia.id == widget.noticiaId) {
-          widget.estadisticas = {
+          estadisticas = {
             'NoticiaInapropiada': state.estadisticas[MotivoReporte.noticiaInapropiada] ?? 0,
             'InformacionFalsa': state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
             'Otro': state.estadisticas[MotivoReporte.otro] ?? 0,
@@ -142,7 +139,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.warning,
                       color: Colors.red,
                       label: 'Inapropiada',
-                      iconNumber: '${widget.estadisticas['NoticiaInapropiada']}',
+                      iconNumber: '${estadisticas['NoticiaInapropiada']}',
                       isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
                       smallSize: true,
                     ),
@@ -152,7 +149,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.info,
                       color: Colors.amber,
                       label: 'Falsa',
-                      iconNumber: '${widget.estadisticas['InformacionFalsa']}',
+                      iconNumber: '${estadisticas['InformacionFalsa']}',
                       isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
                       smallSize: true,
                     ),
@@ -162,7 +159,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.flag,
                       color: Colors.blue,
                       label: 'Otro',
-                      iconNumber: '${widget.estadisticas['Otro']}',
+                      iconNumber: '${estadisticas['Otro']}',
                       isLoading: isLoading && motivoActual == MotivoReporte.otro,
                       smallSize: true,
                     ),

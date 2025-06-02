@@ -10,7 +10,6 @@ import 'package:dcristaldo/components/categoria_card.dart';
 import 'package:dcristaldo/components/side_menu.dart';
 import 'package:dcristaldo/components/formulario_categoria.dart';
 import 'package:dcristaldo/domain/categoria.dart';
-import 'package:dcristaldo/helpers/dialog_helper.dart';
 import 'package:dcristaldo/helpers/modal_helper.dart';
 import 'package:dcristaldo/helpers/snackbar_helper.dart';
 import 'package:dcristaldo/helpers/snackbar_manager.dart';
@@ -62,11 +61,6 @@ class _CategoriaScreenContent extends StatelessWidget {
           SnackBarHelper.mostrarExito(
             context,
             mensaje: CategoriaConstantes.successUpdated,
-          );
-        } else if (state is CategoriaDeleted) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: CategoriaConstantes.successDeleted,
           );
         } else if (state is CategoriaReloaded) {
           SnackBarHelper.mostrarExito(
@@ -221,10 +215,10 @@ class _CategoriaScreenContent extends StatelessWidget {
 
     if (categoriaEditada != null && context.mounted) {
       final categoriaActualizada = categoriaEditada.copyWith(id: categoria.id);
-
+    }
       context.read<CategoriaBloc>().add(
         CategoriaUpdateEvent(categoriaActualizada),
       );
     }
-  }
+}
 }
