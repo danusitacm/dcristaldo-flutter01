@@ -215,10 +215,10 @@ class _CategoriaScreenContent extends StatelessWidget {
 
     if (categoriaEditada != null && context.mounted) {
       final categoriaActualizada = categoriaEditada.copyWith(id: categoria.id);
-    }
       context.read<CategoriaBloc>().add(
         CategoriaUpdateEvent(categoriaActualizada),
       );
     }
-}
+      
+    }
 }
