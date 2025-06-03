@@ -6,22 +6,28 @@ import 'package:dcristaldo/domain/task.dart';
 class TaskService extends BaseService {
   TaskService() : super();
 
-  Future<List<Task>> obtenerTareasPorUsuario(String usuario) async {
-    final data = await get<List<dynamic>>(
-      '${ApiConstantes.tareasEndpoint}/?usuario=$usuario',
-      errorMessage: 'Error al obtener tareas del usuario',
+  final String _endpoint = ApiConstantes.tareasEndpoint;
+
+  /// Obtiene la lista de tareas de un usuario
+  Future<List<Task>> obtenerTareasPorUsuario(usuario) async {
+    final List<dynamic> tareasJson = await get<List<dynamic>>(
+      '$_endpoint?usuario=$usuario',
+      errorMessage: 'Error al obtener las tareas',
     );
-    return data.map((json) => TaskMapper.fromMap(json)).toList();
-    
+    return tareasJson
+        .map<Task>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
+        .toList();
   }
 
   /// Obtiene todas las tareas desde la API
   Future<List<Task>> obtenerTareas() async {
-    final data = await get<List<dynamic>>(
+    final List<dynamic> data = await get<List<dynamic>>(
       ApiConstantes.tareasEndpoint,
       errorMessage: 'Error al obtener tareas',
     );
-    return data.map((json) => TaskMapper.fromMap(json)).toList();
+    return data
+        .map<Task>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
+        .toList();
   }
 
   /// Obtiene una tarea específica por su ID

@@ -26,8 +26,9 @@ class TaskRepository extends BaseRepository<Task> {
   }
 
   @override
-  void validarEntidad(Task tarea) {
-    validarNoVacio(tarea.titulo, 'El título de la tarea no puede estar vacío.');
+  void validarEntidad(Task task) {
+    validarNoVacio(task.titulo, 'El título de la Task no puede estar vacío');
+    //agregar validaciones que correspondan
   }
 
   /// Obtiene el contenido de la caché actual
@@ -61,7 +62,7 @@ class TaskRepository extends BaseRepository<Task> {
     return _sharedPreferences.updateObject<TaskCachePrefs>(
       key: _tareasCacheKey,
       updateFn:
-          (current) => updateFn(current!), 
+          (current) => updateFn(current!), // Asumimos que current nunca es nulo
       fromJson: _fromJson,
       toJson: _toJson,
     );
@@ -71,7 +72,7 @@ class TaskRepository extends BaseRepository<Task> {
   Future<List<Task>> obtenerTareasUsuario(String usuario) async {
     List<Task> tareasUsuario = await manejarExcepcion(
       () => _tareaService.obtenerTareasPorUsuario(usuario),
-      mensajeError: TareasConstantes.errorObtenerTareasPorUsuario,
+      mensajeError: TareasConstantes.errorObtenerTareas,
     );
     return tareasUsuario;
   }
@@ -81,12 +82,14 @@ class TaskRepository extends BaseRepository<Task> {
     return manejarExcepcion(() async {
       List<Task> tareas = [];
       final usuario= await _obtenerUsuarioAutenticado();
+
       TaskCachePrefs? tareasCache = await _obtenerCache(
         defaultValue: TaskCachePrefs(
           usuario: usuario,
           misTareas: tareas,
         ),
       );
+
       if (usuario != tareasCache?.usuario) {
         await _sharedPreferences.remove(_tareasCacheKey);
         tareasCache = null;
@@ -99,18 +102,20 @@ class TaskRepository extends BaseRepository<Task> {
         await _guardarEnCache(tareas);
       }
       return tareas;
-    }, mensajeError: TareasConstantes.errorObtenerTareas);
+    }, mensajeError: TareasConstantes.errorAgregarTarea);
   }
 
-  /// Agrega una nueva tarea y actualiza la caché
-  Future<Task> agregarTarea(Task tarea) async {
+  /// Agrega una nueva Task y actualiza la caché
+  Future<Task> agregarTarea(Task task) async {
     return manejarExcepcion(() async {
-      validarEntidad(tarea);
+      validarEntidad(task);
       final usuario= await _obtenerUsuarioAutenticado();
+
       final tareaConEmail =
-          (tarea.usuario.isEmpty)
-              ? tarea.copyWith(usuario: usuario)
-              : tarea;
+          (task.usuario.isEmpty)
+              ? task.copyWith(usuario: usuario)
+              : task;
+
       final nuevaTarea = await _tareaService.crearTarea(
         tareaConEmail,
       ); 
@@ -121,7 +126,7 @@ class TaskRepository extends BaseRepository<Task> {
     }, mensajeError: TareasConstantes.errorAgregarTarea);
   }
 
-  /// Elimina una tarea y actualiza la caché
+  /// Elimina una Task y actualiza la caché
   Future<void> eliminarTarea(String tareaId) async {
     return manejarExcepcion(() async {
       validarId(tareaId);
@@ -129,26 +134,25 @@ class TaskRepository extends BaseRepository<Task> {
         tareaId,
       ); 
       await _actualizarCache((cache) {
-        
         final tareasFiltradas =
             cache.misTareas.where((t) => t.id != tareaId).toList();
-
         return cache.copyWith(misTareas: tareasFiltradas);
       });
-    }, mensajeError: TareasConstantes.tareaEliminada);
+    }, mensajeError: TareasConstantes.errorEliminarTarea);
   }
 
-  /// Actualiza una tarea existente y la caché
-  Future<Task> actualizarTarea(Task tarea) async {
+  /// Actualiza una Task existente y la caché
+  Future<Task> actualizarTarea(Task task) async {
     return manejarExcepcion(() async {
-      validarId(tarea.id);
-      validarEntidad(tarea);
+      validarId(task.id);
+      validarEntidad(task);
       final tareaActualizada = await _tareaService.actualizarTarea(
-        tarea,
-      ); await _actualizarCache((cache) {
+        task,
+      ); 
+      await _actualizarCache((cache) {
         final nuevasTareas =
             cache.misTareas.map((t) {
-              return t.id == tarea.id ? tareaActualizada : t;
+              return t.id == task.id ? tareaActualizada : t;
             }).toList();
         return cache.copyWith(misTareas: nuevasTareas);
       });

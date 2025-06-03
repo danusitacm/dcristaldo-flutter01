@@ -73,7 +73,7 @@ class ApiConstantes {
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
-  static const String tareasEndpoint = '/tareasdanu';
+  static const String tareasEndpoint = '/tareas';
 }
 
 // Constantes para la pantalla de Tareas
