@@ -109,11 +109,10 @@ class TaskRepository extends BaseRepository<Task> {
   Future<Task> agregarTarea(Task task) async {
     return manejarExcepcion(() async {
       validarEntidad(task);
-      final usuario= await _obtenerUsuarioAutenticado();
-
+      final user= await _obtenerUsuarioAutenticado();
       final tareaConEmail =
           (task.usuario.isEmpty)
-              ? task.copyWith(usuario: usuario)
+              ? task.copyWith(usuario: user)
               : task;
 
       final nuevaTarea = await _tareaService.crearTarea(

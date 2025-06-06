@@ -168,7 +168,7 @@ class AddTaskModalState extends State<AddTaskModal> {
 
             final nuevaTarea = Task(
               id: widget.taskToEdit?.id,
-              usuario: 'usuario',
+              usuario: '',
               titulo: titulo,
               descripcion: descripcion,
               fecha: fechaSeleccionada,
