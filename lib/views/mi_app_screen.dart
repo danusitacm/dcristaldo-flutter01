@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/side_menu.dart';
 
 class MiAppScreen extends StatefulWidget {
@@ -13,7 +12,6 @@ class MiAppScreenState extends State<MiAppScreen> {
   Color _colorActual = Colors.blue;
   final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
   int _indiceColor = 0;
-  final int _selectedIndex = 0;
 
   void _cambiarColor() {
     setState(() {
@@ -68,9 +66,6 @@ class MiAppScreenState extends State<MiAppScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _selectedIndex,
       ),
     );
   }

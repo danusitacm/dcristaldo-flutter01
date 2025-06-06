@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dcristaldo/components/custom_bottom_navigation_bar.dart';
 import 'package:dcristaldo/components/side_menu.dart';
 import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/views/game_screen.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
-
-  final int _selectedIndex = 0;
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +36,6 @@ class StartScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _selectedIndex,
       ),
     );
   }
