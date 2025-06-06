@@ -31,7 +31,7 @@ class NoticiaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha((0.05 * 255).round()),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -87,7 +87,7 @@ class NoticiaCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.label, size: 14, color: Colors.white),
+                      const Icon(Icons.label, size: 14, color: Colors.white),
                       const SizedBox(width: 4),
                       Text(
                         categoriaNombre,
@@ -108,7 +108,7 @@ class NoticiaCard extends StatelessWidget {
                 right: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withAlpha((0.5 * 255).round()),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
@@ -162,7 +162,7 @@ class NoticiaCard extends StatelessWidget {
                   noticia.descripcion,
                   style: TextStyle(
                     fontSize: 14,
-                    color: colorScheme.onSurface.withOpacity(0.7),
+                    color: colorScheme.onSurface,
                     height: 1.4,
                     letterSpacing: 0.2,
                   ),
@@ -176,7 +176,7 @@ class NoticiaCard extends StatelessWidget {
                     Icon(
                       Icons.source_outlined,
                       size: 16,
-                      color: colorScheme.primary.withOpacity(0.8),
+                      color: colorScheme.primary,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -185,7 +185,7 @@ class NoticiaCard extends StatelessWidget {
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
                           fontSize: 13,
-                          color: colorScheme.primary.withOpacity(0.8),
+                          color: colorScheme.primary,
                           letterSpacing: 0.2,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -201,14 +201,14 @@ class NoticiaCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Container(
               height: 1,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.grey.withOpacity(0.1),
-                    Colors.grey.withOpacity(0.3),
-                    Colors.grey.withOpacity(0.1),
+                    Colors.grey,
+                    Colors.grey,
+                    Colors.grey,
                   ],
-                  stops: const [0.0, 0.5, 1.0],
+                  stops: [0.0, 0.5, 1.0],
                 ),
               ),
             ),
@@ -328,10 +328,10 @@ class NoticiaCard extends StatelessWidget {
                         color: countColor,
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                          const BoxShadow(
+                            color: Colors.black,
                             blurRadius: 4,
-                            offset: const Offset(0, 2),
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),

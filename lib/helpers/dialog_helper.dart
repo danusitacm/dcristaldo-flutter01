@@ -69,6 +69,7 @@ class DialogHelper {
                       listen: false,
                     );
                     noticiaBloc.add(ResetNoticiaEvent());
+                  // ignore: empty_catches
                   } catch (e) {}
                   BlocProvider.of<AuthBloc>(context).add(AuthLogoutRequested());
                 }
