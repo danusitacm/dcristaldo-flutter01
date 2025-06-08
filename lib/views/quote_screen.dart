@@ -138,14 +138,14 @@ class QuoteScreenState extends State<QuoteScreen> {
                         Icon(
                           Icons.bar_chart_outlined,
                           size: 80,
-                          color: theme.colorScheme.primary.withOpacity(0.5),
+                          color: theme.colorScheme.primary.withAlpha((0.5 * 255).toInt()),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           'No hay cotizaciones disponibles',
                           style: TextStyle(
                             fontSize: 16,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -213,8 +213,8 @@ class QuoteScreenState extends State<QuoteScreen> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: quote.changePercentage >= 0
-                                          ? Colors.green.withOpacity(0.1)
-                                          : Colors.red.withOpacity(0.1),
+                                          ? Colors.green
+                                          : Colors.red,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -259,8 +259,8 @@ class QuoteScreenState extends State<QuoteScreen> {
                                               ),
                                               decoration: BoxDecoration(
                                                 color: quote.changePercentage >= 0
-                                                    ? Colors.green.withOpacity(0.1)
-                                                    : Colors.red.withOpacity(0.1),
+                                                    ? Colors.green
+                                                    : Colors.red,
                                                 borderRadius: BorderRadius.circular(8),
                                               ),
                                               child: Text(
@@ -280,7 +280,7 @@ class QuoteScreenState extends State<QuoteScreen> {
                                           'Última actualización: ${_formatDate(quote.lastUpdated)}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                            color: theme.colorScheme.onSurface,
                                           ),
                                         ),
                                       ],
