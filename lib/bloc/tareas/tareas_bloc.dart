@@ -27,7 +27,7 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
     ));
 
     try {
-      final tareas = await _taskRepository.obtenerTareas(forzarRecarga: false);
+      final tareas = await _taskRepository.obtenerTareas(forzarRecarga: event.forzarRecarga);
       
       emit(state.copyWith(
         status: TareasStatus.loaded,

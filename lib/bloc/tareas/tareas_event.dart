@@ -9,10 +9,12 @@ abstract class TareasEvent extends Equatable {
 }
 
 class TareasLoadEvent extends TareasEvent {
-  const TareasLoadEvent();
+  final bool forzarRecarga;
+  
+  const TareasLoadEvent({this.forzarRecarga = false});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [forzarRecarga];
 }
 
 class TareasAddEvent extends TareasEvent {
