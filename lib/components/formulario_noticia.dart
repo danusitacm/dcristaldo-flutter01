@@ -214,12 +214,9 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                           vertical: 10,
                           horizontal: 12,
                         ),
+                        helperText: 'Dejar vacío para usar imagen predeterminada',
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingrese la URL de una imagen';
-                        }
-
                         return null;
                       },
                     ),
