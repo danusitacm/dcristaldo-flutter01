@@ -8,7 +8,6 @@ import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
 import 'package:dcristaldo/components/snackbar_component.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
 import 'package:dcristaldo/theme/colors.dart';
-import 'package:dcristaldo/theme/text.style.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -90,17 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 120,
                             ),
                           ),
-
-                          Text(
-                            'Inicio de Sesión',
-                            style: AppTextStyles.headingXl.copyWith(
-                              color: AppColors.primaryDarkBlue,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
                           const SizedBox(height: 30),
-
                           _buildTextField(
                             controller: usernameController,
                             labelText: 'Usuario',
@@ -123,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: AppColors.primaryDarkBlue,
                               ),
                               onPressed: () {

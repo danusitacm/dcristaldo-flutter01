@@ -221,9 +221,7 @@ class QuoteScreenState extends State<QuoteScreen> {
                                       quote.changePercentage >= 0
                                           ? Icons.trending_up
                                           : Icons.trending_down,
-                                      color: quote.changePercentage >= 0
-                                          ? Colors.green
-                                          : Colors.red,
+                                      color: Colors.white,
                                       size: 28,
                                     ),
                                   ),
