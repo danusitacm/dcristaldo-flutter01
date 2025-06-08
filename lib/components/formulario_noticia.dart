@@ -120,7 +120,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 : _imagenUrlController.text,
         categoriaId: _selectedCategoriaId,
         contadorReportes: widget.noticia?.contadorReportes ?? 0,
-        contadorComentarios:  widget.noticia?.contadorComentarios ?? 0,
+        contadorComentarios: widget.noticia?.contadorComentarios ?? 0,
       );
       Navigator.of(context).pop(noticia);
     }
@@ -128,142 +128,219 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        left: 16,
-        right: 16,
-        top: 16,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(
-              controller: _tituloController,
-              decoration: const InputDecoration(
-                labelText: 'Título',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese un título';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descripcionController,
-              decoration: const InputDecoration(
-                labelText: 'Descripción',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese una descripción';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _fuenteController,
-              decoration: const InputDecoration(
-                labelText: 'Fuente',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese una fuente';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _imagenUrlController,
-              decoration: const InputDecoration(
-                labelText: 'URL de la imagen',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese la URL de una imagen';
-                }
-
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-
-            TextFormField(
-              controller: _fechaController,
-              decoration: const InputDecoration(
-                labelText: 'Fecha de publicación',
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-              onTap: _seleccionarFecha,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'La fecha es requerida';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Categoría',
-                border: OutlineInputBorder(),
-              ),
-              value: _selectedCategoriaId,
-              items: [
-                const DropdownMenuItem<String>(
-                  value: CategoriaConstantes.defaultcategoriaId,
-                  child: Text('Sin categoría'),
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 0),
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 32,
                 ),
-                ...widget.categorias
-                    .where(
-                      (categoria) =>
-                          categoria.id != null && categoria.id!.isNotEmpty,
-                    )
-                    .map((categoria) {
-                      return DropdownMenuItem<String>(
-                        value: categoria.id!,
-                        child: Text(categoria.nombre),
-                      );
-                    }),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _selectedCategoriaId = value;
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextFormField(
+                      controller: _tituloController,
+                      decoration: const InputDecoration(
+                        labelText: 'Título',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese un título';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _descripcionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Descripción',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      maxLines: 2,
+                      minLines: 1,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese una descripción';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _fuenteController,
+                      decoration: const InputDecoration(
+                        labelText: 'Fuente',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese una fuente';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _imagenUrlController,
+                      decoration: const InputDecoration(
+                        labelText: 'URL de la imagen',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor ingrese la URL de una imagen';
+                        }
+
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    TextFormField(
+                      controller: _fechaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Fecha de publicación',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.calendar_today),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: _seleccionarFecha,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'La fecha es requerida';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        labelText: 'Categoría',
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 12,
+                        ),
+                      ),
+                      isExpanded: true,
+                      value: _selectedCategoriaId,
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: CategoriaConstantes.defaultcategoriaId,
+                          child: Text('Sin categoría'),
+                        ),
+                        ...widget.categorias
+                            .where(
+                              (categoria) =>
+                                  categoria.id != null &&
+                                  categoria.id!.isNotEmpty,
+                            )
+                            .map((categoria) {
+                              return DropdownMenuItem<String>(
+                                value: categoria.id!,
+                                child: Text(categoria.nombre),
+                              );
+                            }),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedCategoriaId = value;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth > 300) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Cancelar'),
+                              ),
+                              ElevatedButton(
+                                onPressed: _guardarNoticia,
+                                child: Text(
+                                  widget.noticia == null
+                                      ? 'Agregar'
+                                      : 'Guardar',
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _guardarNoticia,
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                ),
+                                child: Text(
+                                  widget.noticia == null
+                                      ? 'Agregar'
+                                      : 'Guardar',
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                style: TextButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(40),
+                                ),
+                                child: const Text('Cancelar'),
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: _guardarNoticia,
-                  child: Text(widget.noticia == null ? 'Agregar' : 'Guardar'),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
