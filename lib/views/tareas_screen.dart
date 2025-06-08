@@ -21,7 +21,7 @@ class TareaScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TareasBloc()..add(const TareasLoadEvent()),
+          create: (context) => TareasBloc()..add(const TareasLoadEvent(forzarRecarga: false)),
         ),
         BlocProvider(create: (context) => TareaContadorBloc()),
       ],
@@ -32,6 +32,7 @@ class TareaScreen extends StatelessWidget {
 
 class TareaScreenContent extends StatefulWidget {
   const TareaScreenContent({super.key});
+  static const int _limiteTareas = 3;
 
   @override
   State<TareaScreenContent> createState() => _TareaScreenContentState();
@@ -58,6 +59,16 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
 
   void _mostrarModalAgregarTarea(BuildContext context) {
     final tareasBloc = context.read<TareasBloc>();
+    final cantidadTareas = tareasBloc.state.tareas.length;    
+    if (cantidadTareas >= TareaScreenContent._limiteTareas) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pueden agregar más tareas. Límite de 3 tareas alcanzado.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     showDialog(
       context: context,
@@ -75,6 +86,21 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
               },
             ),
           ),
+    );
+  }
+
+  void _cargarTareasDesdeAPI(BuildContext context) {
+    final tareasBloc = context.read<TareasBloc>();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Cargando tareas desde la API...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    tareasBloc.add(const TareasLoadEvent(forzarRecarga: true));
+    Future.delayed(
+      const Duration(milliseconds: 500),
+      _actualizarContador,
     );
   }
 
@@ -170,20 +196,56 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
           return Scaffold(
             appBar: AppBar(
               title: Text(
-                '${TareasConstantes.tituloAppBar} - Total: ${state.tareas.length}',
+                '${TareasConstantes.tituloAppBar} - Total: ${state.tareas.length}/${TareaScreenContent._limiteTareas}',
               ),
+              actions: [
+                if (state.tareas.length < TareaScreenContent._limiteTareas)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: Text(
+                        'Disponibles: ${TareaScreenContent._limiteTareas - state.tareas.length}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             drawer: const SideMenu(),
             backgroundColor: Colors.grey[200],
             body: Column(
               children: [
                 const TaskProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ElevatedButton.icon(
+                    onPressed: state.status == TareasStatus.loading 
+                      ? null 
+                      : () => _cargarTareasDesdeAPI(context),
+                    icon: const Icon(Icons.download),
+                    label: const Text('Cargar tareas desde API'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
                 Expanded(child: _buildBody(state)),
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => _mostrarModalAgregarTarea(context),
-              tooltip: 'Agregar Tarea',
+              onPressed: state.tareas.length >= TareaScreenContent._limiteTareas 
+                  ? null 
+                  : () => _mostrarModalAgregarTarea(context),
+              tooltip: state.tareas.length >= TareaScreenContent._limiteTareas 
+                  ? 'Límite de tareas alcanzado' 
+                  : 'Agregar Tarea',
+              backgroundColor: state.tareas.length >= TareaScreenContent._limiteTareas 
+                  ? Colors.grey 
+                  : null,
               child: const Icon(Icons.add),
             ),
           );
@@ -198,7 +260,6 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
       case TareasStatus.loading:
         return const Center(child: CircularProgressIndicator());
 
-      case TareasStatus.loadingMore:
       case TareasStatus.loaded:
         if (state.tareas.isEmpty) {
           return const Center(

@@ -17,17 +17,14 @@ class AuthRepository {
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {
-        throw ArgumentError('Error: Email y contraseña no pueden estar vacíos.');
-      }      
+        throw ArgumentError('Error: Email y contraseña no pueden estar vacios.');
+      }
       _preferenciaRepository.invalidarCache();
-      final loginRequest = LoginRequest(
-        username: email,
-        password: password,
-      );
-      final LoginResponse response = await _authService.login(loginRequest);
+      final loginRequest = LoginRequest(username: email, password: password);
+      final LoginResponse response = await _authService.loginLimitado(loginRequest);
       await _secureStorage.saveJwt(response.sessionToken);
       await _secureStorage.saveUserEmail(email);
-      await _preferenciaRepository.inicializarPreferenciasUsuario();
+      await _preferenciaRepository.cargarDatos();
       return true;
     } catch (e) {
       return false;

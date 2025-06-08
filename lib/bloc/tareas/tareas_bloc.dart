@@ -1,4 +1,3 @@
-// filepath: /home/daniela/projects/dcristaldo-flutter01/lib/bloc/tareas/tareas_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dcristaldo/bloc/tareas/tareas_event.dart';
 import 'package:dcristaldo/bloc/tareas/tareas_state.dart';
@@ -12,8 +11,6 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
   
   TareasBloc() : super(const TareasState()) {
     on<TareasLoadEvent>(_onLoadTareas);
-    // We're removing infinite scroll functionality
-    // on<TareasLoadMoreEvent>(_onLoadMoreTareas);
     on<TareasAddEvent>(_onAddTarea);
     on<TareasUpdateEvent>(_onUpdateTarea);
     on<TareasDeleteEvent>(_onDeleteTarea);
@@ -30,12 +27,11 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
     ));
 
     try {
-      final tareas = await _taskRepository.obtenerTareas(forzarRecarga: false);
+      final tareas = await _taskRepository.obtenerTareas(forzarRecarga: event.forzarRecarga);
       
       emit(state.copyWith(
         status: TareasStatus.loaded,
         tareas: tareas,
-        hasReachedEnd: tareas.length < event.limite,
       ));
     } catch (e) {
       String mensaje = 'Error al cargar las tareas';
@@ -48,50 +44,6 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
       ));
     }
   }
-
-  // Method removed as part of removing infinite scroll functionality
-  /*
-  Future<void> _onLoadMoreTareas(
-    TareasLoadMoreEvent event,
-    Emitter<TareasState> emit,
-  ) async {
-    // Si ya hemos llegado al final o estamos cargando, no hacemos nada
-    if (state.hasReachedEnd || state.status == TareasStatus.loadingMore) {
-      return;
-    }
-
-    emit(state.copyWith(status: TareasStatus.loadingMore));
-
-    try {
-      // En este caso podríamos necesitar implementar un sistema de paginación más sofisticado
-      // Por ahora simplemente recargamos todas las tareas
-      final tareas = await _taskRepository.obtenerTareas(forzarRecarga: true);
-      
-      // Filtramos las tareas que ya tenemos para no duplicarlas
-      final nuevasTareas = tareas.where((tarea) => 
-        !state.tareas.any((t) => t.id == tarea.id)
-      ).toList();
-      
-      // Si no hay nuevas tareas, marcamos que hemos llegado al final
-      final hasReachedEnd = nuevasTareas.isEmpty || tareas.length < event.limite;
-      
-      emit(state.copyWith(
-        status: TareasStatus.loaded,
-        tareas: [...state.tareas, ...nuevasTareas],
-        hasReachedEnd: hasReachedEnd,
-      ));
-    } catch (e) {
-      String mensaje = 'Error al cargar más tareas';
-      if (e is ApiException) {
-        mensaje = e.message;
-      }
-      emit(state.copyWith(
-        status: TareasStatus.error,
-        errorMessage: mensaje,
-      ));
-    }
-  }
-  */
 
   Future<void> _onAddTarea(
     TareasAddEvent event,
@@ -120,8 +72,6 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
   ) async {
     try {
       final tareaActualizada = await _taskRepository.actualizarTarea(event.tarea);
-      
-      // Creamos una nueva lista reemplazando la tarea actualizada
       final nuevasTareas = List<Task>.from(state.tareas);
       if (event.index >= 0 && event.index < nuevasTareas.length) {
         nuevasTareas[event.index] = tareaActualizada;
@@ -145,13 +95,11 @@ class TareasBloc extends Bloc<TareasEvent, TareasState> {
     Emitter<TareasState> emit,
   ) async {
     try {
-      // Obtenemos el id de la tarea a eliminar
       final String? tareaId = state.tareas[event.index].id;
       
       if (tareaId != null) {
         await _taskRepository.eliminarTarea(tareaId);
         
-        // Eliminamos la tarea de la lista por índice
         final nuevasTareas = List<Task>.from(state.tareas);
         if (event.index >= 0 && event.index < nuevasTareas.length) {
           nuevasTareas.removeAt(event.index);
