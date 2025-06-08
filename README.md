@@ -36,3 +36,16 @@ flutter pub get
 # 4. Ejecutar (usar tu dispositivo conectado o emulador)
 flutter run
 ```
+
+## Capturas de pantalla
+<div>
+  <img src="assets/screenshots/Screenshot_20250608_182527.jpg" width="200" />
+  <img src="assets/screenshots/Screenshot_20250608_182445.jpg" width="200" />
+  <img src="assets/screenshots/Screenshot_20250608_182546.jpg" width="200" />
+  <img src="assets/screenshots/Screenshot_20250608_182453.jpg" width="200" />
+   <img src="assets/screenshots/Screenshot_20250608_182504.jpg" width="200" />
+   <img src="assets/screenshots/Screenshot_20250608_182551.jpg" width="200" />
+   <img src="assets/screenshots/Screenshot_20250608_182646.jpg" width="200" />
+   <img src="assets/screenshots/Screenshot_20250608_182651.jpg" width="200" />
+   
+</div>
