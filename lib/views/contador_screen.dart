@@ -28,8 +28,10 @@ class _ContadorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Usar el color del tema de AppBar
+        foregroundColor: Colors.white, // Asegurar que el texto e iconos sean visibles
         title: Text(title),
+        iconTheme: const IconThemeData(color: Colors.white), // Color del icono del menú
       ),
       drawer: const SideMenu(),
       body: BlocBuilder<ContadorBloc, ContadorState>(
