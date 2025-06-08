@@ -7,7 +7,6 @@ import 'package:dcristaldo/components/floating_add_button.dart';
 import 'package:dcristaldo/components/last_updated_header.dart';
 import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/components/categoria_card.dart';
-import 'package:dcristaldo/components/side_menu.dart';
 import 'package:dcristaldo/components/formulario_categoria.dart';
 import 'package:dcristaldo/domain/categoria.dart';
 import 'package:dcristaldo/helpers/modal_helper.dart';
@@ -93,7 +92,6 @@ class _CategoriaScreenContent extends StatelessWidget {
               ),
             ],
           ),
-          drawer: const SideMenu(),
           backgroundColor: Colors.white,
           body: Column(
             children: [
