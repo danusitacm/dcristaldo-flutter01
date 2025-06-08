@@ -7,17 +7,31 @@ import 'package:dcristaldo/bloc/noticia/noticia_bloc.dart';
 import 'package:dcristaldo/bloc/noticia/noticia_event.dart';
 import 'package:dcristaldo/components/snackbar_component.dart';
 import 'package:dcristaldo/views/welcome_screen.dart';
+import 'package:dcristaldo/theme/colors.dart';
+import 'package:dcristaldo/theme/text.style.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
-  LoginScreen({super.key});
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
     return BlocProvider(
       create: (context) => AuthBloc(),
       child: BlocConsumer<AuthBloc, AuthState>(
@@ -59,69 +73,152 @@ class LoginScreen extends StatelessWidget {
         },
         builder: (context, state) {
           return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Inicio de Sesión',
-                      style: TextStyle(color: Colors.black, fontSize: 22),
-                    ),
-                    TextFormField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Usuario *',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'El correo es obligatorio';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Contraseña *',
-                        border: OutlineInputBorder(),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'La contraseña es obligatoria';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final username = usernameController.text.trim();
-                          final password = passwordController.text.trim();
-
-                          context.read<AuthBloc>().add(
-                            AuthLoginRequested(
-                              email: username,
-                              password: password,
+            backgroundColor: AppColors.white,
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 40.0),
+                            child: Image.asset(
+                              'assets/images/logo_sodep.png',
+                              height: 120,
                             ),
-                          );
-                        }
-                      },
-                      child: const Text('Iniciar Sesión'),
+                          ),
+
+                          Text(
+                            'Inicio de Sesión',
+                            style: AppTextStyles.headingXl.copyWith(
+                              color: AppColors.primaryDarkBlue,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          _buildTextField(
+                            controller: usernameController,
+                            labelText: 'Usuario',
+                            prefixIcon: Icons.person,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'El usuario es obligatorio';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          _buildTextField(
+                            controller: passwordController,
+                            labelText: 'Contraseña',
+                            prefixIcon: Icons.lock,
+                            obscureText: _obscurePassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: AppColors.primaryDarkBlue,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'La contraseña es obligatoria';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                final username = usernameController.text.trim();
+                                final password = passwordController.text.trim();
+
+                                context.read<AuthBloc>().add(
+                                  AuthLoginRequested(
+                                    email: username,
+                                    password: password,
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryDarkBlue,
+                              foregroundColor: AppColors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: const Text(
+                              'INICIAR SESIÓN',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+    bool obscureText = false,
+    required String? Function(String?) validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: '$labelText *',
+        labelStyle: const TextStyle(color: AppColors.gray11),
+        prefixIcon: Icon(prefixIcon, color: AppColors.primaryDarkBlue),
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.gray06),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.primaryDarkBlue, width: 2),
+        ),
+        filled: true,
+        fillColor: AppColors.gray02,
+        contentPadding: const EdgeInsets.symmetric(vertical: 16),
+      ),
+      validator: validator,
     );
   }
 }
