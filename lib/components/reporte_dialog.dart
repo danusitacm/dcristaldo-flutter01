@@ -33,7 +33,7 @@ class ReporteDialog {
 class _ReporteDialogContent extends StatefulWidget {
   final String noticiaId;
   final Noticia noticia;
-  const _ReporteDialogContent({required this.noticiaId,required this.noticia});
+  const _ReporteDialogContent({required this.noticiaId, required this.noticia});
 
   @override
   State<_ReporteDialogContent> createState() => _ReporteDialogContentState();
@@ -94,11 +94,13 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         final bool isLoading = state is ReporteLoading;
         final motivoActual = isLoading ? (state).motivoActual : null;
 
-        
-        if (state is ReporteEstadisticasLoaded && state.noticia.id == widget.noticiaId) {
+        if (state is ReporteEstadisticasLoaded &&
+            state.noticia.id == widget.noticiaId) {
           estadisticas = {
-            'NoticiaInapropiada': state.estadisticas[MotivoReporte.noticiaInapropiada] ?? 0,
-            'InformacionFalsa': state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
+            'NoticiaInapropiada':
+                state.estadisticas[MotivoReporte.noticiaInapropiada] ?? 0,
+            'InformacionFalsa':
+                state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
             'Otro': state.estadisticas[MotivoReporte.otro] ?? 0,
           };
         }
@@ -128,42 +130,94 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  '(Límite: 3 reportes por noticia)',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red.shade700,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
                 const SizedBox(height: 16),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildMotivoButton(
-                      context: context,
-                      motivo: MotivoReporte.noticiaInapropiada,
-                      icon: Icons.warning,
-                      color: Colors.red,
-                      label: 'Inapropiada',
-                      iconNumber: '${estadisticas['NoticiaInapropiada']}',
-                      isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
-                      smallSize: true,
-                    ),
-                    _buildMotivoButton(
-                      context: context,
-                      motivo: MotivoReporte.informacionFalsa,
-                      icon: Icons.info,
-                      color: Colors.amber,
-                      label: 'Falsa',
-                      iconNumber: '${estadisticas['InformacionFalsa']}',
-                      isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
-                      smallSize: true,
-                    ),
-                    _buildMotivoButton(
-                      context: context,
-                      motivo: MotivoReporte.otro,
-                      icon: Icons.flag,
-                      color: Colors.blue,
-                      label: 'Otro',
-                      iconNumber: '${estadisticas['Otro']}',
-                      isLoading: isLoading && motivoActual == MotivoReporte.otro,
-                      smallSize: true,
-                    ),
-                  ],
+                Builder(
+                  builder: (context) {
+                    final int totalReportes = _obtenerTotalReportes();
+                    final bool limitAlcanzado = totalReportes >= 3;
+
+                    return Column(
+                      children: [
+                        if (limitAlcanzado)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 12,
+                            ),
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.red.shade300),
+                            ),
+                            child: const Text(
+                              'Límite de reportes alcanzado (3/3)',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildMotivoButton(
+                              context: context,
+                              motivo: MotivoReporte.noticiaInapropiada,
+                              icon: Icons.warning,
+                              color: Colors.red,
+                              label: 'Inapropiada',
+                              iconNumber:
+                                  '${estadisticas['NoticiaInapropiada']}',
+                              isLoading:
+                                  isLoading &&
+                                  motivoActual ==
+                                      MotivoReporte.noticiaInapropiada,
+                              smallSize: true,
+                            ),
+                            _buildMotivoButton(
+                              context: context,
+                              motivo: MotivoReporte.informacionFalsa,
+                              icon: Icons.info,
+                              color: Colors.amber,
+                              label: 'Falsa',
+                              iconNumber: '${estadisticas['InformacionFalsa']}',
+                              isLoading:
+                                  isLoading &&
+                                  motivoActual ==
+                                      MotivoReporte.informacionFalsa,
+                              smallSize: true,
+                            ),
+                            _buildMotivoButton(
+                              context: context,
+                              motivo: MotivoReporte.otro,
+                              icon: Icons.flag,
+                              color: Colors.blue,
+                              label: 'Otro',
+                              iconNumber: '${estadisticas['Otro']}',
+                              isLoading:
+                                  isLoading &&
+                                  motivoActual == MotivoReporte.otro,
+                              smallSize: true,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 Align(
@@ -200,17 +254,28 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     final badgeSize = smallSize ? 16.0 : 18.0;
     final fontSize = smallSize ? 10.0 : 12.0;
 
+    final int totalReportes = _obtenerTotalReportes();
+    final bool limitAlcanzado = totalReportes >= 3;
+
     return Column(
       children: [
         InkWell(
-          onTap: isLoading ? null : () => _enviarReporte(context, motivo),
+          onTap:
+              (isLoading || limitAlcanzado)
+                  ? null
+                  : () => _enviarReporte(context, motivo),
           child: Container(
             width: buttonSize,
             height: buttonSize,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: limitAlcanzado ? Colors.grey.shade200 : Colors.white,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(
+                color:
+                    limitAlcanzado
+                        ? Colors.grey.shade400
+                        : Colors.grey.shade300,
+              ),
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -225,7 +290,11 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                     ),
                   )
                 else
-                  Icon(icon, color: color, size: iconSize),
+                  Icon(
+                    icon,
+                    color: limitAlcanzado ? Colors.grey : color,
+                    size: iconSize,
+                  ),
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -233,7 +302,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                     width: badgeSize,
                     height: badgeSize,
                     decoration: BoxDecoration(
-                      color: color,
+                      color: limitAlcanzado ? Colors.grey : color,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -255,14 +324,44 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
           ),
         ),
         SizedBox(height: smallSize ? 6.0 : 8.0),
-        Text(label, style: TextStyle(fontSize: fontSize)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: fontSize,
+            color: limitAlcanzado ? Colors.grey : Colors.black,
+            fontWeight: limitAlcanzado ? FontWeight.normal : FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
 
   void _enviarReporte(BuildContext context, MotivoReporte motivo) {
+    final int totalReportes = _obtenerTotalReportes();
+
+    if (totalReportes >= 3) {
+      SnackBarHelper.mostrarError(
+        context,
+        mensaje: 'Límite alcanzado: solo se permiten 3 reportes por noticia',
+      );
+      return;
+    }
+
     context.read<ReporteBloc>().add(
       EnviarReporte(noticia: widget.noticia, motivo: motivo),
     );
+  }
+
+  int _obtenerTotalReportes() {
+    final state = context.read<ReporteBloc>().state;
+    if (state is ReporteEstadisticasLoaded &&
+        state.noticia.id == widget.noticiaId) {
+      int total = 0;
+      state.estadisticas.forEach((key, value) {
+        total += value;
+      });
+      return total;
+    }
+    return 0;
   }
 }
