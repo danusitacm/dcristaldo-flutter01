@@ -21,92 +21,37 @@ class SideMenu extends StatelessWidget {
       elevation: 8.0,
       child: Column(
         children: [
-          // Header mejorado
           Container(
-            height: 180,
+            height: 100,
+            width: double.infinity,
             decoration: BoxDecoration(
               color: colorScheme.primary,
               boxShadow: [
-                const BoxShadow(
-                  color: Colors.black,
+                BoxShadow(
+                  color: Colors.black.withAlpha((0.15 * 255).toInt()),
                   spreadRadius: 1,
                   blurRadius: 3,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: Stack(
-              children: [
-                // Efecto decorativo
-                Positioned(
-                  bottom: -10,
-                  right: -10,
-                  child: Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 70,
-                        width: 70,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            const BoxShadow(
-                              color: Colors.black,
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.account_circle,
-                          size: 70,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Menú Principal',
-                        style: TextStyle(
-                          color: colorScheme.onPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'dcristaldo-flutter01',
-                        style: TextStyle(
-                          color: colorScheme.onPrimary,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Text(
+              'Menú Principal',
+              style: TextStyle(
+                color: colorScheme.onPrimary,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
 
-          // Opciones de menú en una lista desplazable
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                // Sección: Principal
                 _buildSectionHeader(context, 'Principal'),
                 _buildMenuTile(
                   context: context,
@@ -115,7 +60,6 @@ class SideMenu extends StatelessWidget {
                   screen: const WelcomeScreen(),
                 ),
 
-                // Sección: Información
                 _buildSectionHeader(context, 'Información'),
                 _buildMenuTile(
                   context: context,
@@ -130,7 +74,6 @@ class SideMenu extends StatelessWidget {
                   screen: const NoticiaScreen(),
                 ),
 
-                // Sección: Aplicaciones
                 _buildSectionHeader(context, 'Aplicaciones'),
                 _buildMenuTile(
                   context: context,
@@ -157,7 +100,6 @@ class SideMenu extends StatelessWidget {
                   screen: const StartScreen(),
                 ),
 
-                // Sección: Configuración
                 _buildSectionHeader(context, 'Configuración'),
                 _buildMenuTile(
                   context: context,
@@ -168,10 +110,11 @@ class SideMenu extends StatelessWidget {
 
                 const Divider(),
 
-                // Cerrar sesión (con color diferente)
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 4.0),
+                    horizontal: 12.0,
+                    vertical: 4.0,
+                  ),
                   child: ListTile(
                     leading: Icon(
                       Icons.exit_to_app_rounded,
@@ -201,7 +144,6 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  // Widget para construir encabezados de sección
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 16.0, bottom: 4.0),
@@ -216,7 +158,6 @@ class SideMenu extends StatelessWidget {
     );
   }
 
-  // Widget para construir un elemento del menú
   Widget _buildMenuTile({
     required BuildContext context,
     required IconData icon,
@@ -229,15 +170,8 @@ class SideMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 2.0),
       child: ListTile(
         leading: Icon(icon, color: theme.colorScheme.primary),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         dense: true,
         visualDensity: const VisualDensity(horizontal: 0, vertical: -0.5),
         tileColor: Colors.transparent,
