@@ -233,7 +233,7 @@ class AcercaScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withAlpha((0.1 * 255).toInt()),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: theme.colorScheme.primary, size: 22),

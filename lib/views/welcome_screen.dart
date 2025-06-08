@@ -184,7 +184,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ).createShader(bounds),
-                              child: Text(
+                              child: const Text(
                                 'Bienvenido',
                                 style: TextStyle(
                                   fontSize: 24,

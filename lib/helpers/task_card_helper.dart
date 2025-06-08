@@ -21,10 +21,10 @@ class CommonWidgetsHelper {
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
         color: isCompleted 
-            ? colorScheme.onSurface.withOpacity(0.6)
+            ? colorScheme.onSurface.withAlpha((0.6 * 255).toInt())
             : colorScheme.onSurface,
         decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-        decorationColor: colorScheme.onSurface.withOpacity(0.5),
+        decorationColor: colorScheme.onSurface.withAlpha((0.5 * 255).toInt()),
         decorationThickness: 2,
       );
     } else {
@@ -113,7 +113,7 @@ class CommonWidgetsHelper {
         
     return Container(
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withAlpha((0.1 * 255).toInt()),
         shape: BoxShape.circle,
       ),
       padding: const EdgeInsets.all(8.0),
@@ -156,7 +156,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
           : colorScheme.error;
       
       if (tarea.completada) {
-        cardColor = colorScheme.surfaceVariant.withOpacity(0.7);
+        cardColor = colorScheme.surfaceContainerHighest.withAlpha((0.7 * 255).toInt());
       }
 
       return Padding(
@@ -167,7 +167,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: tarea.completada ? borderColor.withOpacity(0.3) : borderColor,
+              color: tarea.completada ? borderColor.withAlpha((0.3 * 255).toInt()) : borderColor,
               width: 1,
             ),
           ),
@@ -181,13 +181,13 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
               ),
               leading: Container(
                 decoration: BoxDecoration(
-                  color: typeColor.withOpacity(0.1),
+                  color: typeColor.withAlpha((0.1 * 255).toInt()),
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   tarea.tipo == 'normal' ? Icons.task : Icons.warning,
-                  color: tarea.completada ? typeColor.withOpacity(0.5) : typeColor,
+                  color: tarea.completada ? typeColor.withAlpha((0.5 * 255).toInt()) : typeColor,
                   size: 28,
                 ),
               ),
@@ -224,9 +224,9 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
                         color: tarea.completada 
-                            ? colorScheme.onSurface.withOpacity(0.6)
+                            ? colorScheme.onSurface.withAlpha((0.6 * 255).toInt())
                             : colorScheme.onSurface,
-                        decorationColor: colorScheme.onSurface.withOpacity(0.5),
+                        decorationColor: colorScheme.onSurface.withAlpha((0.5 * 255).toInt()),
                         decorationThickness: 2,
                       ),
                     ),
@@ -243,7 +243,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
                           decoration: BoxDecoration(
-                            color: typeColor.withOpacity(0.1),
+                            color: typeColor.withAlpha((0.1 * 255).toInt()),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -251,7 +251,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: tarea.completada ? typeColor.withOpacity(0.6) : typeColor,
+                              color: tarea.completada ? typeColor.withAlpha((0.6 * 255).toInt()) : typeColor,
                             ),
                           ),
                         ),
@@ -265,7 +265,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                               style: TextStyle(
                                 fontSize: 13,
                                 color: tarea.completada 
-                                    ? colorScheme.onSurfaceVariant.withOpacity(0.7)
+                                    ? colorScheme.onSurfaceVariant.withAlpha((0.7 * 255).toInt())
                                     : colorScheme.onSurfaceVariant,
                               ),
                             ),
@@ -282,13 +282,13 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
                   Icons.edit_outlined,
                   size: 20,
                   color: tarea.completada
-                      ? colorScheme.outline.withOpacity(0.4)
+                      ? colorScheme.outline.withAlpha((0.4 * 255).toInt())
                       : colorScheme.primary,
                 ),
                 style: IconButton.styleFrom(
                   backgroundColor: tarea.completada 
                       ? Colors.transparent
-                      : colorScheme.primaryContainer.withOpacity(0.3),
+                      : colorScheme.primaryContainer.withAlpha((0.3 * 255).toInt()),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

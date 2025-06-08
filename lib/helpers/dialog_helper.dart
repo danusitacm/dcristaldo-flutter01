@@ -76,7 +76,7 @@ class DialogHelper {
 
                 if (context.mounted) {
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
                     (route) => false,
                   );
                 }
