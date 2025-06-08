@@ -198,7 +198,6 @@ class _TareaScreenContentState extends State<TareaScreenContent> {
       case TareasStatus.loading:
         return const Center(child: CircularProgressIndicator());
 
-      case TareasStatus.loadingMore:
       case TareasStatus.loaded:
         if (state.tareas.isEmpty) {
           return const Center(

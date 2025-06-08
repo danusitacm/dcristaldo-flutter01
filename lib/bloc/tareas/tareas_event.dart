@@ -9,12 +9,10 @@ abstract class TareasEvent extends Equatable {
 }
 
 class TareasLoadEvent extends TareasEvent {
-  final int limite;
-
-  const TareasLoadEvent({this.limite = 5});
+  const TareasLoadEvent();
 
   @override
-  List<Object?> get props => [limite];
+  List<Object?> get props => [];
 }
 
 class TareasAddEvent extends TareasEvent {
