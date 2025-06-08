@@ -190,14 +190,18 @@ class PreferenciaScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                state is PreferenciaError
-                    ? 'Error al cargar preferencias'
-                    : 'Categorías seleccionadas: $numCategorias',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: state is PreferenciaError ? Colors.red : null,
+              Flexible(
+                child: Text(
+                  state is PreferenciaError
+                      ? 'Error al cargar preferencias'
+                      : 'Categorías seleccionadas: $numCategorias',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: state is PreferenciaError ? Colors.red : null,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed:
                     isEnabled ? () => _aplicarFiltros(context, state) : null,
