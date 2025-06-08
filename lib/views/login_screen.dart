@@ -63,10 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
             ).popUntil((route) => route.isFirst);
 
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBarComponent.crear(
+              SnackBarComponent.error(
                 mensaje: state.error,
-                color: Colors.red,
-                duracion: const Duration(seconds: 4),
               ),
             );
           }
