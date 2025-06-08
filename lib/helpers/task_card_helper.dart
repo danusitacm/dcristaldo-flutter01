@@ -1,86 +1,143 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dcristaldo/constants/constantes.dart';
 import 'package:dcristaldo/domain/task.dart';
 import 'package:dcristaldo/bloc/tareas/tareas_bloc.dart';
 import 'package:dcristaldo/bloc/tareas/tareas_event.dart';
 
 class CommonWidgetsHelper {
-  /// Construye un título en negrita con tamaño 20
+  /// Construye un título en negrita con tamaño configurable
   /// Si isCompleted es true, aplica un estilo de texto tachado
-  static Widget buildBoldTitle(String title, {bool isCompleted = false}) {
+  static Widget buildBoldTitle(
+    String title, {
+    bool isCompleted = false, 
+    BuildContext? context,
+    double fontSize = 18,
+  }) {
+    final TextStyle textStyle;
+    
+    if (context != null) {
+      final colorScheme = Theme.of(context).colorScheme;
+      textStyle = TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w600,
+        color: isCompleted 
+            ? colorScheme.onSurface.withOpacity(0.6)
+            : colorScheme.onSurface,
+        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+        decorationColor: colorScheme.onSurface.withOpacity(0.5),
+        decorationThickness: 2,
+      );
+    } else {
+      textStyle = TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w600,
+        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+      );
+    }
+    
     return Text(
       title,
-      style: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        decoration:
-            isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
-      ),
+      style: textStyle,
     );
   }
 
   /// Construye líneas de información (máximo 3 líneas)
-  static Widget buildInfoLines(String line1, [String? line2, String? line3]) {
+  static Widget buildInfoLines(
+    String line1, 
+    [String? line2, String? line3, BuildContext? context]
+  ) {
     final List<String> lines = [
       line1,
       if (line2 != null) line2,
       if (line3 != null) line3,
     ];
+    
+    final TextStyle textStyle;
+    if (context != null) {
+      textStyle = TextStyle(
+        fontSize: 14, 
+        color: Theme.of(context).colorScheme.onSurfaceVariant
+      );
+    } else {
+      textStyle = const TextStyle(fontSize: 14, color: Colors.black54);
+    }
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children:
-          lines
-              .map(
-                (line) => Text(
-                  line,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              )
-              .toList(),
+      children: lines.map(
+        (line) => Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(line, style: textStyle),
+        ),
+      ).toList(),
     );
   }
 
   /// Construye un pie de página en negrita
-  static Widget buildBoldFooter(String footer) {
-    return Text(
-      footer,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
+  static Widget buildBoldFooter(String footer, {BuildContext? context}) {
+    final TextStyle textStyle;
+    if (context != null) {
+      textStyle = TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+        color: Theme.of(context).colorScheme.primary,
+      );
+    } else {
+      textStyle = const TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
         color: Colors.grey,
+      );
+    }
+    
+    return Text(footer, style: textStyle);
+  }
+
+  /// Construye un SizedBox con altura de 8
+  static Widget buildSpacing({double height = 8.0}) {
+    return SizedBox(height: height);
+  }
+
+  /// Construye un borde redondeado
+  static RoundedRectangleBorder buildRoundedBorder({double radius = 12.0}) {
+    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius));
+  }
+
+  /// Construye un ícono dinámico basado en el tipo de tarea
+  static Widget buildLeadingIcon(String type, {BuildContext? context}) {
+    final Color color = context != null 
+        ? (type == 'normal' 
+            ? Theme.of(context).colorScheme.primary 
+            : Theme.of(context).colorScheme.error)
+        : (type == 'normal' ? Colors.blue : Colors.red);
+        
+    return Container(
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        shape: BoxShape.circle,
+      ),
+      padding: const EdgeInsets.all(8.0),
+      child: Icon(
+        type == 'normal' ? Icons.task : Icons.warning,
+        color: color,
+        size: 28,
       ),
     );
   }
 
-  /// Construye un SizedBox con altura de 8
-  static Widget buildSpacing() {
-    return const SizedBox(height: 8);
-  }
-
-  /// Construye un borde redondeado con BorderRadius.circular(10)
-  static RoundedRectangleBorder buildRoundedBorder() {
-    return RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
-  }
-
-  /// Construye un ícono dinámico basado en el tipo de tarea
-  static Widget buildLeadingIcon(String type) {
-    return Icon(
-      type == 'normal' ? Icons.task : Icons.warning,
-      color: type == 'normal' ? Colors.blue : Colors.red,
-      size: 32,
-    );
-  }
-
-  static Widget buildNoStepsText() {
-    return const Text(
+  static Widget buildNoStepsText({BuildContext? context}) {
+    final Color textColor = context != null 
+        ? Theme.of(context).colorScheme.onSurfaceVariant 
+        : Colors.black54;
+        
+    return Text(
       'No hay pasos disponibles',
-      style: TextStyle(fontSize: 16, color: Colors.black54),
+      style: TextStyle(fontSize: 16, color: textColor),
     );
   }
 
   /// Construye un BorderRadius con bordes redondeados solo en la parte superior
-  static BorderRadius buildTopRoundedBorder({double radius = 8.0}) {
+  static BorderRadius buildTopRoundedBorder({double radius = 12.0}) {
     return BorderRadius.vertical(top: Radius.circular(radius));
   }
 }
@@ -88,63 +145,154 @@ class CommonWidgetsHelper {
 Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
   return StatefulBuilder(
     builder: (context, setState) {
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
+      
+      // Determinar colores según tipo de tarea y estado
+      Color cardColor = colorScheme.surface;
+      Color borderColor = colorScheme.outlineVariant;
+      Color typeColor = tarea.tipo == 'normal' 
+          ? colorScheme.primary 
+          : colorScheme.error;
+      
+      if (tarea.completada) {
+        cardColor = colorScheme.surfaceVariant.withOpacity(0.7);
+      }
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: ListTile(
-          contentPadding: const EdgeInsets.all(16.0),
-          tileColor: Colors.white,
-          shape: CommonWidgetsHelper.buildRoundedBorder(),
-          leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo),
-          title: Row(
-            children: [
-              Checkbox(
-                value: tarea.completada,
-                onChanged: (value) {
-                  final bloc = context.read<TareasBloc>();
-                  bloc.add(
-                    CompletarTareaEvent(
-                      tarea: tarea,
-                      completada: value ?? false,
-                    ),
-                  );
-                },
+        child: Card(
+          margin: EdgeInsets.zero,
+          elevation: tarea.completada ? 0 : 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: tarea.completada ? borderColor.withOpacity(0.3) : borderColor,
+              width: 1,
+            ),
+          ),
+          color: cardColor,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-              Expanded(
-                child: Text(
-                  tarea.titulo,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    decoration:
-                        tarea.completada
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
-                  ),
+              leading: Container(
+                decoration: BoxDecoration(
+                  color: typeColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  tarea.tipo == 'normal' ? Icons.task : Icons.warning,
+                  color: tarea.completada ? typeColor.withOpacity(0.5) : typeColor,
+                  size: 28,
                 ),
               ),
-            ],
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('${TareasConstantes.tipoTarea} ${tarea.tipo}'),
-              CommonWidgetsHelper.buildSpacing(),
-            ],
-          ),
-          trailing: IconButton(
-            onPressed: tarea.completada ? null : onEdit,
-            icon: Icon(
-              Icons.edit,
-              size: 16,
-              color:
-                  tarea.completada
-                      ? Colors.grey.withAlpha((0.3 * 255).toInt())
-                      : Colors.grey,
-            ),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.grey,
-              disabledForegroundColor: Colors.grey.withAlpha(
-                (0.3 * 255).toInt(),
+              title: Row(
+                children: [
+                  Transform.scale(
+                    scale: 1.1,
+                    child: Checkbox(
+                      value: tarea.completada,
+                      activeColor: typeColor,
+                      checkColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      onChanged: (value) {
+                        final bloc = context.read<TareasBloc>();
+                        bloc.add(
+                          CompletarTareaEvent(
+                            tarea: tarea,
+                            completada: value ?? false,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      tarea.titulo,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        decoration: tarea.completada
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        color: tarea.completada 
+                            ? colorScheme.onSurface.withOpacity(0.6)
+                            : colorScheme.onSurface,
+                        decorationColor: colorScheme.onSurface.withOpacity(0.5),
+                        decorationThickness: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8.0, left: 42.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: typeColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            tarea.tipo.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: tarea.completada ? typeColor.withOpacity(0.6) : typeColor,
+                            ),
+                          ),
+                        ),
+                        if (tarea.descripcion != null && tarea.descripcion!.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              tarea.descripcion!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: tarea.completada 
+                                    ? colorScheme.onSurfaceVariant.withOpacity(0.7)
+                                    : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              trailing: IconButton(
+                onPressed: tarea.completada ? null : onEdit,
+                icon: Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  color: tarea.completada
+                      ? colorScheme.outline.withOpacity(0.4)
+                      : colorScheme.primary,
+                ),
+                style: IconButton.styleFrom(
+                  backgroundColor: tarea.completada 
+                      ? Colors.transparent
+                      : colorScheme.primaryContainer.withOpacity(0.3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ),
             ),
           ),
